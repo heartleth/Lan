@@ -16,3 +16,12 @@
             RULE Buzz Buzz-Buzz
         END
     END
+    
+## HQ9+
+
+    PART main
+        RULE H H-HelloWorld
+        RULE Q Q-Quine
+        RULE 9 9-Nine
+        RULE + +-Plus
+    END
