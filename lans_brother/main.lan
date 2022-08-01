@@ -16,11 +16,7 @@ PART Command 1
     SET 흡 [:0=흡]$흡
     SET 흑 [:0=흑]$흑
     
-    RULE bro    %형 %항 %핫 %흣 %흡 %흑 
-    RULE bro    %형 %항 %핫 %흣 %흡 %흑 $Fold( dot )
-    
-    RULE bro    %형 %항 %핫 %흣 %흡 %흑 *Heart
-    RULE bro    %형 %항 %핫 %흣 %흡 %흑 $Fold( dot ) *Heart
+    RULE bro    %형 %항 %핫 %흣 %흡 %흑 ?$Fold( dot ) ?*Heart
 END
 
 PART 형
@@ -62,7 +58,7 @@ END
 PART Fold 1
     # :0 | mode
     
-    SET more $Fold( :0 )
+    SET more ?$Fold( :0 )
 
     IF 0 0
         RULE command    $Command( 형 )
@@ -104,7 +100,7 @@ PART Fold 1
         RULE f  으-으 %more
     END
     IF 0 dot
-        RULE f  .-dot
         RULE f  .-dot %more
+        RULE f  .-dot
     END
 END

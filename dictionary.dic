@@ -12,3 +12,45 @@ PART Heart
 💝
 
 ♡
+
+# For /lans_chemistry
+
+PART Numbers
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+
+PART Elements
+# :0 | Kind
+# => Metal, NonMetal, Metalloid
+# :1 | Valence
+# :2 | Oxygen
+
+H   NonMetal    1
+He  NonMetal    0
+Li  Metal       1
+Be  Metal       2
+B   NonMetal    3
+C   NonMetal    4
+N   NonMetal    5
+O   NonMetal    6 Oxygen
+F   NonMetal    7
+Ne	NonMetal    0
+Na  Metal       1
+Mg  Metal       2
+Al  Metal       3
+Si  Metalloid   4
+P   NonMetal    5
+S   NonMetal    6
+Cl  NonMetal    7
+Ar	NonMetal    0
+K   Metal       1
+Ca  Metal       2

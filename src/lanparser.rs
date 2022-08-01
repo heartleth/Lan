@@ -94,10 +94,10 @@ pub fn parse_rules<'s>(words :&[&'s str]) -> Result<Vec<TemplateNode<'s>>, usize
                 }
                 else if word.get(1) == Some(&'*') {
                     if let Some((a, b)) = &sword[2..].split_once('[') {
-                        res.push(TN::from(Templates::ShortPart(ShortWordPart::from_conditional(a, &b[..b.len()-1]))));
+                        res.push(TN::from_opt(Templates::ShortPart(ShortWordPart::from_conditional(a, &b[..b.len()-1]))));
                     }
                     else {
-                        res.push(TN::from(Templates::ShortPart(ShortWordPart::from(&sword[2..]))));
+                        res.push(TN::from_opt(Templates::ShortPart(ShortWordPart::from(&sword[2..]))));
                     }
                 }
                 else {

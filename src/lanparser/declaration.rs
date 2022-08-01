@@ -66,6 +66,7 @@ impl ShortWordPart<'_> {
     pub fn from_conditional<'s>(p :&'s str, c :&'s str) -> ShortWordPart<'s> {
         ShortWordPart { condition: Some(c), part_name: p }
     }
+    
     pub fn from<'s>(p :&'s str) -> ShortWordPart<'s> {
         ShortWordPart { condition: None, part_name: p }
     }

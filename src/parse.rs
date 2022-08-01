@@ -32,6 +32,7 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
     }
 }
 
+#[derive(Clone)]
 pub struct Expectation<'p> {
     pub voca_attrs :Vec<&'p Vec<&'p str>>,
     pub rule :ParsingRule<'p>,
@@ -42,14 +43,14 @@ pub struct Expectation<'p> {
 }
 
 impl<'p> Expectation<'p> {
-    pub fn from<'tt, 'n>(name :&'n str, rule :ParsingRule<'n>)->Expectation<'n> {
+    pub fn from<'tt, 'n>(name :&'n str, rule :ParsingRule<'n>, morphemes :Vec<Morpheme>, reading :usize)->Expectation<'n> {
         Expectation {
             voca_attrs: Vec::new(),
-            morphemes: Vec::new(),
             alive: true,
-            reading: 0,
-            rule: rule,
-            name: name
+            morphemes,
+            reading,
+            rule,
+            name
         }
     }
     
@@ -68,6 +69,28 @@ impl<'p> Expectation<'p> {
     pub fn register_attr(&mut self, attr :&'p Vec<&'p str>) {
         self.voca_attrs.push(attr);
     }
+
+    pub fn nexts(&self)->Vec<Expectation<'p>> {
+        if self.rule.is_empty() {
+            return vec![ self.clone() ];
+        }
+        let mut ret :Vec<Expectation<'p>> = Vec::new();
+        let mut i = 0;
+        for r in self.rule {
+            if r.is_optional {
+                ret.push(Expectation::from(self.name, &self.rule[i..], self.morphemes.clone(), self.reading));
+            }
+            else {
+                ret.push(Expectation::from(self.name, &self.rule[i..], self.morphemes.clone(), self.reading));
+                return ret;
+            }
+            i = i + 1;
+        }
+        if self.rule.last().unwrap().is_optional {
+            ret.push(Expectation::from(self.name, &self.rule[0..0], self.morphemes.clone(), self.reading));
+        }
+        return ret;
+    }
 }
 
 pub fn nexts<'s, 'p>(name: &'p str, rule :ParsingRule<'p>) -> Vec<Expectation<'p>> {
@@ -75,10 +98,10 @@ pub fn nexts<'s, 'p>(name: &'p str, rule :ParsingRule<'p>) -> Vec<Expectation<'p
     let mut i = 0;
     for r in rule {
         if r.is_optional {
-            ret.push(Expectation::from(name, &rule[i..]));
+            ret.push(Expectation::from(name, &rule[i..], Vec::new(), 0));
         }
         else {
-            ret.push(Expectation::from(name, &rule[i..]));
+            ret.push(Expectation::from(name, &rule[i..], Vec::new(), 0));
             return ret;
         }
         i = i + 1;
@@ -90,6 +113,7 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
     let print_debug = false;
     let s :Vec<_> = String::from_iter(uts).trim().chars().collect();
     let mut expections = nexts(name, rule);
+    let mut winners = Vec::new();
     while !expections.is_empty() {
         for expect in &mut expections {
             let reading = expect.reading;
@@ -132,7 +156,7 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
                                     if let Some((a, b)) = &cond[1..].split_once('=') {
                                         let argn :usize = a.parse().unwrap();
                                         &s[reading..reading+e.text.len()] == &e.text[..]
-                                        && &e.argv[argn] == b
+                                        && e.argv.get(argn).unwrap_or(&"0") == b
                                     }
                                     else { panic!() }
                                 }
@@ -194,14 +218,30 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
             }
             else {
                 if s[0] == uts[0] {
-                    return Some((expect.morphemes.clone(), reading));
+                    // return Some((expect.morphemes.clone(), reading));
+                    winners.push((expect.morphemes.clone(), reading));
+                    expect.kill();
                 }
                 else {
-                    return Some((expect.morphemes.clone(), reading + 1));
+                    // return Some((expect.morphemes.clone(), reading + 1));
+                    winners.push((expect.morphemes.clone(), reading + 1));
+                    expect.kill();
                 }
             }
         }
         expections.retain(|x| x.alive);
+        let mut new_expections = Vec::new();
+        for ex in &expections {
+            new_expections = [new_expections, ex.nexts()].concat();
+        }
+        expections = new_expections;
     }
-    return None;
+
+    if winners.is_empty() {
+        return None;
+    }
+    else {
+        let best_winner = winners.iter().max_by(|x, y| x.1.cmp(&y.1));
+        return Some(best_winner.unwrap().clone());
+    }
 }
