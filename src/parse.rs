@@ -158,7 +158,12 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
                                         &s[reading..reading+e.text.len()] == &e.text[..]
                                         && e.argv.get(argn).unwrap_or(&"0") == b
                                     }
-                                    else { panic!() }
+                                    else {
+                                        let (a, b) = &cond[1..].split_once('~').unwrap();
+                                        let argn :usize = a.parse().unwrap();
+                                        &s[reading..reading+e.text.len()] == &e.text[..]
+                                        && e.argv.get(argn).unwrap_or(&"0") == b
+                                    }
                                 }
                                 else {
                                     &s[reading..reading+e.text.len()] == &e.text[..]

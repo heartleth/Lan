@@ -12,14 +12,14 @@ PART Combine 1
 
     IF 0 0
         RULE substance  C-C ?$Number ?$Combine( C )
-        RULE substance  ?$Combine( C )
+        RULE substance  ?$Combine( C ) %cation
     END
     IF 0 C
         RULE substance  H-H ?$Number ?$Combine( H )
         RULE substance  ?$Combine( H )
     END
     IF 0 H
-        RULE substance  *Elements[:2=0] ?$Number ?$Combine( H )
+        RULE substance  *Elements[:2~Oxygen] ?$Number ?$Combine( H )
         RULE substance  *Elements[:2=Oxygen] ?$Number
     END
 END
