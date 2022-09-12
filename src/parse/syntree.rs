@@ -65,7 +65,7 @@ impl SyntaxTreeNode {
                 if v.text == " " {
                     return String::new();
                 }
-                format!("{}", &v.text)
+                format!("{}", &v.text.trim())
             }
         }
     }
