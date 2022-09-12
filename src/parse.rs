@@ -8,6 +8,7 @@ use super::lanparser::*;
 
 use super::Dictionary;
 use std::collections::HashMap;
+use std::iter::FromIterator;
 
 pub type PhraseRulesCollection<'p> = &'p HashMap<&'p str, PhraseContext<'p>>;
 pub type ParsingRule<'p> = &'p [TemplateNode<'p>];
@@ -109,9 +110,9 @@ pub fn nexts<'s, 'p>(name: &'p str, rule :ParsingRule<'p>) -> Vec<Expectation<'p
     return ret;
 }
 
-pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(SyntaxTreeNode, usize)> {
+pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(SyntaxTreeNode, usize)> {
     let print_debug = false;
-    let s :Vec<_> = String::from_iter(uts).trim().chars().collect();
+    // let s :Vec<_> = String::from_iter(uts).trim().chars().collect();
     let mut expections = nexts(name, rule);
     let mut winners = Vec::new();
     while !expections.is_empty() {
@@ -128,7 +129,17 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
                             if print_debug {
                                 println!("Text: {}", t.name);
                             }
-                            if s[reading..].starts_with(&t.text) {
+                            
+                            if t.text == &['w', 's'] && (&String::from_iter(&s[reading..]).trim_start()[..].len() < &s[reading..].len()) {
+                                let wss = &s[reading..].len() - &String::from_iter(&s[reading..]).trim_start()[..].len();
+                                expect.read(wss);
+                                expect.next_rule();
+                                expect.tree.push_category(SyntaxTreeNode::new_morpheme(String::from(t.name), String::from(" ")));
+                                if print_debug {
+                                    println!("OK Text: {}", t.name);
+                                }
+                            }
+                            else if s[reading..].starts_with(&t.text) {
                                 expect.read(t.text.len());
                                 expect.next_rule();
                                 expect.tree.push_category(SyntaxTreeNode::new_morpheme(String::from(t.name), String::from_iter(&t.text)));
@@ -144,7 +155,7 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
                             if print_debug {
                                 println!("ShortPart: {:?}", p);
                             }
-                            let x :Vec<_> = dict[p.part_name].iter()
+                            let mut x :Vec<_> = dict[p.part_name].iter()
                             .filter(|e| {
                                 if s.len() - reading < e.text.len() {
                                     return false;
@@ -171,6 +182,8 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
                                 expect.kill();
                             }
                             else {
+                                x.sort_by_key(|x| x.text.len());
+                                x.reverse();
                                 if print_debug {
                                     println!("OK ShortPart: {:?}", p);
                                 }
@@ -218,7 +231,7 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
                 }
             }
             else {
-                if s[0] == uts[0] {
+                if s[0] == s[0] {
                     winners.push((expect.tree.clone(), reading));
                     expect.kill();
                 }

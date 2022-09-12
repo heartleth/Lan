@@ -62,6 +62,9 @@ impl SyntaxTreeNode {
                 format!("{}[ {} ]", &c.name, cc.join(" "))
             },
             Self::Vocab(v) => {
+                if v.text == " " {
+                    return String::new();
+                }
                 format!("{}", &v.text)
             }
         }

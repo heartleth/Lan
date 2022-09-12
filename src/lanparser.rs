@@ -229,9 +229,6 @@ pub fn parse<'s>(lines :&Vec<&'s str>) -> Result<HashMap<&'s str, PhraseContext<
                 }
             }
         }
-        else if words[0] == "SET" {
-            
-        }
     };
 
     return Ok(res);
