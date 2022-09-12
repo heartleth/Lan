@@ -12,7 +12,7 @@ use std::collections::HashMap;
 pub type PhraseRulesCollection<'p> = &'p HashMap<&'p str, PhraseContext<'p>>;
 pub type ParsingRule<'p> = &'p [TemplateNode<'p>];
 
-pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(Morphemes, usize)> {
+pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(SyntaxTreeNode, usize)> {
     let mut m = 0;
     let mut mp = None;
     for r in part.rules {
@@ -23,7 +23,7 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
             }
         }
     }
-    
+
     if m == 0 {
         return None;
     }
@@ -36,18 +36,18 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
 pub struct Expectation<'p> {
     pub voca_attrs :Vec<&'p Vec<&'p str>>,
     pub rule :ParsingRule<'p>,
-    pub morphemes :Morphemes,
+    pub tree :SyntaxTreeNode,
     pub reading :usize,
     pub name :&'p str,
     pub alive :bool,
 }
 
 impl<'p> Expectation<'p> {
-    pub fn from<'tt, 'n>(name :&'n str, rule :ParsingRule<'n>, morphemes :Vec<Morpheme>, reading :usize)->Expectation<'n> {
+    pub fn from<'tt, 'n>(name :&'n str, rule :ParsingRule<'n>, tree :SyntaxTreeNode, reading :usize)->Expectation<'n> {
         Expectation {
             voca_attrs: Vec::new(),
             alive: true,
-            morphemes,
+            tree,
             reading,
             rule,
             name
@@ -78,16 +78,16 @@ impl<'p> Expectation<'p> {
         let mut i = 0;
         for r in self.rule {
             if r.is_optional {
-                ret.push(Expectation::from(self.name, &self.rule[i..], self.morphemes.clone(), self.reading));
+                ret.push(Expectation::from(self.name, &self.rule[i..], self.tree.clone(), self.reading));
             }
             else {
-                ret.push(Expectation::from(self.name, &self.rule[i..], self.morphemes.clone(), self.reading));
+                ret.push(Expectation::from(self.name, &self.rule[i..], self.tree.clone(), self.reading));
                 return ret;
             }
             i = i + 1;
         }
         if self.rule.last().unwrap().is_optional {
-            ret.push(Expectation::from(self.name, &self.rule[0..0], self.morphemes.clone(), self.reading));
+            ret.push(Expectation::from(self.name, &self.rule[0..0], self.tree.clone(), self.reading));
         }
         return ret;
     }
@@ -98,10 +98,10 @@ pub fn nexts<'s, 'p>(name: &'p str, rule :ParsingRule<'p>) -> Vec<Expectation<'p
     let mut i = 0;
     for r in rule {
         if r.is_optional {
-            ret.push(Expectation::from(name, &rule[i..], Vec::new(), 0));
+            ret.push(Expectation::from(name, &rule[i..], SyntaxTreeNode::new_category(name), 0));
         }
         else {
-            ret.push(Expectation::from(name, &rule[i..], Vec::new(), 0));
+            ret.push(Expectation::from(name, &rule[i..], SyntaxTreeNode::new_category(name), 0));
             return ret;
         }
         i = i + 1;
@@ -109,7 +109,7 @@ pub fn nexts<'s, 'p>(name: &'p str, rule :ParsingRule<'p>) -> Vec<Expectation<'p
     return ret;
 }
 
-pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(Morphemes, usize)> {
+pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(SyntaxTreeNode, usize)> {
     let print_debug = false;
     let s :Vec<_> = String::from_iter(uts).trim().chars().collect();
     let mut expections = nexts(name, rule);
@@ -131,10 +131,7 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
                             if s[reading..].starts_with(&t.text) {
                                 expect.read(t.text.len());
                                 expect.next_rule();
-                                expect.morphemes.push(Morpheme {
-                                    text: String::from_iter(&t.text),
-                                    name: String::from(t.name)
-                                });
+                                expect.tree.push_category(SyntaxTreeNode::new_morpheme(String::from(t.name), String::from_iter(&t.text)));
                                 if print_debug {
                                     println!("OK Text: {}", t.name);
                                 }
@@ -177,10 +174,9 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
                                 if print_debug {
                                     println!("OK ShortPart: {:?}", p);
                                 }
-                                expect.morphemes.push(Morpheme {
-                                    text: String::from_iter(&s[reading..reading+x[0].text.len()]),
-                                    name: String::from(p.part_name)
-                                });
+                                expect.tree.push_category(SyntaxTreeNode::new_morpheme(
+                                    String::from(p.part_name),
+                                    String::from_iter(&s[reading..reading+x[0].text.len()])));
                                 expect.register_attr(&x[0].argv);
                                 expect.read(x[0].text.len());
                                 expect.next_rule();
@@ -201,14 +197,14 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
                                 }
                             }
                             let parsed = parse(&s[reading..], t2.build(rules), rules, dict);
-                            
-                            if let Some((mut morphemes, x)) = parsed {
+                            if let Some((stn, x)) = parsed {
                                 if print_debug {
                                     println!("OK Template: {:?}", template);
                                 }
                                 expect.read(x);
                                 expect.next_rule();
-                                expect.morphemes.append(&mut morphemes);
+                                
+                                expect.tree.push_category(stn);
                             }
                             else {
                                 if print_debug {
@@ -223,13 +219,11 @@ pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, 
             }
             else {
                 if s[0] == uts[0] {
-                    // return Some((expect.morphemes.clone(), reading));
-                    winners.push((expect.morphemes.clone(), reading));
+                    winners.push((expect.tree.clone(), reading));
                     expect.kill();
                 }
                 else {
-                    // return Some((expect.morphemes.clone(), reading + 1));
-                    winners.push((expect.morphemes.clone(), reading + 1));
+                    winners.push((expect.tree.clone(), reading + 1));
                     expect.kill();
                 }
             }

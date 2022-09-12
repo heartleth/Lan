@@ -54,3 +54,17 @@ Cl  NonMetal    7
 Ar	NonMetal    0
 K   Metal       1
 Ca  Metal       2
+
+PART Ion
+
+(+)   An    1
+(2+)  An    2
+(3+)  An    3
+
+(-)   Cat   1
+(2-)  Cat   2
+(3-)  Cat   3
+
+PART conj
++
+-->
