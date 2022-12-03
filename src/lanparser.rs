@@ -236,3 +236,10 @@ pub fn parse<'s>(lines :&Vec<&'s str>) -> Result<HashMap<&'s str, PhraseContext<
 
     return Ok(res);
 }
+
+pub fn load_lan<'s>(lcs :&'s Vec<String>)->Result<HashMap<&'s str, PhraseContext>, usize> {
+    let lines_c :Vec<_> = lcs.iter().map(|lc| lc.split('\n').map(|x| x.trim()).filter(|x| x.len() > 0 && (!x.starts_with("#"))).collect::<Vec<_>>()).collect();
+    let lines = lines_c.concat();
+    let hm = parse(&lines);
+    return hm;
+}

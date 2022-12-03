@@ -17,3 +17,20 @@ impl Voca<'_> {
 }
 
 pub type Dictionary<'s> = HashMap<&'s str, Vec<Voca<'s>>>;
+
+pub fn load_dictionary<'s>(dict :&'s str) -> Dictionary<'s> {
+    let mut dictionary = HashMap::new();
+    let voca_list :Vec<_> = dict.split('\n')
+        .map(|x| x.trim()).filter(|x| x.len() > 0 && (!x.starts_with("#"))).collect();
+    let mut mode :&str = "";
+    for t in voca_list {
+        if t.starts_with("PART") {
+            mode = &t[5..];
+            dictionary.insert(&t.clone()[5..], Vec::new());
+        }
+        else {
+            dictionary.get_mut(mode).unwrap().push(Voca::from(t.clone()));
+        }
+    }
+    return dictionary;
+}
