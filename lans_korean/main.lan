@@ -1,0 +1,45 @@
+PART main
+	RULE scv				$주어 $보어 $되다아니다
+	RULE sov				$주어 $목적어 $서술어
+	RULE sb					$주어 $서술격조사구
+	RULE sv					$주어 $서술어
+END
+
+PART 서술어
+	RULE V					$동사서술어
+	RULE A					$형용사서술어
+END
+
+PART 동사서술어
+	RULE Reflects			*동사어간 $선어말어미( respect @0:1 @0:0 V @0:2 )
+
+	RULE Reflects			*불규칙동사어간 $선어말어미( respect - C V @0:0 @0:1 )
+END
+
+PART 형용사서술어
+	RULE Reflects			*형용사어간 $선어말어미( respect @0:1 @0:0 A @0:2 )
+
+	RULE Reflects			*ㅂ불규칙양성형용사어간 $선어말어미( respect - C A ㅂ + )
+	RULE Reflects			*ㅂ불규칙형용사어간 $선어말어미( respect - C A ㅂ - )
+END
+
+PART 서술격조사구
+	RULE Be					*명사 $서술격조사( @0:0 )
+END
+
+PART 서술격조사 1
+	# :0 | 받침유무
+
+	IF 0 C
+		RULE Be				이-서술격조사어간 $선어말어미( respect - V A )
+	END
+	IF 0 V
+		RULE Be				이-서술격조사어간 $선어말어미( respect - V A )
+		RULE Be				$선어말어미( respect - V A )
+	END
+END
+
+PART 되다아니다
+	RULE RefsBe				되-동사어간 $선어말어미( respect - V V )
+	RULE RefsNot			아니-형용사어간 $선어말어미( respect - V A )
+END

@@ -1,0 +1,54 @@
+# Reference from:
+# https://s-space.snu.ac.kr/bitstream/10371/85932/1/7.%202235203.pdf
+
+PART S
+	# ㄱ
+	RULE S		$NP( NOM ) $IV
+END
+
+PART NP 2
+	# :0 | TYPE
+	# :1 | CASE
+	
+	# ㄴ
+	RULE NP		$N $P( :1 )
+END
+
+PART N
+	# ㄷ
+	RULE N		?$ADJP $N ?$CONJX( NP )
+END
+
+PART IV
+	# ㄹ
+	RULE IV		?$ADVP $IV
+	RULE IV		$NP $CAP
+	# ㅅ
+	RULE IV 	$NP( COMP ) $CIV
+	# ㅇ
+	RULE IV 	$NP( ACC ) $TV
+END
+
+PART ADJP
+	# ㄹ
+	RULE ADJP	$ADJ ?$ADJP
+	RULE ADJP	$N $P( PFORM_X )
+END
+
+PART ADVP
+	# ㅅ
+	RULE ADVP	$ADV ?$ADVP
+END
+
+PART TV
+	# ㅈ
+	RULE TV 	$NP( DAT ) $DTV
+	RULE TV 	$NP( COMP ) $CTV
+END
+
+PART CONJX 1
+	# :0 | X
+	
+	SET X [:0=N]$N
+	RULE CONJX	$CONJX( :0 ) %X
+END

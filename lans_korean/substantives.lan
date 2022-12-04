@@ -1,0 +1,38 @@
+PART 주어
+	RULE subject			$체언( C ) 이-주격조사
+	RULE subject			$체언( V ) 가-주격조사
+
+	RULE subject			$체언( C ) 은-보조사
+	RULE subject			$체언( V ) 는-보조사
+
+	RULE respected			$체언 께서-주격조사
+	RULE respected			$체언 께서-주격조사 는-보조사
+END
+
+PART 보어
+	RULE subject			$체언( C ) 이-보격조사
+	RULE subject			$체언( V ) 가-보격조사
+END
+
+PART 목적어
+	RULE subject			$체언( C ) 을-목적격조사
+	RULE subject			$체언( V ) 를-목적격조사
+END
+
+PART 체언 1
+	# :0 | 받침 유무
+
+	# RULE pronoun			*대명사
+	# RULE numeric			*수사
+
+	IF 0 C
+		RULE noun			*명사[:0=C]
+	END
+	IF 0 V
+		RULE noun			*명사[:0=V]
+	END
+	
+	IF 0 0
+		RULE noun			*명사
+	END
+END

@@ -79,10 +79,18 @@ impl<'p> Expectation<'p> {
         let mut i = 0;
         for r in self.rule {
             if r.is_optional {
-                ret.push(Expectation::from(self.name, &self.rule[i..], self.tree.clone(), self.reading));
+                let mut p = Expectation::from(self.name, &self.rule[i..], self.tree.clone(), self.reading);
+                for attr in &self.voca_attrs {
+                    p.register_attr(attr);
+                }
+                ret.push(p);
             }
             else {
-                ret.push(Expectation::from(self.name, &self.rule[i..], self.tree.clone(), self.reading));
+                let mut p = Expectation::from(self.name, &self.rule[i..], self.tree.clone(), self.reading);
+                for attr in &self.voca_attrs {
+                    p.register_attr(attr);
+                }
+                ret.push(p);
                 return ret;
             }
             i = i + 1;
@@ -110,9 +118,9 @@ pub fn nexts<'s, 'p>(name: &'p str, rule :ParsingRule<'p>) -> Vec<Expectation<'p
     return ret;
 }
 
-pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(SyntaxTreeNode, usize)> {
+pub fn fit_rules<'p, 't>(uts :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(SyntaxTreeNode, usize)> {
     let print_debug = false;
-    // let s :Vec<_> = String::from_iter(uts).trim().chars().collect();
+    let s :Vec<_> = String::from_iter(uts).trim().chars().collect();
     let mut expections = nexts(name, rule);
     let mut winners = Vec::new();
     while !expections.is_empty() {
@@ -129,7 +137,6 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                             if print_debug {
                                 println!("Text: {}", t.name);
                             }
-                            
                             if t.text == &['w', 's'] && (&String::from_iter(&s[reading..]).trim_start()[..].len() < &s[reading..].len()) {
                                 let wss = &s[reading..].len() - &String::from_iter(&s[reading..]).trim_start()[..].len();
                                 expect.read(wss);
@@ -185,7 +192,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                 x.sort_by_key(|x| x.text.len());
                                 x.reverse();
                                 if print_debug {
-                                    println!("OK ShortPart: {:?}", p);
+                                    println!("OK ShortPart: {:?} @ {:?}", p, x[0].text);
                                 }
                                 expect.tree.push_category(SyntaxTreeNode::new_morpheme(
                                     String::from(p.part_name),
@@ -206,7 +213,8 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                     let (a, b) = e[1..].split_once(':').unwrap();
                                     let a :usize = a.parse().unwrap();
                                     let b :usize = b.parse().unwrap();
-                                    *e = expect.voca_attrs[a].get(b).unwrap_or(&"0");
+                                    // *e = expect.voca_attrs[a].get(b).unwrap_or(&"0");
+                                    *e = expect.voca_attrs.get(a).unwrap_or(&&Vec::new()).get(b).unwrap_or(&"0");
                                 }
                             }
                             let parsed = parse(&s[reading..], t2.build(rules), rules, dict);
@@ -231,7 +239,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                 }
             }
             else {
-                if s[0] == s[0] {
+                if s[0] == uts[0] {
                     winners.push((expect.tree.clone(), reading));
                     expect.kill();
                 }

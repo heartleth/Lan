@@ -9,6 +9,9 @@ use dictionary::{ * };
 fn main() {
     let lcs_chemistry = vec![ std::fs::read_to_string("lans_chemistry/main.lan").unwrap() ];
     let lcs_tokipona = vec![ std::fs::read_to_string("lans_tokipona/main.lan").unwrap() ];
+    let lcs_korean = vec![ std::fs::read_to_string("lans_korean/main.lan").unwrap(),
+        std::fs::read_to_string("lans_korean/agglutinate.lan").unwrap(),
+        std::fs::read_to_string("lans_korean/substantives.lan").unwrap() ];
     
     let lc = &std::fs::read_to_string("dictionary.dic").unwrap()[..];
     let dictionary = load_dictionary(lc);
@@ -32,6 +35,17 @@ fn main() {
         let dtext = assembling::disassemble(text);
         
         let k = parse::parse(&dtext, hm_tokipona["main"].build(&Vec::new()), &hm_tokipona, &dictionary);
+        println!("{}\n", k.unwrap().0.collect_verbose());
+    }
+
+    let hm_korean = lanparser::load_lan(&lcs_korean).unwrap();
+
+    let t = std::fs::read_to_string("sentences_korean.txt").unwrap();
+    for text in t.split("\n") {
+        println!("{}", text);
+        let dtext = assembling::disassemble(text);
+        
+        let k = parse::parse(&dtext, hm_korean["main"].build(&Vec::new()), &hm_korean, &dictionary);
         println!("{}\n", k.unwrap().0.collect_verbose());
     }
 }

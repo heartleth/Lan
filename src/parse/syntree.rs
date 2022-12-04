@@ -1,3 +1,5 @@
+use crate::assembling::*;
+
 #[derive(Clone, Debug)]
 pub struct Morpheme {
     pub text: String,
@@ -59,7 +61,8 @@ impl SyntaxTreeNode {
         match self {
             Self::Category(c) => {
                 let cc :Vec<_> = c.children.iter().map(|e| e.collect_verbose()).collect();
-                format!("{}[ {} ]", &c.name, cc.join(" "))
+                // format!("{}[ {} ]", &c.name, cc.join(" "))
+                format!("{}[ {} ]", &c.name, assemble(&cc.join(" ")))
             },
             Self::Vocab(v) => {
                 if v.text == " " {
