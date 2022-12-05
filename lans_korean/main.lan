@@ -33,15 +33,6 @@ PART 격조사 2
 	IF 0 서술격
 		RULE P	$서술격조사( :1 )
 	END
-	IF 0 관형격
-		RULE P	*격조사[:0=관형격]
-	END
-	# IF 0 목적격
-	# 	RULE P	*격조사[:0=목적격]
-	# END
-	# IF 0 주격
-	# 	RULE P	*격조사[:0=주격]
-	# END
 END
 
 PART 서술격조사 1

@@ -1,22 +1,6 @@
-# PART 주어
-# 	RULE subject			$체언( C ) $격조사( 주격 C )
-# 	RULE subject			$체언( V ) $격조사( 주격 V )
-
-# 	RULE subject			$체언( C ) 은-보조사
-# 	RULE subject			$체언( V ) 는-보조사
-
-# 	RULE respected			$체언 께서-주격조사
-# 	RULE respected			$체언 께서-주격조사 ?는-보조사
-# END
-
-# PART 목적어
-# 	RULE subject			$체언( C ) $격조사( 목적격 C )
-# 	RULE subject			$체언( V ) $격조사( 목적격 V )
-# END
-
 PART 주어
-	RULE subject			$체언( C ) 이-주격조사
-	RULE subject			$체언( V ) 가-주격조사
+	RULE subject			$체언( C ) *격조사[:0=주격&:1=C]
+	RULE subject			$체언( V ) *격조사[:0=주격&:1=V]
 
 	RULE subject			$체언( C ) 은-보조사
 	RULE subject			$체언( V ) 는-보조사
@@ -31,8 +15,8 @@ PART 보어
 END
 
 PART 목적어
-	RULE subject			$체언( C ) 을-목적격조사
-	RULE subject			$체언( V ) 를-목적격조사
+	RULE subject			$체언( C ) *격조사[:0=목적격&:1=C]
+	RULE subject			$체언( V ) *격조사[:0=목적격&:1=V]
 END
 
 PART 체언 1
@@ -54,8 +38,8 @@ PART 체언 1
 	END
 END
 
+
 PART 관형어
-	# RULE ADJP	$체언 $격조사( 관형격 )
-	RULE ADJP	*명사 $격조사( 관형격 )
+	RULE ADJP	*명사 *격조사[:0=관형격]
 	RULE ADJP	*관형사
 END
