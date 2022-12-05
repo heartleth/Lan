@@ -8,7 +8,8 @@ pub type ConcreteRules<'s> = Rule<'s>;
 
 pub struct ConcretePart<'s ,'p> {
     pub rules :Vec<ConcreteRules<'s>>,
-    pub part :&'p PhraseContext<'s>
+    pub part :&'p PhraseContext<'s>,
+    pub id :String
 }
 
 impl<'n> PhraseContext<'n> {
@@ -97,7 +98,8 @@ impl<'n> PhraseContext<'n> {
         let mut vals = HashMap::new();
         ConcretePart {
             rules: self.gain_rules(&self.children, args, &mut vals),
-            part: &self
+            part: &self,
+            id: format!("{}@{:?}", self.name, args)
         }
     }
 }

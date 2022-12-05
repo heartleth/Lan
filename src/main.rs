@@ -4,6 +4,7 @@ pub mod lanparser;
 pub mod concrete;
 pub mod parse;
 
+use std::time::{ Instant };
 use dictionary::{ * };
 
 fn main() {
@@ -21,10 +22,13 @@ fn main() {
     let t = std::fs::read_to_string("sentences_chemistry.txt").unwrap();
     for text in t.split("\n") {
         println!("{}", text);
+        let start = Instant::now();
         let dtext = assembling::disassemble(text);
-        
+        parse::init_parse();
         let k = parse::parse(&dtext, hm_chemistry["main"].build(&Vec::new()), &hm_chemistry, &dictionary);
-        println!("{}\n", k.unwrap().0.collect_verbose());
+        let dur = start.elapsed();
+        println!("{}", k.unwrap().0.collect_verbose());
+        println!("==> {:?}\n", dur);
     }
 
     let hm_tokipona = lanparser::load_lan(&lcs_tokipona).unwrap();
@@ -32,10 +36,13 @@ fn main() {
     let t = std::fs::read_to_string("sentences_tokipona.txt").unwrap();
     for text in t.split("\n") {
         println!("{}", text);
+        let start = Instant::now();
         let dtext = assembling::disassemble(text);
-        
+        parse::init_parse();
         let k = parse::parse(&dtext, hm_tokipona["main"].build(&Vec::new()), &hm_tokipona, &dictionary);
-        println!("{}\n", k.unwrap().0.collect_verbose());
+        let dur = start.elapsed();
+        println!("{}", k.unwrap().0.collect_verbose());
+        println!("==> {:?}\n", dur);
     }
 
     let hm_korean = lanparser::load_lan(&lcs_korean).unwrap();
@@ -43,9 +50,12 @@ fn main() {
     let t = std::fs::read_to_string("sentences_korean.txt").unwrap();
     for text in t.split("\n") {
         println!("{}", text);
+        let start = Instant::now();
         let dtext = assembling::disassemble(text);
-        
+        parse::init_parse();
         let k = parse::parse(&dtext, hm_korean["main"].build(&Vec::new()), &hm_korean, &dictionary);
-        println!("{}\n", k.unwrap().0.collect_verbose());
+        let dur = start.elapsed();
+        println!("{}", k.unwrap().0.collect_verbose());
+        println!("==> {:?}\n", dur);
     }
 }

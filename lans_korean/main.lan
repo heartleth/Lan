@@ -19,12 +19,29 @@ END
 PART 형용사서술어
 	RULE Reflects			*형용사어간 $선어말어미( respect @0:1 @0:0 A @0:2 )
 
-	RULE Reflects			*ㅂ불규칙양성형용사어간 $선어말어미( respect - C A ㅂ + )
-	RULE Reflects			*ㅂ불규칙형용사어간 $선어말어미( respect - C A ㅂ - )
+	RULE Reflects			*ㅂ불규칙형용사어간 $선어말어미( respect - C A ㅂ @0:0 )
 END
 
 PART 서술격조사구
 	RULE Be					*명사 $서술격조사( @0:0 )
+END
+
+PART 격조사 2
+	# :0 | 격
+	# :1 | 받침유무
+	
+	IF 0 서술격
+		RULE P	$서술격조사( :1 )
+	END
+	IF 0 관형격
+		RULE P	*격조사[:0=관형격]
+	END
+	# IF 0 목적격
+	# 	RULE P	*격조사[:0=목적격]
+	# END
+	# IF 0 주격
+	# 	RULE P	*격조사[:0=주격]
+	# END
 END
 
 PART 서술격조사 1

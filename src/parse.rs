@@ -13,7 +13,20 @@ use std::iter::FromIterator;
 pub type PhraseRulesCollection<'p> = &'p HashMap<&'p str, PhraseContext<'p>>;
 pub type ParsingRule<'p> = &'p [TemplateNode<'p>];
 
+static mut PARSE_DP :Option<HashMap<(usize, String), Option<(SyntaxTreeNode, usize)>>> = None;
+
+pub fn init_parse() {
+    unsafe { PARSE_DP = Some(HashMap::new()); }
+}
+
 pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(SyntaxTreeNode, usize)> {
+    unsafe {
+        if let Some(k) = &PARSE_DP {
+            if let Some(x) = k.get(&(s.len(), part.id.clone())) {
+                return x.clone();
+            }
+        }
+    }
     let mut m = 0;
     let mut mp = None;
     for r in part.rules {
@@ -26,9 +39,19 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
     }
 
     if m == 0 {
+        unsafe {
+            if let Some(k) = &mut PARSE_DP {
+                k.insert((s.len(), part.id), None);
+            }
+        }
         return None;
     }
     else {
+        unsafe {
+            if let Some(k) = &mut PARSE_DP {
+                k.insert((s.len(), part.id), Some((mp.clone().unwrap(), m)));
+            }
+        }
         return Some((mp.unwrap(), m));
     }
 }
