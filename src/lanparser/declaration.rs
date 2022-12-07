@@ -83,6 +83,33 @@ pub enum Templates<'s> {
 pub type TemplateNode<'s> = TemplateNodeGen<'s, Templates<'s>>;
 
 impl<'s> TemplateNode<'s> {
+    pub fn to_string(&self) -> String {
+        match &self.template {
+            Templates::Embed(e) => {
+                String::from(*e)
+            },
+            Templates::ShortPart(s) => {
+                if let Some(cond) = s.condition {
+                    format!("*{}[{}]", s.part_name, cond)
+                }
+                else {
+                    format!("*{}", s.part_name)
+                }
+            },
+            Templates::Template(t) => {
+                if t.args.len() > 0 {
+                    format!("${}{:?}", t.name, t.args)
+                }
+                else {
+                    format!("${}", t.name)
+                }
+            },
+            Templates::Text(t) => {
+                format!("{}-{}", String::from_iter(&t.text), t.name)
+            }
+        }
+    }
+
     pub fn from<'p>(t :Templates<'p>) -> TemplateNode<'p> {
         TemplateNode {
             is_optional: false,
@@ -95,7 +122,7 @@ impl<'s> TemplateNode<'s> {
         TemplateNode {
             is_optional: true,
             condition: None,
-            template: t,
+            template: t
         }
     }
     

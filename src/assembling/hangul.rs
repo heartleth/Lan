@@ -37,12 +37,15 @@ pub fn assemble<'s>(s :&'s str) -> String {
         }
         else if firsts.contains(&c) || lasts.contains(&c) {
             let last = ret.chars().last().unwrap();
-            let lp = lasts.iter().position(|x| x==&c).unwrap() as u32;
+            let lps = lasts.iter().position(|x| x==&c);
             let unilast = last as u32;
             if 0xAC00 <= unilast && unilast <= 0xD7AF {
                 if (unilast - 0xAC00) % 28 == 0 {
-                    ret.pop();
-                    ret.push(char::from_u32(unilast + lp + 1).unwrap());
+                    if let Some(lp) = lps {
+                        let lp = lp as u32;
+                        ret.pop();
+                        ret.push(char::from_u32(unilast + lp + 1).unwrap());
+                    }
                 }
                 else {
                     ret.push(c);

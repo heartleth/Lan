@@ -5,41 +5,41 @@ END
 
 PART Sentence
     RULE sentence   $NP( NOM ) $VP
-    RULE sentence   $ADVP ws-ws $NP( NOM ) $VP
-    RULE sentence   $NP( NOM ) $VP ws-ws *Particles[:0=A]
-    RULE sentence   $ADVP ws-ws $NP( NOM ) $VP ws-ws *Particles[:0=A]
+    RULE sentence   $ADVP $NP( NOM ) $VP
+    RULE sentence   $NP( NOM ) $VP *Particles[:0=A]
+    RULE sentence   $ADVP $NP( NOM ) $VP *Particles[:0=A]
 
-    RULE sentence   $ComplexWord ws-ws *Particles[:0=WOW]
+    RULE sentence   $ComplexWord *Particles[:0=WOW]
 END
 
 PART NP 1
     # :0 | case
 
     IF 0 NOM
-        RULE call   *Particles[:0=WOW] ws-ws
+        RULE call   *Particles[:0=WOW]
         
-        RULE npNOM  *Toki[:0=NOM] ws-ws
-        RULE npNOM  *Toki[:0~NOM] ws-ws *Particles[:0=NOM] ws-ws
-        RULE npNOM  $ComplexWord ws-ws *Particles[:0=NOM] ws-ws
+        RULE npNOM  *Toki[:0=NOM]
+        RULE npNOM  *Toki[:0~NOM] *Particles[:0=NOM]
+        RULE npNOM  $ComplexWord *Particles[:0=NOM]
     END
     IF 0 ACC
-        RULE npACC  *Particles[:0=ACC] ws-ws $ComplexWord
+        RULE npACC  *Particles[:0=ACC] $ComplexWord
     END
 END
 
 PART ADVP
-    RULE advp   $ComplexWord ws-ws *Particles[:0=ADV]
+    RULE advp   $ComplexWord *Particles[:0=ADV]
 END
 
 PART VP 0
     # :0 | multi
 
     IF 0 0
-        RULE vps    $VP( 1 ) ws-ws *Particles[:0=NOM] ws-ws $VP( 0 )
+        RULE vps    $VP( 1 ) *Particles[:0=NOM] $VP( 0 )
         RULE vp     $VP( 1 )
     END
     IF 0 1
-        RULE tvp    $ComplexWord ws-ws $NP( ACC )
+        RULE tvp    $ComplexWord $NP( ACC )
         RULE vp     $ComplexWord
     END
 END
@@ -50,10 +50,10 @@ PART ComplexWord 2
     IF 1 0
         RULE word   [:0=p]ws-ws *Toki ?$ComplexWord( p 0 )
 
-        RULE word   [:0=p]ws-ws *Toki ws-ws *TokiConj ?$ComplexWord( p 0 )
-        RULE word   [:0=p]ws-ws *Toki ws-ws *pi $ComplexWord( p 1 )
+        RULE word   [:0=p]ws-ws *Toki *TokiConj ?$ComplexWord( p 0 )
+        RULE word   [:0=p]ws-ws *Toki *pi $ComplexWord( p 1 )
     END
     IF 1 1
-        RULE word   [:0=p]ws-ws *Toki ws-ws *Toki ?$ComplexWord( p )
+        RULE word   [:0=p]ws-ws *Toki *Toki ?$ComplexWord( p )
     END
 END
