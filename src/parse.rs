@@ -6,8 +6,8 @@ use syntree::*;
 use super::concrete::ConcretePart;
 use super::lanparser::*;
 
-use super::Dictionary;
 use std::collections::HashMap;
+use super::Dictionary;
 
 pub type PhraseRulesCollection<'p> = &'p HashMap<&'p str, PhraseContext<'p>>;
 pub type ParsingRule<'p> = &'p [TemplateNode<'p>];
@@ -21,10 +21,19 @@ pub fn init_parse() {
     }
 }
 
+pub fn trim_front_iter<'t>(s :&'t [char])->&'t [char] {
+    let mut i = 0;
+    while s[i] == ' ' || s[i] == '\t' || s[i] == '\n' {
+        i += 1;
+    }
+    &s[i..]
+}
+
 pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(SyntaxTreeNode, usize)> {
+    let key = (s.len(), part.id.clone());
     unsafe {
         if let Some(k) = &PARSE_DP {
-            if let Some(x) = k.get(&(s.len(), part.id.clone())) {
+            if let Some(x) = k.get(&key) {
                 return x.clone();
             }
         }
@@ -32,7 +41,7 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
 
     let mut m = 0;
     let mut mp = None;
-    let s2 :Vec<_> = String::from_iter(s).trim().chars().collect();
+    let s2 :&[char] = trim_front_iter(s);
     for r in part.rules {
         if let Some((morphemes, x)) = fit_rules::fit_rules(&s2, r.name, &r.rules, rules, dict, s) {
             if x > m {
@@ -53,10 +62,10 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
     else {
         unsafe {
             if let Some(k) = &mut PARSE_DP {
-                if let Some(x) = k.get(&(s.len(), part.id.clone())) {
+                if let Some(x) = k.get(&key) {
                     if let Some(x2) = x {
                         if x2.1 < m {
-                            k.insert((s.len(), part.id), Some((mp.clone().unwrap(), m)));
+                            k.insert(key, Some((mp.clone().unwrap(), m)));
                         }
                     }
                 }

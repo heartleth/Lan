@@ -31,12 +31,13 @@ impl<'n> PhraseContext<'n> {
 
             if qualified {
                 if let Templates::Embed(k) = &r.template {
-                    let x = vals[k].rules.clone();
-                    ret = [ret, x].concat();
+                    for r in &vals[k].rules {
+                        ret.push(r.clone());
+                    }
                 }
                 else if let Templates::Template(n) = &r.template {
                     let concreteargs :Vec<&'n str> = n.args.iter().map(
-                        |x| if x.starts_with(":") {
+                        |x| if x.starts_with(':') {
                             let idx :usize = x[1..].parse().unwrap();
                             &args.get(idx).unwrap_or(&"0")[..]
                         }
@@ -79,25 +80,18 @@ impl<'n> PhraseContext<'n> {
                 });
             }
             else if let PhraseRules::Ifs(cond) = pr {
-                if cond.unless {
-                    if &args.get(cond.parameter).unwrap_or(&"0")[..] != cond.value {
-                        res.append(&mut self.gain_rules(&cond.children, args, vals));
-                    }
-                }
-                else {
-                    if &args.get(cond.parameter).unwrap_or(&"0")[..] == cond.value {
-                        res.append(&mut self.gain_rules(&cond.children, args, vals));
-                    }
+                if (&args.get(cond.parameter).unwrap_or(&"0")[..] == cond.value) ^ cond.unless {
+                    res.append(&mut self.gain_rules(&cond.children, args, vals));
                 }
             }
         }
         return res;
     }
     
-    pub fn build<'p>(&'p self, args :&'p Vec<&'n str>) -> ConcretePart<'n, 'p> {
+    pub fn build<'p>(&'p self, args :Vec<&'n str>) -> ConcretePart<'n, 'p> {
         let mut vals = HashMap::new();
         ConcretePart {
-            rules: self.gain_rules(&self.children, args, &mut vals),
+            rules: self.gain_rules(&self.children, &args, &mut vals),
             part: &self,
             id: format!("{}@{:?}", self.name, args)
         }
@@ -105,7 +99,7 @@ impl<'n> PhraseContext<'n> {
 }
 
 impl<'n> ParamedPart<'n> {
-    pub fn build<'p>(&'p self, rules :PhraseRulesCollection<'n>) -> ConcretePart<'n, 'p> {
-        rules[self.name].build(&self.args)
+    pub fn build<'p>(&'p self, rules :PhraseRulesCollection<'n>, args :Vec<&'n str>) -> ConcretePart<'n, 'p> {
+        rules[self.name].build(args)
     }
 }

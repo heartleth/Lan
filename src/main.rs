@@ -25,10 +25,10 @@ fn main() {
         let start = Instant::now();
         let dtext = assembling::disassemble(text);
         parse::init_parse();
-        let k = parse::parse(&dtext, hm_chemistry["main"].build(&Vec::new()), &hm_chemistry, &dictionary);
+        let k = parse::parse(&dtext, hm_chemistry["main"].build(Vec::new()), &hm_chemistry, &dictionary);
         for _ in 1 .. 100 {
             parse::init_parse();
-            parse::parse(&dtext, hm_chemistry["main"].build(&Vec::new()), &hm_chemistry, &dictionary);
+            parse::parse(&dtext, hm_chemistry["main"].build(Vec::new()), &hm_chemistry, &dictionary);
         }
         let dur = start.elapsed();
         println!("{}", k.unwrap().0.collect_verbose());
@@ -43,10 +43,10 @@ fn main() {
         let start = Instant::now();
         let dtext = assembling::disassemble(text);
         parse::init_parse();
-        let k = parse::parse(&dtext, hm_tokipona["main"].build(&Vec::new()), &hm_tokipona, &dictionary);
+        let k = parse::parse(&dtext, hm_tokipona["main"].build(Vec::new()), &hm_tokipona, &dictionary);
         for _ in 1 .. 100 {
             parse::init_parse();
-            parse::parse(&dtext, hm_tokipona["main"].build(&Vec::new()), &hm_tokipona, &dictionary);
+            parse::parse(&dtext, hm_tokipona["main"].build(Vec::new()), &hm_tokipona, &dictionary);
         }
         let dur = start.elapsed();
         println!("{}", k.unwrap().0.collect_verbose());
@@ -61,13 +61,14 @@ fn main() {
         let start = Instant::now();
         let dtext = assembling::disassemble(text);
         parse::init_parse();
-        let k = parse::parse(&dtext, hm_korean["main"].build(&Vec::new()), &hm_korean, &dictionary);
+        let k = parse::parse(&dtext, hm_korean["main"].build(Vec::new()), &hm_korean, &dictionary);
         for _ in 1 .. 100 {
             parse::init_parse();
-            parse::parse(&dtext, hm_korean["main"].build(&Vec::new()), &hm_korean, &dictionary);
+            parse::parse(&dtext, hm_korean["main"].build(Vec::new()), &hm_korean, &dictionary);
         }
         let dur = start.elapsed();
         println!("{}", k.unwrap().0.collect_verbose());
         println!("==> {:?}\n", dur / 100);
     }
+    parse::init_parse();
 }

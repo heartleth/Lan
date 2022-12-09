@@ -24,6 +24,14 @@ PART 체언 1
 
 	# RULE pronoun			*대명사
 	# RULE numeric			*수사
+	
+	RULE CONJ				$체언( C ) *접속조사[:0=C] $체언( :0 )
+	RULE CONJ				$체언( V ) *접속조사[:0=V] $체언( :0 )
+	
+	# RULE CONJ				*명사[:0=C] *접속조사[:0=C] $체언( :0 )
+	# RULE CONJ				*명사[:0=V] *접속조사[:0=V] $체언( :0 )
+	
+	RULE NP					$관형어 $체언( :0 )
 
 	IF 0 C
 		RULE noun			*명사[:0=C]
@@ -34,10 +42,6 @@ PART 체언 1
 	IF 0 0
 		RULE noun			*명사
 	END
-	
-	RULE CONJ				$체언( C ) *접속조사[:0=C] $체언( :0 )
-	RULE CONJ				$체언( V ) *접속조사[:0=V] $체언( :0 )
-	RULE NP					$관형어 $체언( :0 )
 END
 
 PART 관형어

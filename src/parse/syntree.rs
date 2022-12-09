@@ -30,7 +30,7 @@ impl SyntaxTreeNode {
 
     pub fn new_morpheme(name :String, text :String)->SyntaxTreeNode {
         return SyntaxTreeNode::Vocab(Morpheme {
-            name: String::from(name),
+            name: name,
             text: String::from(text)
         });
     }
