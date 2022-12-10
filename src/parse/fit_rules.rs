@@ -1,9 +1,9 @@
 use crate::lanparser::Templates::*;
+use crate::dictionary::Dictionary;
 use super::PhraseRulesCollection;
 use std::collections::HashMap;
 use super::SyntaxTreeNode;
 use super::ParsingRule;
-use crate::Dictionary;
 use super::parse;
 
 static mut PARSE_DP :Option<HashMap<(usize, String), Option<(SyntaxTreeNode, usize)>>> = None;
@@ -181,7 +181,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                             let (a, b) = &cond[1..].split_once('~').unwrap();
                                             let argn :usize = a.parse().unwrap();
                                             &s[reading..reading+e.text.len()] == &e.text[..]
-                                            && e.argv.get(argn).unwrap_or(&"0") == b
+                                            && e.argv.get(argn).unwrap_or(&"0") != b
                                         };
                                     }
                                     r
@@ -218,7 +218,12 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                     let (a, b) = e[1..].split_once(':').unwrap();
                                     let a :usize = a.parse().unwrap();
                                     let b :usize = b.parse().unwrap();
-                                    *e = expect.voca_attrs.get(a).unwrap_or(&&Vec::new()).get(b).unwrap_or(&"0");
+                                    if let Some(k) = expect.voca_attrs.get(a).unwrap().get(b) {
+                                        *e = k;
+                                    }
+                                    else {
+                                        *e = "0";
+                                    }
                                 }
                             }
                             let parsed = parse(&s[reading..], template.build(rules, t2), rules, dict);

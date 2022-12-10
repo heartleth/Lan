@@ -6,8 +6,8 @@ use syntree::*;
 use super::concrete::ConcretePart;
 use super::lanparser::*;
 
+use super::dictionary::Dictionary;
 use std::collections::HashMap;
-use super::Dictionary;
 
 pub type PhraseRulesCollection<'p> = &'p HashMap<&'p str, PhraseContext<'p>>;
 pub type ParsingRule<'p> = &'p [TemplateNode<'p>];

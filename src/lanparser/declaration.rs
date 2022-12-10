@@ -1,11 +1,13 @@
 use std::fmt::Debug;
 
+#[derive(Clone)]
 pub struct PhraseContext<'n> {
     pub name :&'n str,
     pub children :Vec<PhraseRules<'n>>,
     pub argc :usize
 }
 
+#[derive(Clone)]
 pub struct PhraseIf<'s> {
     pub parameter :usize,
     pub value :&'s str,
@@ -14,6 +16,7 @@ pub struct PhraseIf<'s> {
     pub children :Vec<PhraseRules<'s>>
 }
 
+#[derive(Clone)]
 pub enum PhraseRules<'s> {
     SetVariable(Rule<'s>),
     Rules(Rule<'s>),
@@ -135,6 +138,7 @@ impl<'s> TemplateNode<'s> {
     }
 }  
 
+#[derive(Clone)]
 pub struct Rule<'s> {
     pub rules: Vec<TemplateNode<'s>>,
     pub name: &'s str
