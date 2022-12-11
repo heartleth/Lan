@@ -1,5 +1,5 @@
-use crate::lanparser::Templates::*;
-use crate::dictionary::Dictionary;
+use crate::lan::lanparser::Templates::*;
+use crate::lan::dictionary::Dictionary;
 use super::PhraseRulesCollection;
 use std::collections::HashMap;
 use super::SyntaxTreeNode;
@@ -156,7 +156,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                             if s[reading..].starts_with(&t.text) {
                                 expect.read(t.text.len());
                                 expect.next_rule();
-                                expect.push_category(SyntaxTreeNode::new_morpheme(String::from(t.name), String::from_iter(&s[reading..reading+t.text.len()])));
+                                expect.push_category(SyntaxTreeNode::new_morpheme(String::from(t.name), s[reading..reading+t.text.len()].iter().collect::<String>()));
                             }
                             else {
                                 expect.kill();
@@ -205,7 +205,8 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                 let mx = *x.iter().max_by_key(|t| t.text.len()).unwrap();
                                 expect.push_category(SyntaxTreeNode::new_morpheme(
                                     String::from(p.part_name),
-                                    String::from_iter(&s[reading..reading+mx.text.len()])));
+                                    // String::from_iter(&s[reading..reading+mx.text.len()])));
+                                    s[reading..reading+mx.text.len()].iter().collect::<String>()));
                                 expect.register_attr(&mx.argv);
                                 expect.read(mx.text.len());
                                 expect.next_rule();

@@ -108,7 +108,7 @@ impl<'s> TemplateNode<'s> {
                 }
             },
             Templates::Text(t) => {
-                format!("{}-{}", String::from_iter(&t.text), t.name)
+                format!("{}-{}", &t.text.iter().collect::<String>(), t.name)
             }
         }
     }
