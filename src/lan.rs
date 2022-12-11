@@ -1,7 +1,9 @@
-use crate::assembling;
-use crate::dictionary;
-use crate::lanparser;
-use crate::parse;
+pub mod dictionary;
+pub mod lanparser;
+pub mod concrete;
+pub mod parse;
+
+pub use crate::assembling;
 use std::rc::Rc;
 
 #[derive(Debug)]
@@ -47,7 +49,6 @@ impl Parser {
         })
     }
 
-    
     // pub fn context<F, E:std::error::Error>(&self, block :F) -> Result<(), LanError<E>> where F:(Fn(lanparser::LanRules, dictionary::Dictionary) -> Result<(), E>) {
     pub fn context<F>(&self, block :F) -> Result<(), LanError<()>> where F:(Fn(RefParser) -> Option<()>) {
         let lan = lanparser::load_lan(&self.lcs).map_err(|_| LanError::LanSyntaxError)?;

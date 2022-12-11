@@ -45,11 +45,11 @@ impl SyntaxTreeNode {
         }
     }
 
-    pub fn collect(&self)->String {
+    pub fn collect(&self, delim :&str)->String {
         match self {
             Self::Category(c) => {
-                let c :Vec<_> = c.children.iter().map(|e| e.collect()).collect();
-                c.join(" ")
+                let c :Vec<_> = c.children.iter().map(|e| e.collect(delim)).collect();
+                c.join(delim)
             },
             Self::Vocab(v) => {
                 String::from(&v.text)
@@ -57,12 +57,11 @@ impl SyntaxTreeNode {
         }
     }
     
-    pub fn collect_verbose(&self)->String {
+    pub fn collect_verbose(&self, delim :&str)->String {
         match self {
             Self::Category(c) => {
-                let cc :Vec<_> = c.children.iter().map(|e| e.collect_verbose()).collect();
-                // format!("{}[ {} ]", &c.name, cc.join(" "))
-                format!("{}[ {} ]", &c.name, assemble(&cc.join(" ")))
+                let cc :Vec<_> = c.children.iter().map(|e| e.collect_verbose(delim)).collect();
+                format!("{}[ {} ]", &c.name, assemble(&cc.join(delim)))
             },
             Self::Vocab(v) => {
                 if v.text == " " {
@@ -70,6 +69,34 @@ impl SyntaxTreeNode {
                 }
                 format!("{}", &v.text.trim())
             }
+        }
+    }
+
+    pub fn is_category(&self) -> bool {
+        match self {
+            Self::Category(_) => true,
+            _ => false
+        }
+    }
+
+    pub fn is_vocab(&self) -> bool {
+        match self {
+            Self::Vocab(_) => true,
+            _ => false
+        }
+    }
+
+    pub fn get_vocab(&self) -> Option<&Morpheme> {
+        match self {
+            Self::Vocab(v) => Some(v),
+            _ => None
+        }
+    }
+    
+    pub fn get_category(&self) -> Option<&SyntaxTree> {
+        match self {
+            Self::Category(v) => Some(v),
+            _ => None
         }
     }
 }
