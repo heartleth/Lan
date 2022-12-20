@@ -23,6 +23,20 @@ fn main() {
         Some(())
     }).unwrap();
 
+    let parser_english = Parser::open("lans_english/main.lan", "dictionary.dic").unwrap();
+    parser_english.context(|p| {
+        let t = std::fs::read_to_string("sentences_english.txt").unwrap();
+        for text in t.split("\n") {
+            println!("{}", text);
+            let start = Instant::now();
+            let result = p.parse(text).unwrap();
+            let dur = start.elapsed();
+            println!("{}", result.tree.collect_verbose(" "));
+            println!("==> {:?}\n", dur);
+        }
+        Some(())
+    }).unwrap();
+
     let parser_chemistry = Parser::open("lans_chemistry/main.lan", "dictionary.dic").unwrap();
     parser_chemistry.context(|p| {
         let t = std::fs::read_to_string("sentences_chemistry.txt").unwrap();

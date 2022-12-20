@@ -1,0 +1,47 @@
+PART main
+    RULE sentence $Sentence
+END
+
+PART Sentence
+    RULE Si     $NP( S ) $V( s1 )
+
+    RULE Sii    $NP( S ) $V( s2 ) $Comp
+
+    RULE Siii   $NP( S ) $V( s3 ) $NP( O )
+
+    RULE Siv    $NP( S ) $V( s4 ) $NP( IO ) $NP( DO )
+    
+    RULE Sv     $NP( S ) $V( s5 ) $NP( O ) $Comp
+END
+
+PART NP
+    RULE n  $AP( det ) $AP( num ) $AP( siz ) $AP( prp ) $AP( new ) $AP( col ) $AP( nat ) $AP( mat ) *noun
+END
+
+PART AP
+    IF 0 det
+        RULE adj    *adp[:0=det]
+        RULE nppos  $NP( POS )
+    END
+    IF 0 num
+        RULE adj    *adp[:0=num]
+    END
+    IF 0 siz
+        RULE adj    *adp[:0=siz]
+    END
+    IF 0 prp
+        RULE adj    *adp[:0=prp]
+    END
+    IF 0 new
+        RULE adj    *adp[:0=new]
+    END
+    IF 0 col
+        RULE adj    *adp[:0=col]
+    END
+    IF 0 nat
+        RULE adj    *adp[:0=nat]
+    END
+    IF 0 mat
+        RULE adj    *adp[:0=mat]
+    END
+END

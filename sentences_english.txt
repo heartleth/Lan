@@ -1,0 +1,4 @@
+H2O
+CO2
+H20 + CO2 --> H2CO3 --> 2H(+) + CO3(2-)
+NaOH + H2CO3 -> H20 + Na(+) + HCO3(-)
