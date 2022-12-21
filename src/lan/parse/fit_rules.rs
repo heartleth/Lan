@@ -118,7 +118,7 @@ fn parsingrule_tostr<'p, 't>(p :ParsingRule<'p>) -> String {
 pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&'p Dictionary<'p>, uts :&'t [char]) -> Option<(SyntaxTreeNode, usize)> {
     let rulehash = parsingrule_tostr(rule);
     unsafe {
-        let key = (uts.len(), rulehash.clone());
+        let key = (s.len(), rulehash.clone());
         if let Some(k) = &PARSE_DP {
             if let Some(x) = k.get(&key) {
                 return x.clone();
@@ -151,6 +151,10 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                     expect.kill();
                 }
                 else {
+                    while s[expect.reading] == ' ' || s[expect.reading] == '\r' || s[expect.reading] == '\n' || s[expect.reading] == '\t' {
+                        expect.read(1);
+                    }
+                    let reading = expect.reading;
                     match &prule.template {
                         Text(t) => {
                             if s[reading..].starts_with(&t.text) {
@@ -173,10 +177,6 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                     for cond in conds.split('&') {
                                         r &= if let Some((a, b)) = &cond[1..].split_once('=') {
                                             // let argn = (a.bytes().next().unwrap() - 48) as usize;
-                                            // if b.starts_with(':') {
-                                            //     let targn :usize = b[1..].parse().unwrap();
-                                                
-                                            // }
                                             let argn :usize = a.parse().unwrap();
                                             &s[reading..reading+e.text.len()] == &e.text[..]
                                             && e.argv.get(argn).unwrap_or(&"0") == b
@@ -247,7 +247,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                 }
             }
             else {
-                if s[0] == uts[0] {
+                if s[0] == uts[0] || true {
                     winners.push((expect.take_tree(), reading));
                     expect.kill();
                 }
@@ -271,7 +271,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
     if winners.is_empty() {
         unsafe {
             if let Some(k) = &mut PARSE_DP {
-                k.insert((uts.len(), rulehash), None);
+                k.insert((s.len(), rulehash), None);
             }
         }
         
@@ -282,7 +282,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
         
         unsafe {
             if let Some(k) = &mut PARSE_DP {
-                k.insert((uts.len(), rulehash), Some(best_winner.unwrap().clone()));
+                k.insert((s.len(), rulehash), Some(best_winner.unwrap().clone()));
             }
         }
         

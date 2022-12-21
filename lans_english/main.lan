@@ -1,66 +1,102 @@
-PART main
-	RULE sentence $Sentence
-END
+# PART main
+# 	RULE sentence $Sentence
+# END
 
 PART Sentence
-	RULE Si     $NP( S 1 ) $V( s1 1 )
-	RULE Si     $NP( S m ) $V( s1 m )
+	RULE Si		$NP( S 1 ) $V( s1 1 )
+	RULE Si		$NP( S m ) $V( s1 m )
 
-	RULE Sii    $NP( S 1 ) $V( s2 1 ) $Comp
-	RULE Sii    $NP( S m ) $V( s2 m ) $Comp
+	RULE Sii	$NP( S 1 ) $V( s2 1 ) $Comp
+	RULE Sii	$NP( S m ) $V( s2 m ) $Comp
 
-	RULE Siii   $NP( S 1 ) $V( s3 1 ) $NP( O )
-	RULE Siii   $NP( S m ) $V( s3 m ) $NP( O )
+	RULE Siii	$NP( S 1 ) $V( s3 1 ) $NP( O )
+	RULE Siii	$NP( S m ) $V( s3 m ) $NP( O )
 
-	RULE Siv    $NP( S 1 ) $V( s4 1 ) $NP( IO ) $NP( DO )
-	RULE Siv    $NP( S m ) $V( s4 m ) $NP( IO ) $NP( DO )
+	RULE Siv	$NP( S 1 ) $V( s4 1 ) $NP( IO ) $NP( DO )
+	RULE Siv	$NP( S m ) $V( s4 m ) $NP( IO ) $NP( DO )
 	
-	RULE Sv     $NP( S 1 ) $V( s5 1 ) $NP( O ) $Comp
-	RULE Sv     $NP( S m ) $V( s5 m ) $NP( O ) $Comp
+	RULE Sv		$NP( S 1 ) $V( s5 1 ) $NP( O ) $Comp
+	RULE Sv		$NP( S m ) $V( s5 m ) $NP( O ) $Comp
 END
 
-PART NP
-	SET Aps     $AP( num ) $AP( siz ) $AP( prp ) $AP( new ) $AP( col ) $AP( nat ) $AP( mat )
+# PART NP
+PART main
+	RULE n1		*noun[:1=only]
+	RULE n1		*noun[:1=abstract]
 	
-	IF 0 S
-		RULE n  $AP( det ) %Aps *noun[:0=NOM]
+	RULE n1		$Det( a ) *noun[:2=a&:0=1]
+	RULE n1		$Det( an ) *noun[:2=an&:0=1]
+
+	RULE n1		?$Det *noun[:0=m]
+
+	RULE n2		$Det( a ) $AP( 0 a ) *noun
+	RULE n2		$Det( an ) $AP( 0 an ) *noun
+	
+	# RULE n1	$Det $Adv %Aps *noun
+
+	RULE n3		*sath $AP $Det( a ) *noun[:2=a]
+	RULE n3		*sath $AP $Det( an ) *noun[:2=an]
+
+	RULE n4		*firsts $Det( a ) $AP( 0 a ) *noun
+	RULE n4		*firsts $Det( an ) $AP( 0 an ) *noun
+
+	RULE n5		*skof $Det *noun
+	
+	# IF 0 S
+	# 	RULE n	?$AP( det ) %Aps *noun[:0=NOM]
+	# END
+	# IF 0 O
+	# 	RULE n	?$AP( det ) %Aps *noun[:0=OBJ]
+	# END
+	# IF 0 IO
+	# 	RULE n	?$AP( det ) %Aps *noun[:0=OBJ]
+	# END
+	# IF 0 DO
+	# 	RULE n	?$AP( det ) %Aps *noun[:0=OBJ]
+	# END
+END
+
+PART Det
+	# :0 | a/an
+	RULE the	the-det
+
+	IF 0 a
+		RULE a	a-det
 	END
-	IF 0 O
-		RULE n  $AP( det ) %Aps *noun[:0=OBJ]
-	END
-	IF 0 IO
-		RULE n  $AP( det ) %Aps *noun[:0=OBJ]
-	END
-	IF 0 DO
-		RULE n  $AP( det ) %Aps *noun[:0=OBJ]
+	IF 0 an
+		RULE an	an-det
 	END
 END
 
 PART AP
+	IF 0 0
+		RULE adj	*adj
+	END
+
 	IF 0 det
-		RULE adj    *adp[:0=det]
-		RULE nppos  $NP( POS )
+		RULE adj	*adj[:0=det]
+		RULE nppos	$NP( POS )
 	END
 	IF 0 num
-		RULE adj    *adp[:0=num]
+		RULE adj	*adj[:0=num]
 	END
 	IF 0 siz
-		RULE adj    *adp[:0=siz]
+		RULE adj	*adj[:0=siz]
 	END
 	IF 0 prp
-		RULE adj    *adp[:0=prp]
+		RULE adj	*adj[:0=prp]
 	END
 	IF 0 new
-		RULE adj    *adp[:0=new]
+		RULE adj	*adj[:0=new]
 	END
 	IF 0 col
-		RULE adj    *adp[:0=col]
+		RULE adj	*adj[:0=col]
 	END
 	IF 0 nat
-		RULE adj    *adp[:0=nat]
+		RULE adj	*adj[:0=nat]
 	END
 	IF 0 mat
-		RULE adj    *adp[:0=mat]
+		RULE adj	*adj[:0=mat]
 	END
 END
 
@@ -71,4 +107,26 @@ PART AdvP
 	RULE pabs	*prep[:0=in] *noun[:1=abstract]
 	RULE pabs	*prep[:0=on] *noun[:1=abstract]
 	RULE pabs	*prep[:0=to] *noun[:1=abstract]
+END
+
+PART Quantifier
+	# :0 | uctype
+	# :1 | count:1/m/-
+
+	IF 0 cnt
+		IF 1 1
+			RULE quant	*quantifier[:0=cnt&:1=1]
+		END
+		IF 1 m
+			RULE quant	*quantifier[:0=cnt&:1=m]
+			RULE quant	*quantmeasure[:0=0] *prep[:0=of]
+			RULE quant	a-det *quantmeasure[:0=a] *prep[:0=of]
+
+			RULE quant	*quantifier[:0=both]
+		END
+	END
+	UNLESS 0 cnt
+		RULE quant	*quantifier[:0=ucnt]
+		RULE quant	*quantifier[:0=both]
+	END
 END

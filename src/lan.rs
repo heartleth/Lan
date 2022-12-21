@@ -4,7 +4,8 @@ pub mod concrete;
 pub mod parse;
 
 pub use crate::assembling;
-use std::rc::Rc;
+
+use self::dictionary::add_dictionaryrc;
 
 #[derive(Debug)]
 pub enum LanError<E> {
@@ -18,7 +19,7 @@ pub enum LanError<E> {
 
 pub struct Parser {
     lcs :Vec<String>,
-    dictionary :Option<Rc<dictionary::DictionaryRc>>
+    dictionary :Option<dictionary::DictionaryRc>
 }
 
 pub struct RefParser<'p> {
@@ -38,7 +39,7 @@ impl Parser {
         let dict = dictionary::load_dictionaryrc(&std::fs::read_to_string(dictionary_path).ok().ok_or(LanError::NoDictionaryError)?[..]);
         Ok(Parser {
             lcs: vec![ std::fs::read_to_string(lan_path).unwrap() ],
-            dictionary: Some(Rc::from(dict))
+            dictionary: Some(dict)
         })
     }
     
@@ -50,7 +51,7 @@ impl Parser {
     }
 
     // pub fn context<F, E:std::error::Error>(&self, block :F) -> Result<(), LanError<E>> where F:(Fn(lanparser::LanRules, dictionary::Dictionary) -> Result<(), E>) {
-    pub fn context<F>(&self, block :F) -> Result<(), LanError<()>> where F:(Fn(RefParser) -> Option<()>) {
+    pub fn with_parser<F>(&self, block :F) -> Result<(), LanError<()>> where F:(Fn(RefParser) -> Option<()>) {
         let lan = lanparser::load_lan(&self.lcs).map_err(|_| LanError::LanSyntaxError)?;
         let dict = dictionary::dictrc_to_dict(&&self.dictionary.as_ref().ok_or(LanError::NoDictionaryError)?);
         let rp = RefParser { dict: &dict, lan: &lan };
@@ -62,8 +63,11 @@ impl Parser {
         self.lcs.push(std::fs::read_to_string(lan_path).unwrap());
     }
 
-    pub fn load_dict(&mut self, dictionary :&Rc<dictionary::DictionaryRc>) {
-        self.dictionary = Some(dictionary.clone());
+    pub fn load_dict(&mut self, dictionary_path :&str) -> Result<(), LanError<()>> {
+        let dict = &std::fs::read_to_string(dictionary_path).ok().ok_or(LanError::NoDictionaryError)?[..];
+        let s = self.dictionary.as_mut().unwrap();
+        add_dictionaryrc(s, dict);
+        Ok(())
     }
 }
 

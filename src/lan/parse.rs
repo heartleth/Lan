@@ -21,12 +21,12 @@ pub fn init_parse() {
     }
 }
 
-pub fn trim_front_iter<'t>(s :&'t [char])->&'t [char] {
+pub fn trim_front_iter<'t>(s :&'t [char])->(&'t [char], usize) {
     let mut i = 0;
-    while s[i] == ' ' || s[i] == '\t' || s[i] == '\n' {
+    while !s.is_empty() && (s[i] == ' ' || s[i] == '\t' || s[i] == '\n' || s[i] == '\r') {
         i += 1;
     }
-    &s[i..]
+    (&s[i..], i)
 }
 
 pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<(SyntaxTreeNode, usize)> {
@@ -39,19 +39,20 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
         }
     }
 
-    let mut m = 0;
+    let (s2, trims) :(&[char], usize) = trim_front_iter(s);
+    let mut m = trims;
     let mut mp = None;
-    let s2 :&[char] = trim_front_iter(s);
+    // println!("{:20} : {}", part.id, String::from_iter(s));
     for r in part.rules {
-        if let Some((morphemes, x)) = fit_rules::fit_rules(&s2, r.name, &r.rules, rules, dict, s) {
-            if x > m {
+        if let Some((morphemes, x)) = fit_rules::fit_rules(&s2, &format!("{}@{}", part.part.name, r.name)[..], &r.rules, rules, dict, s) {
+            if x + trims > m {
                 mp = Some(morphemes);
-                m = x;
+                m = x + trims;
             }
         }
     }
 
-    if m == 0 {
+    if m == trims {
         unsafe {
             if let Some(k) = &mut PARSE_DP {
                 k.insert((s.len(), part.id), None);

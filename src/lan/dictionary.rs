@@ -69,6 +69,21 @@ pub fn load_dictionaryrc(dict :&str) -> DictionaryRc {
     return dictionary;
 }
 
+pub fn add_dictionaryrc(target :&mut DictionaryRc, dict :&str) {
+    let voca_list :Vec<_> = dict.split('\n')
+    .map(|x| x.trim()).filter(|x| x.len() > 0 && (!x.starts_with("#"))).collect();
+    let mut mode :&str = "";
+    for t in voca_list {
+        if t.starts_with("PART") {
+            mode = &t[5..];
+            target.insert(String::from(&t[5..]), Vec::new());
+        }
+        else {
+            target.get_mut(&mode.to_string()).unwrap().push(VocaRc::from(Rc::from(t)));
+        }
+    }
+}
+
 pub fn dictrc_to_dict<'d>(dicrc :&'d DictionaryRc) -> Dictionary<'d> {
     let mut dictionary = HashMap::new();
     for (k, v) in dicrc {

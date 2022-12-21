@@ -8,13 +8,13 @@ pub struct Morpheme {
 
 pub type Morphemes = Vec<Morpheme>;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct SyntaxTree {
     pub children: Vec<SyntaxTreeNode>,
     pub name: String,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum SyntaxTreeNode {
     Category(SyntaxTree),
     Vocab(Morpheme)

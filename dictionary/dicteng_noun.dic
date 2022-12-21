@@ -3,125 +3,142 @@
 PART noun
 # :0 | count
 # :1 | uctype
+# :2 | a/an
+# :3 | people/stuff
+
+man			1 cnt a		man
+men			m cnt a		man
+
+boy			1 cnt a		man
+boys		m cnt a		man
+
+sister		1 cnt a		man
+sisters		m cnt a		man
+
+price		1 cnt a		stuff
+
+sight		1 cnt a		stuff
+chance		1 cnt a		stuff
+flower		1 cnt a		stuff
 
 # 출처: 명사, 관사, 대명사 프린트 p. 1
-audience	- family
-class		- family
-committee	- family
-jury		- family
+audience	- family an
+class		- family a
+committee	- family a
+jury		- family a
 
-clergy		m police
-gentry		m police
-nobility	m police
-peasantry	m police
+clergy		m police a
+gentry		m police a
+nobility	m police a
+peasantry	m police a
 
-people		m people
-cattle		m people
-poultry		m people
+people		m people a
+cattle		m people a
+poultry		m people a
 
-people		1 countable
-peoples		m countable
+people		1 countable a
+peoples		m countable a
 
-beauty		1 abstract
-advice		1 abstract
-information	1 abstract
-news		1 abstract
-education	1 abstract
-employment	1 abstract
-fun			1 abstract
-health		1 abstract
-help		1 abstract
+beauty		1 abstract a
+advice		1 abstract an
+information	1 abstract an
+news		1 abstract a
+education	1 abstract an
+employment	1 abstract an
+fun			1 abstract a
+health		1 abstract a
+help		1 abstract a
+
+sun			1 only a
 
 # 출처: 명사, 관사, 대명사 프린트 p. 2
-honesty		1 abstract
-importance	1 abstract
-peace		1 abstract
-sleep		1 abstract
-truth		1 abstract
-wealth		1 abstract
-space		1 abstract
-energy		1 abstract
-homework	1 abstract
-work		1 abstract
-success		1 abstract
-vocabulary	1 abstract
-grammer		1 abstract
-slang		1 abstract
-English		1 abstract
-Chinese		1 abstract
-French		1 abstract
-literature	1 abstract
-linguistics	1 abstract
-economics	1 abstract
-electronics	1 abstract
-science		1 abstract
-history		1 abstract
-chemistry	1 abstract
-baseball	1 abstract
-football	1 abstract
-soccer		1 abstract
-tennis		1 abstract
-swimming	1 abstract
-skiing		1 abstract
-aerobics	1 abstract
-studying	1 abstract
-driving		1 abstract
-shopping	1 abstract
-traveling	1 abstract
+honesty		1 abstract a
+importance	1 abstract an
+peace		1 abstract a
+sleep		1 abstract a
+truth		1 abstract a
+wealth		1 abstract a
+space		1 abstract a
+energy		1 abstract a
+homework	1 abstract a
+work		1 abstract a
+success		1 abstract a
+vocabulary	1 abstract a
+grammer		1 abstract a
+slang		1 abstract a
+English		1 abstract an
+Chinese		1 abstract a
+French		1 abstract a
+literature	1 abstract a
+linguistics	1 abstract a
+economics	1 abstract an
+electronics	1 abstract an
+science		1 abstract a
+history		1 abstract a
+chemistry	1 abstract a
+baseball	1 abstract a
+football	1 abstract a
+soccer		1 abstract a
+tennis		1 abstract a
+swimming	1 abstract a
+skiing		1 abstract a
+aerobics	1 abstract an
+studying	1 abstract a
+driving		1 abstract a
+shopping	1 abstract a
+traveling	1 abstract a
 
-air			1 matter
-water		1 matter
-oil			1 matter
-milk		1 matter
-juice		1 matter
-gas			1 matter
-steam		1 matter
-jam			1 matter
-butter		1 matter
-cheese		1 matter
-cream		1 matter
-paste		1 matter
-toothpaste	1 matter
-chocolate	1 matter
-fire		1 matter
-concrete	1 matter
-paper		1 matter
-wool		1 matter
-steel		1 matter
-iron		1 matter
-gold		1 matter
-silver		1 matter
-bronze		1 matter
-stone		1 matter
-glass		1 matter
-rain		1 matter
-snow		1 matter
-hail		1 matter
-wind		1 matter
-darkness	1 matter
-light		1 matter
+air			1 matter an
+water		1 matter a
+oil			1 matter an
+milk		1 matter a
+juice		1 matter a
+gas			1 matter a
+steam		1 matter a
+jam			1 matter a
+butter		1 matter a
+cheese		1 matter a
+cream		1 matter a
+paste		1 matter a
+toothpaste	1 matter a
+chocolate	1 matter a
+fire		1 matter a
+concrete	1 matter a
+paper		1 matter a
+wool		1 matter a
+steel		1 matter a
+iron		1 matter an
+gold		1 matter a
+silver		1 matter a
+bronze		1 matter a
+stone		1 matter a
+glass		1 matter a
+rain		1 matter a
+snow		1 matter a
+hail		1 matter a
+wind		1 matter a
+darkness	1 matter a
+light		1 matter a
 
-sand		- matter
-salt		- matter
-sugar		- matter
-rice		- matter
-wheat		- matter
-barley		- matter
-corn		- matter
-popcorn		- matter
-dirt		- matter
-dust		- matter
-hair		- matter
-grass		- matter
+sand		- matter a
+salt		- matter a
+sugar		- matter a
+rice		- matter a
+wheat		- matter a
+barley		- matter a
+corn		- matter a
+popcorn		- matter a
+dirt		- matter a
+dust		- matter a
+hair		- matter a
+grass		- matter a
 
-furniture	1 matter
-clothing	1 matter
-machinery	1 matter
-baggage		1 matter
-money		1 matter
-jewelry		1 matter
-
-
+furniture	1 matter a
+clothing	1 matter a
+machinery	1 matter a
+baggage		1 matter a
+money		1 matter a
+jewelry		1 matter a
 
 PART quantifier
 # 출처: 명사, 관사, 대명사 프린트 p. 4
@@ -144,28 +161,173 @@ few			cnt m
 a_few		cnt m
 several		cnt m
 both		cnt m
-one_of		cnt m
-a_couple_of	cnt m
-################### TODO
+numerous	cnt m
+various		cnt m
+these		cnt m
+those		cnt m
+
+much				ucnt
+little				ucnt
+a_little			ucnt
+amounts_of			ucnt
+a_good_deal_of		ucnt
+a_large_deal_of		ucnt
+a_great_deal_of		ucnt
+a_good_amount_of	ucnt
+a_large_amount_of	ucnt
+a_great_amount_of	ucnt
+
+no			both
+all			both
+any			both
+most		both
+some		both
+half		both
+any_of		both
+some_of		both
+none_of		both
+lots_of		both
+a_lot_of	both
+plenty_of	both
+
+PART quantmeasure
+# "a number" of, "a couple" of
+
+one
+dozens
+scores
+numbers
+hundreds
+millions
+billions
+thousands
+set				a
+couple			a
+series			a
+variety			a
+good_number		a
+large_number	a
+great_number	a
+
+PART firsts
+what	a
+such	a
+many	a
+half	a
+quite	a
+rather	a
+all		the
+both	the
+half	the
+double	the
+
+PART sath
+so
+as
+too
+how
+however
+
+PART skof
+all
+both
+double
+half
 
 PART pronoun
 # :0 | case
 # :1 | num
 
-I           NOM	 1
-it          NOM	 1
-he          NOM  1
-she         NOM  1
+I			NOM 1
+me			OBJ 1
+my			POS 1
+mine		PSP 1
+myself		REC 1
 
-me          OBJ	 1
-it          OBJ	 1
-him         OBJ  1
-her         OBJ  1
+you			NOM m
+you			OBJ m
+your		POS m
+yours		PSP m
+yourself	REC 1
+yourselves	REC m
 
-we          NOM  m
-you         NOM  m
-they        NOM  m
+he			NOM 1
+him			OBJ 1
+his			POS 1
+his			PSP 1
+himself		REC 1
 
-us          OBJ  m
-you         OBJ  m
-them    	OBJ  m
+she			NOM 1
+her			OBJ 1
+her			POS 1
+hers		PSP 1
+herself		REC 1
+
+it			NOM 1
+it			OBJ 1
+its			POS 1
+its			PSP 1
+itself		REC 1
+
+we			NOM m
+us			OBJ m
+our			POS m
+ours		PSP m
+ourselves	REC m
+
+they		NOM m
+them		OBJ m
+their		POS m
+theirs		PSP m
+themselves	REC m
+
+yourselves
+
+PART adj
+# :0 | type
+
+good		prp
+rich		prp
+cold		prp
+strong		prp
+nervous		prp
+beautiful	prp
+
+a			det
+an			det
+the			det
+
+big			siz
+small		siz
+large		siz
+
+new			new
+old			new
+recent		new
+latest		new
+ancient		new
+
+red			col
+cyan		col
+pink		col
+blue		col
+gray		col
+grey		col
+green		col
+white		col
+brown		col
+black		col
+yellow		col
+orange		col
+purple		col
+magenta		col
+
+dutch		nat
+korean		nat
+spanish		nat
+chinese		nat
+japanese	nat
+american	nat
+
+golden      mat
+wooden      mat
