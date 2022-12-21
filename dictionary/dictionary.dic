@@ -1,25 +1,5 @@
+	# asdf
 # For /lans_english
-
-PART noun
-# :0 | num
-
-school		1
-home		1
-house		1
-houses		m
-
-PART Pronoun
-# :0 | case
-# :1 | num
-
-I			NOM	 1
-it			NOM	 1
-she			NOM  1
-he			NOM  1
-
-we			NOM  m
-you			NOM  m
-they		NOM  m
 
 PART adj
 # :0 | type

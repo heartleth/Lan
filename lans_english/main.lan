@@ -1,47 +1,74 @@
 PART main
-    RULE sentence $Sentence
+	RULE sentence $Sentence
 END
 
 PART Sentence
-    RULE Si     $NP( S ) $V( s1 )
+	RULE Si     $NP( S 1 ) $V( s1 1 )
+	RULE Si     $NP( S m ) $V( s1 m )
 
-    RULE Sii    $NP( S ) $V( s2 ) $Comp
+	RULE Sii    $NP( S 1 ) $V( s2 1 ) $Comp
+	RULE Sii    $NP( S m ) $V( s2 m ) $Comp
 
-    RULE Siii   $NP( S ) $V( s3 ) $NP( O )
+	RULE Siii   $NP( S 1 ) $V( s3 1 ) $NP( O )
+	RULE Siii   $NP( S m ) $V( s3 m ) $NP( O )
 
-    RULE Siv    $NP( S ) $V( s4 ) $NP( IO ) $NP( DO )
-    
-    RULE Sv     $NP( S ) $V( s5 ) $NP( O ) $Comp
+	RULE Siv    $NP( S 1 ) $V( s4 1 ) $NP( IO ) $NP( DO )
+	RULE Siv    $NP( S m ) $V( s4 m ) $NP( IO ) $NP( DO )
+	
+	RULE Sv     $NP( S 1 ) $V( s5 1 ) $NP( O ) $Comp
+	RULE Sv     $NP( S m ) $V( s5 m ) $NP( O ) $Comp
 END
 
 PART NP
-    RULE n  $AP( det ) $AP( num ) $AP( siz ) $AP( prp ) $AP( new ) $AP( col ) $AP( nat ) $AP( mat ) *noun
+	SET Aps     $AP( num ) $AP( siz ) $AP( prp ) $AP( new ) $AP( col ) $AP( nat ) $AP( mat )
+	
+	IF 0 S
+		RULE n  $AP( det ) %Aps *noun[:0=NOM]
+	END
+	IF 0 O
+		RULE n  $AP( det ) %Aps *noun[:0=OBJ]
+	END
+	IF 0 IO
+		RULE n  $AP( det ) %Aps *noun[:0=OBJ]
+	END
+	IF 0 DO
+		RULE n  $AP( det ) %Aps *noun[:0=OBJ]
+	END
 END
 
 PART AP
-    IF 0 det
-        RULE adj    *adp[:0=det]
-        RULE nppos  $NP( POS )
-    END
-    IF 0 num
-        RULE adj    *adp[:0=num]
-    END
-    IF 0 siz
-        RULE adj    *adp[:0=siz]
-    END
-    IF 0 prp
-        RULE adj    *adp[:0=prp]
-    END
-    IF 0 new
-        RULE adj    *adp[:0=new]
-    END
-    IF 0 col
-        RULE adj    *adp[:0=col]
-    END
-    IF 0 nat
-        RULE adj    *adp[:0=nat]
-    END
-    IF 0 mat
-        RULE adj    *adp[:0=mat]
-    END
+	IF 0 det
+		RULE adj    *adp[:0=det]
+		RULE nppos  $NP( POS )
+	END
+	IF 0 num
+		RULE adj    *adp[:0=num]
+	END
+	IF 0 siz
+		RULE adj    *adp[:0=siz]
+	END
+	IF 0 prp
+		RULE adj    *adp[:0=prp]
+	END
+	IF 0 new
+		RULE adj    *adp[:0=new]
+	END
+	IF 0 col
+		RULE adj    *adp[:0=col]
+	END
+	IF 0 nat
+		RULE adj    *adp[:0=nat]
+	END
+	IF 0 mat
+		RULE adj    *adp[:0=mat]
+	END
+END
+
+PART AdvP
+	# 출처: 명사, 관사, 대명사 프린트 p. 2
+	RULE pabs	*prep[:0=with] *noun[:1=abstract]
+	RULE pabs	*prep[:0=by] *noun[:1=abstract]
+	RULE pabs	*prep[:0=in] *noun[:1=abstract]
+	RULE pabs	*prep[:0=on] *noun[:1=abstract]
+	RULE pabs	*prep[:0=to] *noun[:1=abstract]
 END

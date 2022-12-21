@@ -1,0 +1,171 @@
+	# asdf
+	
+PART noun
+# :0 | count
+# :1 | uctype
+
+# 출처: 명사, 관사, 대명사 프린트 p. 1
+audience	- family
+class		- family
+committee	- family
+jury		- family
+
+clergy		m police
+gentry		m police
+nobility	m police
+peasantry	m police
+
+people		m people
+cattle		m people
+poultry		m people
+
+people		1 countable
+peoples		m countable
+
+beauty		1 abstract
+advice		1 abstract
+information	1 abstract
+news		1 abstract
+education	1 abstract
+employment	1 abstract
+fun			1 abstract
+health		1 abstract
+help		1 abstract
+
+# 출처: 명사, 관사, 대명사 프린트 p. 2
+honesty		1 abstract
+importance	1 abstract
+peace		1 abstract
+sleep		1 abstract
+truth		1 abstract
+wealth		1 abstract
+space		1 abstract
+energy		1 abstract
+homework	1 abstract
+work		1 abstract
+success		1 abstract
+vocabulary	1 abstract
+grammer		1 abstract
+slang		1 abstract
+English		1 abstract
+Chinese		1 abstract
+French		1 abstract
+literature	1 abstract
+linguistics	1 abstract
+economics	1 abstract
+electronics	1 abstract
+science		1 abstract
+history		1 abstract
+chemistry	1 abstract
+baseball	1 abstract
+football	1 abstract
+soccer		1 abstract
+tennis		1 abstract
+swimming	1 abstract
+skiing		1 abstract
+aerobics	1 abstract
+studying	1 abstract
+driving		1 abstract
+shopping	1 abstract
+traveling	1 abstract
+
+air			1 matter
+water		1 matter
+oil			1 matter
+milk		1 matter
+juice		1 matter
+gas			1 matter
+steam		1 matter
+jam			1 matter
+butter		1 matter
+cheese		1 matter
+cream		1 matter
+paste		1 matter
+toothpaste	1 matter
+chocolate	1 matter
+fire		1 matter
+concrete	1 matter
+paper		1 matter
+wool		1 matter
+steel		1 matter
+iron		1 matter
+gold		1 matter
+silver		1 matter
+bronze		1 matter
+stone		1 matter
+glass		1 matter
+rain		1 matter
+snow		1 matter
+hail		1 matter
+wind		1 matter
+darkness	1 matter
+light		1 matter
+
+sand		- matter
+salt		- matter
+sugar		- matter
+rice		- matter
+wheat		- matter
+barley		- matter
+corn		- matter
+popcorn		- matter
+dirt		- matter
+dust		- matter
+hair		- matter
+grass		- matter
+
+furniture	1 matter
+clothing	1 matter
+machinery	1 matter
+baggage		1 matter
+money		1 matter
+jewelry		1 matter
+
+
+
+PART quantifier
+# 출처: 명사, 관사, 대명사 프린트 p. 4
+a			cnt 1
+an			cnt 1
+one			cnt 1
+another		cnt 1
+each		cnt 1
+every		cnt 1
+either		cnt 1
+neither		cnt 1
+this		cnt 1
+that		cnt 1
+many_a		cnt 1
+not_a		cnt 1
+
+other		cnt m
+many		cnt m
+few			cnt m
+a_few		cnt m
+several		cnt m
+both		cnt m
+one_of		cnt m
+a_couple_of	cnt m
+################### TODO
+
+PART pronoun
+# :0 | case
+# :1 | num
+
+I           NOM	 1
+it          NOM	 1
+he          NOM  1
+she         NOM  1
+
+me          OBJ	 1
+it          OBJ	 1
+him         OBJ  1
+her         OBJ  1
+
+we          NOM  m
+you         NOM  m
+they        NOM  m
+
+us          OBJ  m
+you         OBJ  m
+them    	OBJ  m
