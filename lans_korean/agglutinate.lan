@@ -9,13 +9,13 @@ PART 선어말어미 6
 	SET eu	[:4=ㅡ]ㅡ-어간ㅡ
 	SET b	[:4=ㅂ]ㅂ-어간ㅂ
 
-	IF 0 respect
-		IF 4 ㅂ
+	IF :0 respect
+		IF :4 ㅂ
 			RULE Res			우-ㅂ불규칙 시-주체높임선어말어미 $선어말어미( time - V :3 )
 			RULE ResPst			우-ㅂ불규칙 셨-주체높임,과거시제선어말어미 $선어말어미( should - C :3 )
 			RULE ResPPst		우-ㅂ불규칙 셨었-주체높임,과거시제선어말어미 $선어말어미( should - C :3 )
 		END
-		UNLESS 4 ㅂ
+		UNLESS :4 ㅂ
 			RULE Res			%eu [:2=C]으-매개모음 시-주체높임선어말어미 $선어말어미( time - V :3 )
 			RULE ResPst			%eu [:2=C]으-매개모음 셨-주체높임,과거시제선어말어미 $선어말어미( should - C :3 )
 			RULE ResPPst		%eu [:2=C]으-매개모음 셨었-주체높임,과거시제선어말어미 $선어말어미( should - C :3 )
@@ -23,33 +23,33 @@ PART 선어말어미 6
 		RULE Agg				$선어말어미( time :1 :2 :3 :4 :5 )
 	END
 	
-	IF 0 time
-		IF 4 ㅂ
-			IF 5 +
+	IF :0 time
+		IF :4 ㅂ
+			IF :5 +
 				RULE Pst		왔-과거시제선어말어미 $선어말어미( should + C :3 )
 				RULE PPst	  	왔었-과거시제선어말어미 $선어말어미( should - C :3 )
 			END
-			IF 5 -
+			IF :5 -
 				RULE Pst		웠-과거시제선어말어미 $선어말어미( should + C :3 )
 				RULE PPst	  	웠었-과거시제선어말어미 $선어말어미( should - C :3 )
 			END
 		END
-		IF 4 ㅡ
-			IF 1 +
+		IF :4 ㅡ
+			IF :1 +
 				RULE Pst		ㅏㅆ-과거시제선어말어미 $선어말어미( should + C :3 )
 				RULE PPst	  	ㅏㅆ었-과거시제선어말어미 $선어말어미( should - C :3 )
 			END
-			IF 1 -
+			IF :1 -
 				RULE Pst		ㅓㅆ-과거시제선어말어미 $선어말어미( should + C :3 )
 				RULE PPst	  	ㅓㅆ었-과거시제선어말어미 $선어말어미( should - C :3 )
 			END
 		END
-		IF 4 0
-			IF 1 +
+		IF :4 0
+			IF :1 +
 				RULE Pst		았-과거시제선어말어미 $선어말어미( should - C :3 )
 				RULE PPst		았었-과거시제선어말어미 $선어말어미( should - C :3 )
 			END
-			IF 1 -
+			IF :1 -
 				RULE Pst		었-과거시제선어말어미 $선어말어미( should - C :3 ),
 				RULE PPst		었었-과거시제선어말어미 $선어말어미( should - C :3 )
 			END
@@ -57,7 +57,7 @@ PART 선어말어미 6
 		RULE Agg				$선어말어미( should :1 :2 :3 :4 :5 )
 	END
 
-	IF 0 should
+	IF :0 should
 		RULE should				%eu %b 겠-미래시제선어말어미 $어말어미( C )
 		RULE Agg				$어말어미( :2 :4 :5 )
 	END
@@ -70,7 +70,7 @@ PART 어말어미 2
 	SET eu	[:1=ㅡ]ㅡ-어간ㅡ
 	SET b	ㅂ-어간ㅂ
 
-	IF 1 ㅂ
+	IF :1 ㅂ
 		RULE 연결어미			%b 고-연결어미
 		
 		RULE 종결어미			우-어간ㅜ ㅁ-종결어미
@@ -78,7 +78,7 @@ PART 어말어미 2
 		RULE 종결어미			%b 습니다-종결어미
 	END
 	
-	UNLESS 1 ㅂ
+	UNLESS :1 ㅂ
 		RULE 연결어미			%eu *연결어미
 		RULE 종결어미			%eu *종결어미
 	END

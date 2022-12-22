@@ -33,13 +33,10 @@ PART 체언 1
 	
 	RULE NP					$관형어 $체언( :0 )
 
-	IF 0 C
-		RULE noun			*명사[:0=C]
+	IF :0 ~ C V
+		RULE noun			*명사[:0=:0]
 	END
-	IF 0 V
-		RULE noun			*명사[:0=V]
-	END
-	IF 0 0
+	IF :0 0
 		RULE noun			*명사
 	END
 END

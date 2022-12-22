@@ -1,36 +1,64 @@
-# PART main
-# 	RULE sentence $Sentence
-# END
-
-PART Sentence
-	RULE Si		$NP( S 1 ) $V( s1 1 )
-	RULE Si		$NP( S m ) $V( s1 m )
-
-	RULE Sii	$NP( S 1 ) $V( s2 1 ) $Comp
-	RULE Sii	$NP( S m ) $V( s2 m ) $Comp
-
-	RULE Siii	$NP( S 1 ) $V( s3 1 ) $NP( O )
-	RULE Siii	$NP( S m ) $V( s3 m ) $NP( O )
-
-	RULE Siv	$NP( S 1 ) $V( s4 1 ) $NP( IO ) $NP( DO )
-	RULE Siv	$NP( S m ) $V( s4 m ) $NP( IO ) $NP( DO )
-	
-	RULE Sv		$NP( S 1 ) $V( s5 1 ) $NP( O ) $Comp
-	RULE Sv		$NP( S m ) $V( s5 m ) $NP( O ) $Comp
+PART main
+	RULE sentence	$Sentence
 END
 
-# PART NP
-PART main
-	RULE n1		*noun[:1=only]
-	RULE n1		*noun[:1=abstract]
+PART Sentence
+	RULE Si		$S( 1 ) $VP( s1 1 )
+	RULE Si		$S( m ) $VP( s1 m )
+
+	# RULE Sii	$S( 1 ) $V( s2 1 ) $Comp
+	# RULE Sii	$S( m ) $V( s2 m ) $Comp
+
+	RULE Siii	$S( 1 ) $VP( s3 1 )
+	RULE Siii	$S( m ) $VP( s3 m )
+
+	# RULE Siv	$S( 1 ) $V( s4 1 ) $NP( IO ) $NP( DO )
+	# RULE Siv	$S( m ) $V( s4 m ) $NP( IO ) $NP( DO )
+	# 
+	# RULE Sv		$S( 1 ) $V( s5 1 ) $NP( O ) $Comp
+	# RULE Sv		$S( m ) $V( s5 m ) $NP( O ) $Comp
+END
+
+PART S
+	# :0 | 1/m
+	RULE pron	*pronoun[:0=NOM&:1=:0]
+	RULE np		$NP( :0 NOM )
+END
+
+PART O
+	RULE pron	*pronoun[:0=OBJ]
+	RULE recr	*pronoun[:0=REC]
+	RULE np		$NP( _ OBJ )
+END
+
+PART Oprep
+	RULE pron	*pronoun[:0=OBJ]
+	RULE recr	*pronoun[:0=REC]
+	RULE np		$NP( _ OBJprep )
+END
+
+PART NP
+	# :0 | 1/m
+
+	RULE n1		*noun[:1=only&:0=_]
+	RULE n1		*noun[:1=only&:0=:0]
+	RULE n1		*noun[:1=abstract&:0=_]
+	RULE n1		*noun[:1=abstract&:0=:0]
 	
-	RULE n1		$Det( a ) *noun[:2=a&:0=1]
-	RULE n1		$Det( an ) *noun[:2=an&:0=1]
+	UNLESS :0 m
+		RULE n1		$Det( a ) *noun[:2=a&:0=1]
+		RULE n1		$Det( an ) *noun[:2=an&:0=1]
+	END
 
-	RULE n1		?$Det *noun[:0=m]
+	RULE n1		*noun[:0=_]
+	RULE n1		*noun[:0=:0]
+	RULE n1		$Det *noun[:0=_]
+	RULE n1		$Det *noun[:0=:0]
 
-	RULE n2		$Det( a ) $AP( 0 a ) *noun
-	RULE n2		$Det( an ) $AP( 0 an ) *noun
+	UNLESS :0 m
+		RULE n2		$Det( a ) $AP( 0 a ) *noun
+		RULE n2		$Det( an ) $AP( 0 an ) *noun
+	END
 	
 	# RULE n1	$Det $Adv %Aps *noun
 
@@ -60,64 +88,46 @@ PART Det
 	# :0 | a/an
 	RULE the	the-det
 
-	IF 0 a
+	IF :0 a
 		RULE a	a-det
 	END
-	IF 0 an
+	IF :0 an
 		RULE an	an-det
 	END
 END
 
 PART AP
-	IF 0 0
+	IF :0 0
 		RULE adj	*adj
 	END
 
-	IF 0 det
+	IF :0 det
 		RULE adj	*adj[:0=det]
 		RULE nppos	$NP( POS )
 	END
-	IF 0 num
-		RULE adj	*adj[:0=num]
-	END
-	IF 0 siz
-		RULE adj	*adj[:0=siz]
-	END
-	IF 0 prp
-		RULE adj	*adj[:0=prp]
-	END
-	IF 0 new
-		RULE adj	*adj[:0=new]
-	END
-	IF 0 col
-		RULE adj	*adj[:0=col]
-	END
-	IF 0 nat
-		RULE adj	*adj[:0=nat]
-	END
-	IF 0 mat
-		RULE adj	*adj[:0=mat]
+	IF :0 ~ num siz prp new col nat mat
+		RULE adj	*adj[:0=:0]
 	END
 END
 
 PART AdvP
 	# 출처: 명사, 관사, 대명사 프린트 p. 2
-	RULE pabs	*prep[:0=with] *noun[:1=abstract]
-	RULE pabs	*prep[:0=by] *noun[:1=abstract]
-	RULE pabs	*prep[:0=in] *noun[:1=abstract]
-	RULE pabs	*prep[:0=on] *noun[:1=abstract]
-	RULE pabs	*prep[:0=to] *noun[:1=abstract]
+	RULE pabs	$Prep( with ) *noun[:1=abstract]
+	RULE pabs	$Prep( by ) *noun[:1=abstract]
+	RULE pabs	$Prep( in ) *noun[:1=abstract]
+	RULE pabs	$Prep( on ) *noun[:1=abstract]
+	RULE pabs	$Prep( to ) *noun[:1=abstract]
 END
 
 PART Quantifier
 	# :0 | uctype
 	# :1 | count:1/m/-
 
-	IF 0 cnt
-		IF 1 1
+	IF :0 cnt
+		IF :1 1
 			RULE quant	*quantifier[:0=cnt&:1=1]
 		END
-		IF 1 m
+		IF :1 m
 			RULE quant	*quantifier[:0=cnt&:1=m]
 			RULE quant	*quantmeasure[:0=0] *prep[:0=of]
 			RULE quant	a-det *quantmeasure[:0=a] *prep[:0=of]
@@ -125,7 +135,7 @@ PART Quantifier
 			RULE quant	*quantifier[:0=both]
 		END
 	END
-	UNLESS 0 cnt
+	UNLESS :0 cnt
 		RULE quant	*quantifier[:0=ucnt]
 		RULE quant	*quantifier[:0=both]
 	END

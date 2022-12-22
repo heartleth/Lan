@@ -1,0 +1,25 @@
+PART VP
+	# :0 | form
+	# :1 | 1/m
+	IF :0 s1
+		RULE v		*verb[:1=_&:2~t]
+		RULE v		*verb[:1=:1&:2~t]
+		
+		RULE vp		*verb[:1=_&:2~t&:3~0] $PrepP( @0:3 )
+		RULE vp		*verb[:1=:1&:2~t&:3~0] $PrepP( @0:3 )
+	END
+	
+	IF :0 s3
+		RULE vp		*verb[:1=_&:2=t] $O
+		RULE vp		*verb[:1=:1&:2=t] $O
+	END
+END
+
+PART PrepP
+	# :0 | type
+	RULE pp		$Prep( :0 ) $Oprep
+END
+
+PART Prep
+	RULE prep	[:0=about]about-prep [:0=with]with-prep [:0=for]for-prep [:0=by]by-prep [:0=in]in-prep [:0=on]on-prep [:0=to]to-prep [:0=of]of-prep [:0=at]at-prep
+END

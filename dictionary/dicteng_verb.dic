@@ -1,0 +1,144 @@
+	# l
+
+PART verb
+# :0 | tense
+# :1 | 1/m
+# :2 | t/i
+# :3 | prep
+
+apologizes	pr 1 i to
+apologize	pr m i to
+
+arrives		pr 1 i at
+arrive		pr m i at
+arrives		pr 1 i in
+arrive		pr m i in
+
+leads		pr 1 i to
+lead		pr m i to
+
+replys		pr 1 i to
+reply		pr m i to
+
+waits		pr 1 i for
+wait		pr m i for
+
+subscribes	pr 1 i to
+subscribe	pr m i to
+
+majors		pr 1 i in
+major		pr m i in
+
+complains	pr 1 i of
+complain	pr m i of
+
+complains	pr 1 i about
+complain	pr m i about
+
+objects		pr 1 i to
+object		pr m i to
+
+discusses	pr 1 t
+discuss		pr m t
+discussed	pa _ t
+discussed	pp _ t
+
+enters		pr 1 t
+enter		pr m t
+
+reaches		pr 1 t
+reach		pr m t
+
+approaches	pr 1 t
+approach	pr m t
+
+accesses	pr 1 t
+access		pr m t
+
+contacts	pr 1 t
+contact		pr m t
+
+marrys		pr 1 t
+marry		pr m t
+
+attends		pr 1 t
+attend		pr m t
+
+joins		pr 1 t
+join		pr m t
+
+answers		pr 1 t
+answer		pr m t
+
+calls		pr 1 t
+call		pr m t
+
+resembles	pr 1 t
+resemble	pr m t
+
+obeys		pr 1 t
+obey		pr m t
+
+describes	pr 1 t
+describe	pr m t
+
+addresses	pr 1 t
+address		pr m t
+
+mentions	pr 1 t
+mention		pr m t
+
+has			pr 1
+have		pr m
+had			pa _
+had			pp _
+
+flees		pr 1
+flee		pr m
+fled		pa _
+fled		pp _
+
+hears		pr 1
+hear		pr m
+heard		pa _
+heard		pp _
+
+holds		pr 1
+hold		pr m
+held		pa _
+held		pp _
+
+lays		pr 1
+lay			pr m
+laid		pa _
+laid		pp _
+
+leads		pr 1
+lead		pr m
+led			pa _
+led			pp _
+
+makes		pr 1
+make		pr m
+made		pa _
+made		pp _
+
+pays		pr 1
+pay			pr m
+paid		pa _
+paid		pp _
+
+says		pr 1
+say			pr m
+said		pa _
+said		pp _
+
+sells		pr 1
+sell		pr m
+sold		pa _
+sold		pp _
+
+tells		pr 1
+tell		pr m
+told		pa _
+told		pp _

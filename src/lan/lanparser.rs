@@ -144,10 +144,10 @@ pub fn parse_rules<'s>(words :&[&'s str]) -> Result<Vec<TemplateNode<'s>>, usize
                 }
             }
             else {
-                let t :Vec<&str> = sword.split('-').collect();
+                let (a, b) :(&str, &str) = sword.split_once('-').unwrap();
                 res.push(TN::from(Templates::Text(SignText {
-                    text: assembling::disassemble(t[0]),
-                    name: t[1]
+                    text: assembling::disassemble(a),
+                    name: b
                 })));
             }
         }
@@ -196,21 +196,21 @@ pub fn parse<'s>(lines :&Vec<&'s str>) -> Result<HashMap<&'s str, PhraseContext<
             }
         }
         else if words[0] == "IF" {
-            let argn :usize = words[1].parse().unwrap();
+            let argn :usize = words[1][1..].parse().unwrap();
             let p = PhraseIf {
                 parameter: argn,
                 children: Vec::new(),
-                value: words[2],
+                value: line.split_once('~').map(|e| e.1).unwrap_or(words[2]),
                 unless: false
             };
             st.push(Context::If(p));
         }
         else if words[0] == "UNLESS" {
-            let argn :usize = words[1].parse().unwrap();
+            let argn :usize = words[1][1..].parse().unwrap();
             let p = PhraseIf {
                 parameter: argn,
                 children: Vec::new(),
-                value: words[2],
+                value: line.split_once('~').map(|e| e.1).unwrap_or(words[2]),
                 unless: true
             };
             st.push(Context::If(p));

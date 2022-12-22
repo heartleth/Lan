@@ -9,6 +9,7 @@ pub type ConcreteRules<'s> = Rule<'s>;
 pub struct ConcretePart<'s ,'p> {
     pub rules :Vec<ConcreteRules<'s>>,
     pub part :&'p PhraseContext<'s>,
+    pub cargs :Vec<&'p str>,
     pub id :String
 }
 
@@ -80,7 +81,9 @@ impl<'n> PhraseContext<'n> {
                 });
             }
             else if let PhraseRules::Ifs(cond) = pr {
-                if (&args.get(cond.parameter).unwrap_or(&"0")[..] == cond.value) ^ cond.unless {
+                let cp = &args.get(cond.parameter).unwrap_or(&"0")[..];
+                let is_equal = cond.value.split_whitespace().any(|x| x==cp);
+                if is_equal ^ cond.unless {
                     res.append(&mut self.gain_rules(&cond.children, args, vals));
                 }
             }
@@ -92,6 +95,7 @@ impl<'n> PhraseContext<'n> {
         let mut vals = HashMap::new();
         ConcretePart {
             rules: self.gain_rules(&self.children, &args, &mut vals),
+            cargs: args.clone(),
             part: &self,
             id: format!("{}@{:?}", self.name, args)
         }

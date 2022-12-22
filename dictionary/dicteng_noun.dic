@@ -22,10 +22,10 @@ chance		1 cnt a		stuff
 flower		1 cnt a		stuff
 
 # 출처: 명사, 관사, 대명사 프린트 p. 1
-audience	- family an
-class		- family a
-committee	- family a
-jury		- family a
+audience	_ family an
+class		_ family a
+committee	_ family a
+jury		_ family a
 
 clergy		m police a
 gentry		m police a
@@ -120,18 +120,18 @@ wind		1 matter a
 darkness	1 matter a
 light		1 matter a
 
-sand		- matter a
-salt		- matter a
-sugar		- matter a
-rice		- matter a
-wheat		- matter a
-barley		- matter a
-corn		- matter a
-popcorn		- matter a
-dirt		- matter a
-dust		- matter a
-hair		- matter a
-grass		- matter a
+sand		_ matter a
+salt		_ matter a
+sugar		_ matter a
+rice		_ matter a
+wheat		_ matter a
+barley		_ matter a
+corn		_ matter a
+popcorn		_ matter a
+dirt		_ matter a
+dust		_ matter a
+hair		_ matter a
+grass		_ matter a
 
 furniture	1 matter a
 clothing	1 matter a

@@ -1,10 +1,13 @@
-a man
-men
-as strong a man
-too good a chance
-however rich a man
-how beautiful a sight
-what a beautiful flower
-all the boys
-double the price
-both the sisters
+# 3인칭 단수 검사
+A man apologizes
+A man apologize
+Men apologizes
+Men apologize
+# 자동사 검사
+A man apologizes to me
+A man apologizes me
+A man apologizes at me
+A man apologizes to I
+# 타동사 검사
+They discussed it
+They discussed about it

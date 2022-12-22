@@ -115,8 +115,8 @@ fn parsingrule_tostr<'p, 't>(p :ParsingRule<'p>) -> String {
     return v.join("");
 }
 
-pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&'p Dictionary<'p>, uts :&'t [char]) -> Option<(SyntaxTreeNode, usize)> {
-    let rulehash = parsingrule_tostr(rule);
+pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&'p Dictionary<'p>, cargs :&Vec<&'p str>) -> Option<(SyntaxTreeNode, usize)> {
+    let rulehash = parsingrule_tostr(rule) + &cargs.join("")[..];
     unsafe {
         let key = (s.len(), rulehash.clone());
         if let Some(k) = &PARSE_DP {
@@ -176,16 +176,32 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                     let mut r = true;
                                     for cond in conds.split('&') {
                                         r &= if let Some((a, b)) = &cond[1..].split_once('=') {
-                                            // let argn = (a.bytes().next().unwrap() - 48) as usize;
                                             let argn :usize = a.parse().unwrap();
+                                            let is_equal =
+                                            if b.starts_with(':') {
+                                                let argn2 :usize = b[1..].parse().unwrap();
+                                                e.argv.get(argn).unwrap_or(&"0") == cargs.get(argn2).unwrap_or(&"0")
+                                            }
+                                            else {
+                                                e.argv.get(argn).unwrap_or(&"0") == b
+                                            };
+                                            
                                             &s[reading..reading+e.text.len()] == &e.text[..]
-                                            && e.argv.get(argn).unwrap_or(&"0") == b
+                                            && is_equal
                                         }
                                         else {
                                             let (a, b) = &cond[1..].split_once('~').unwrap();
                                             let argn :usize = a.parse().unwrap();
+                                            let is_equal =
+                                            if b.starts_with(':') {
+                                                let argn2 :usize = b[1..].parse().unwrap();
+                                                e.argv.get(argn).unwrap_or(&"0") != cargs.get(argn2).unwrap_or(&"0")
+                                            }
+                                            else {
+                                                e.argv.get(argn).unwrap_or(&"0") != b
+                                            };                                            
                                             &s[reading..reading+e.text.len()] == &e.text[..]
-                                            && e.argv.get(argn).unwrap_or(&"0") != b
+                                            && is_equal
                                         };
                                     }
                                     r
@@ -209,8 +225,8 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                 let mx = *x.iter().max_by_key(|t| t.text.len()).unwrap();
                                 expect.push_category(SyntaxTreeNode::new_morpheme(
                                     String::from(p.part_name),
-                                    // String::from_iter(&s[reading..reading+mx.text.len()])));
-                                    s[reading..reading+mx.text.len()].iter().collect::<String>()));
+                                    String::from_iter(&s[reading..reading+mx.text.len()])));
+                                    // s[reading..reading+mx.text.len()].iter().collect::<String>()));
                                 expect.register_attr(&mx.argv);
                                 expect.read(mx.text.len());
                                 expect.next_rule();
@@ -247,14 +263,8 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                 }
             }
             else {
-                if s[0] == uts[0] || true {
-                    winners.push((expect.take_tree(), reading));
-                    expect.kill();
-                }
-                else {
-                    winners.push((expect.take_tree(), reading + 1));
-                    expect.kill();
-                }
+                winners.push((expect.take_tree(), reading));
+                expect.kill();
             }
         }
         let mut new_expections = Vec::new();
