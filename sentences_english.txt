@@ -11,3 +11,8 @@ A man apologizes to I
 # 타동사 검사
 They discussed it
 They discussed about it
+# 5형식 검사
+He had her hold
+He had her to hold
+He allowed her hold
+He allowed her to hold

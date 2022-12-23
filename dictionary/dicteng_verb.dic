@@ -142,3 +142,118 @@ tells		pr 1
 tell		pr m
 told		pa _
 told		pp _
+
+PART verb5
+# :0 | tense
+# :1 | 1/m
+# :2 | J/S/T/U
+
+sees		pr 1 J
+see			pr m J
+saw			pa _ J
+seen		pp _ J
+
+watches		pr 1 J
+watch		pr m J
+watched		pa _ J
+watched		pp _ J
+
+notices		pr 1 J
+notice		pr m J
+noticed		pa _ J
+noticed		pp _ J
+
+observes	pr 1 J
+observe		pr m J
+observed	pa _ J
+observed	pp _ J
+
+hears		pr 1 J
+hear		pr m J
+heard		pa _ J
+heard		pp _ J
+
+feels		pr 1 J
+feel		pr m J
+felt		pa _ J
+felt		pp _ J
+
+makes		pr 1 S
+make		pr m S
+made		pa _ S
+made		pp _ S
+
+has			pr 1 S
+have		pr m S
+had			pa _ S
+had			pp _ S
+
+lets		pr 1 S
+let			pr m S
+let			pa _ S
+let			pp _ S
+
+helps		pr 1 U
+help		pr m U
+helped		pa _ U
+helped		pp _ U
+
+asks		pr 1 T
+ask			pr m T
+asked		pa _ T
+asked		pp _ T
+
+wants		pr 1 T
+want		pr m T
+wanted		pa _ T
+wanted		pp _ T
+
+expects		pr 1 T
+expect		pr m T
+expected	pa _ T
+expected	pp _ T
+
+advises		pr 1 T
+advise		pr m T
+advised		pa _ T
+advised		pp _ T
+
+allows		pr 1 T
+allow		pr m T
+allowed		pa _ T
+allowed		pp _ T
+
+encourages	pr 1 T
+encourage	pr m T
+encouraged	pa _ T
+encouraged	pp _ T
+
+motivates	pr 1 T
+motivate	pr m T
+motivated	pa _ T
+motivated	pp _ T
+
+forces		pr 1 T
+force		pr m T
+forced		pa _ T
+forced		pp _ T
+
+causes		pr 1 T
+cause		pr m T
+caused		pa _ T
+caused		pp _ T
+
+enables		pr 1 T
+enable		pr m T
+enabled		pa _ T
+enabled		pp _ T
+
+tells		pr 1 T
+tell		pr m T
+told		pa _ T
+told		pp _ T
+
+orders		pr 1 T
+order		pr m T
+ordered		pa _ T
+ordered		pp _ T

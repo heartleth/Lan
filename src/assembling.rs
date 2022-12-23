@@ -1,5 +1,6 @@
 pub fn disassemble<'s>(s :&'s str) -> Vec<char> {
-    let ret :Vec<char> = s.to_lowercase().replace('_', " ").chars().collect();
+    // let ret :Vec<char> = s.to_lowercase().replace('_', " ").chars().collect();
+    let ret :Vec<char> = s.to_lowercase().chars().collect();
     return ret;
 }
 

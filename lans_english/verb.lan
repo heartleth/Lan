@@ -1,17 +1,43 @@
 PART VP
 	# :0 | form
 	# :1 | 1/m
+	# :2 | time
+	
 	IF :0 s1
-		RULE v		*verb[:1=_&:2~t]
-		RULE v		*verb[:1=:1&:2~t]
-		
-		RULE vp		*verb[:1=_&:2~t&:3~0] $PrepP( @0:3 )
-		RULE vp		*verb[:1=:1&:2~t&:3~0] $PrepP( @0:3 )
+		IF :2 0
+			RULE v		*verb[:1=_&:2~t]
+			RULE v		*verb[:1=:1&:2~t]
+			RULE vp		*verb[:1=_&:2~t&:3~0] $PrepP( @0:3 )
+			RULE vp		*verb[:1=:1&:2~t&:3~0] $PrepP( @0:3 )
+		END
+		UNLESS :2 0
+			RULE v		*verb[:0=:2&:1=_&:2~t]
+			RULE v		*verb[:0=:2&:1=:1&:2~t]
+			RULE vp		*verb[:0=:2&:1=_&:2~t&:3~0] $PrepP( @0:3 )
+			RULE vp		*verb[:0=:2&:1=:1&:2~t&:3~0] $PrepP( @0:3 )
+		END
 	END
 	
 	IF :0 s3
-		RULE vp		*verb[:1=_&:2=t] $O
-		RULE vp		*verb[:1=:1&:2=t] $O
+		IF :2 0
+			RULE vp		*verb[:1=_&:2=t] $O
+			RULE vp		*verb[:1=:1&:2=t] $O
+		END
+		UNLESS :2 0
+			RULE vp		*verb[:0=:2&:1=_&:2=t] $O
+			RULE vp		*verb[:0=:2&:1=:1&:2=t] $O
+		END
+	END
+	
+	IF :0 s5
+		IF :2 0
+			RULE vp		*verb5[:1=_] $O $C5( @0:2 )
+			RULE vp		*verb5[:1=:1] $O $C5( @0:2 )
+		END
+		UNLESS :2 0
+			RULE vp		*verb5[:0=:2&:1=_] $O $C5( @0:2 )
+			RULE vp		*verb5[:0=:2&:1=:1] $O $C5( @0:2 )
+		END
 	END
 END
 
@@ -22,4 +48,14 @@ END
 
 PART Prep
 	RULE prep	[:0=about]about-prep [:0=with]with-prep [:0=for]for-prep [:0=by]by-prep [:0=in]in-prep [:0=on]on-prep [:0=to]to-prep [:0=of]of-prep [:0=at]at-prep
+END
+
+PART Gerund
+	RULE todo	being-gerund
+END
+
+PART ToV
+	RULE tov	to-inf $VP( s1 m pr )
+	RULE tov	to-inf $VP( s3 m pr )
+	RULE tov	to-inf $VP( s5 m pr )
 END

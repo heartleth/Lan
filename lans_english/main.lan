@@ -14,9 +14,9 @@ PART Sentence
 
 	# RULE Siv	$S( 1 ) $V( s4 1 ) $NP( IO ) $NP( DO )
 	# RULE Siv	$S( m ) $V( s4 m ) $NP( IO ) $NP( DO )
-	# 
-	# RULE Sv		$S( 1 ) $V( s5 1 ) $NP( O ) $Comp
-	# RULE Sv		$S( m ) $V( s5 m ) $NP( O ) $Comp
+	
+	RULE Sv		$S( 1 ) $VP( s5 1 )
+	RULE Sv		$S( m ) $VP( s5 m )
 END
 
 PART S
@@ -29,12 +29,53 @@ PART O
 	RULE pron	*pronoun[:0=OBJ]
 	RULE recr	*pronoun[:0=REC]
 	RULE np		$NP( _ OBJ )
+	RULE np		$Gerund( _ OBJ )
 END
 
 PART Oprep
 	RULE pron	*pronoun[:0=OBJ]
 	RULE recr	*pronoun[:0=REC]
 	RULE np		$NP( _ OBJprep )
+END
+
+PART C5
+	IF :0 J
+		RULE c	$C( r )
+		RULE c	$C( g )
+		RULE c	$C( pp )
+	END
+	IF :0 U
+		RULE c	$C( r )
+		RULE c	$C( t )
+	END
+	IF :0 S
+		RULE c	$C( r )
+		RULE c	$C( pp )
+	END
+	IF :0 T
+		RULE c	$C( t )
+	END
+END
+
+PART C
+	# :0 | type
+
+	IF :0 g
+		RULE g		$Gerund
+	END
+	IF :0 t
+		RULE tov	$ToV
+	END
+	IF :0 r
+		RULE r		$VP( s1 m pr )
+		RULE r		$VP( s3 m pr )
+		RULE r		$VP( s5 m pr )
+	END
+	IF :0 pp
+		RULE r		$VP( s1 _ pp )
+		RULE r		$VP( s3 _ pp )
+		RULE r		$VP( s5 _ pp )
+	END
 END
 
 PART NP

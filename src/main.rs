@@ -1,7 +1,7 @@
 pub mod assembling;
 pub mod lan;
 
-// use std::time::Instant;
+use std::time::Instant;
 use lan::Parser;
 
 fn main() {
@@ -38,9 +38,9 @@ fn main() {
             
             let text = text.trim();
             println!("{}", text);
-            // let start = Instant::now();
+            let start = Instant::now();
             let result = p.parse(text);
-            // let dur = start.elapsed();
+            let dur = start.elapsed();
             if let Ok(res) = result {
                 if res.length == text.len() {
                     println!("VALID");
@@ -48,6 +48,7 @@ fn main() {
                 }
                 else {
                     println!("INVALID");
+                    // println!("{}", res.tree.collect_verbose(" "));
                     // println!("PARSE FAILED");
                 }
             }
@@ -55,8 +56,7 @@ fn main() {
                 println!("INVALID");
                 // println!("PARSE FAILED");
             }
-            // println!("==> {:?}\n", dur);
-            println!("");
+            println!("==> {:?}\n", dur);
         }
         Some(())
     }).unwrap();
