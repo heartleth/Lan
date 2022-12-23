@@ -110,19 +110,6 @@ PART NP
 	RULE n4		*firsts $Det( an ) $AP( 0 an ) *noun
 
 	RULE n5		*skof $Det *noun
-	
-	# IF 0 S
-	# 	RULE n	?$AP( det ) %Aps *noun[:0=NOM]
-	# END
-	# IF 0 O
-	# 	RULE n	?$AP( det ) %Aps *noun[:0=OBJ]
-	# END
-	# IF 0 IO
-	# 	RULE n	?$AP( det ) %Aps *noun[:0=OBJ]
-	# END
-	# IF 0 DO
-	# 	RULE n	?$AP( det ) %Aps *noun[:0=OBJ]
-	# END
 END
 
 PART Det
