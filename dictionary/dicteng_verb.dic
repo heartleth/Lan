@@ -25,6 +25,8 @@ wait		pr m i for
 
 subscribes	pr 1 i to
 subscribe	pr m i to
+subscribed	pa _ i to
+subscribed	pp _ i to
 
 majors		pr 1 i in
 major		pr m i in

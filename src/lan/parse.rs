@@ -44,6 +44,7 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
     let mut mp = None;
     // println!("{:20} : {}", part.id, String::from_iter(s));
     for r in part.rules {
+        // println!("{:?}", r);
         if let Some((morphemes, x)) = fit_rules::fit_rules(&s2, &format!("{}@{}", part.part.name, r.name)[..], &r.rules, rules, dict, &part.cargs) {
             if x + trims > m {
                 mp = Some(morphemes);
@@ -73,51 +74,5 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
             }
         }
         return Some((mp.unwrap(), m));
-    }
-}
-
-
-pub fn parse_notree<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRulesCollection<'p>, dict :&Dictionary<'p>) -> Option<usize> {
-    let key = (s.len(), part.id.clone());
-    unsafe {
-        if let Some(k) = &PARSE_DP {
-            if let Some(x) = k.get(&key) {
-                return x.clone().map(|p| p.1);
-            }
-        }
-    }
-
-    let (s2, trims) :(&[char], usize) = trim_front_iter(s);
-    let mut m = trims;
-    // println!("{:20} : {}", part.id, String::from_iter(s));
-    for r in part.rules {
-        if let Some(x) = fit_rules::fit_rules_notree(&s2, &format!("{}@{}", part.part.name, r.name)[..], &r.rules, rules, dict, &part.cargs) {
-            if x + trims > m {
-                m = x + trims;
-            }
-        }
-    }
-
-    if m == trims {
-        unsafe {
-            if let Some(k) = &mut PARSE_DP {
-                k.insert((s.len(), part.id), None);
-            }
-        }
-        return None;
-    }
-    else {
-        unsafe {
-            if let Some(k) = &mut PARSE_DP {
-                if let Some(x) = k.get(&key) {
-                    if let Some(x2) = x {
-                        if x2.1 < m {
-                            k.insert(key, Some((SyntaxTreeNode::new_morpheme(String::new(), String::new()), m)));
-                        }
-                    }
-                }
-            }
-        }
-        return Some(m);
     }
 }

@@ -3,141 +3,42 @@ PART main
 END
 
 PART Sentence
-	RULE Si		$S( 1 ) $VP( s1 1 )
-	RULE Si		$S( m ) $VP( s1 m )
+	# :0 | missing
 
-	# RULE Sii	$S( 1 ) $V( s2 1 ) $Comp
-	# RULE Sii	$S( m ) $V( s2 m ) $Comp
+	IF :0 0
+		RULE Si		$S( 1 ) $VP( s1 1 )
+		RULE Si		$S( m ) $VP( s1 m )
 
-	RULE Siii	$S( 1 ) $VP( s3 1 )
-	RULE Siii	$S( m ) $VP( s3 m )
+		# RULE Sii	$S( 1 ) $V( s2 1 ) $Comp
+		# RULE Sii	$S( m ) $V( s2 m ) $Comp
 
-	# RULE Siv	$S( 1 ) $V( s4 1 ) $NP( IO ) $NP( DO )
-	# RULE Siv	$S( m ) $V( s4 m ) $NP( IO ) $NP( DO )
-	
-	RULE Sv		$S( 1 ) $VP( s5 1 )
-	RULE Sv		$S( m ) $VP( s5 m )
-END
+		RULE Siii	$S( 1 ) $VP( s3 1 )
+		RULE Siii	$S( m ) $VP( s3 m )
 
-PART S
-	# :0 | 1/m
-	RULE pron	*pronoun[:0=NOM&:1=:0]
-	RULE np		$NP( :0 NOM )
-END
+		# RULE Siv	$S( 1 ) $V( s4 1 ) $NP( IO ) $NP( DO )
+		# RULE Siv	$S( m ) $V( s4 m ) $NP( IO ) $NP( DO )
 
-PART O
-	RULE pron	*pronoun[:0=OBJ]
-	RULE recr	*pronoun[:0=REC]
-	RULE np		$NP( _ OBJ )
-	RULE np		$Gerund( _ OBJ )
-END
+		RULE Sv		$S( 1 ) $VP( s5 1 )
+		RULE Sv		$S( m ) $VP( s5 m )
 
-PART Oprep
-	RULE pron	*pronoun[:0=OBJ]
-	RULE recr	*pronoun[:0=REC]
-	RULE np		$NP( _ OBJprep )
-END
-
-PART C5
-	IF :0 J
-		RULE c	$C( r )
-		RULE c	$C( g )
-		RULE c	$C( pp )
-	END
-	IF :0 U
-		RULE c	$C( r )
-		RULE c	$C( t )
+		RULE ithl	it-it $BeV( 3 1 ) $S that-rel $Sentence( S )
+		RULE ithl	it-it $BeV( 3 1 ) $O that-rel $Sentence( O )
 	END
 	IF :0 S
-		RULE c	$C( r )
-		RULE c	$C( pp )
+		RULE Si		$VP( s1 1 )
+		RULE Si		$VP( s1 m )
+		RULE Siii	$VP( s3 1 )
+		RULE Siii	$VP( s3 m )
+		RULE Sv		$VP( s5 1 )
+		RULE Sv		$VP( s5 m )
 	END
-	IF :0 T
-		RULE c	$C( t )
-	END
-END
-
-PART C
-	# :0 | type
-
-	IF :0 g
-		RULE g		$Gerund
-	END
-	IF :0 t
-		RULE tov	$ToV
-	END
-	IF :0 r
-		RULE r		$VP( s1 m pr )
-		RULE r		$VP( s3 m pr )
-		RULE r		$VP( s5 m pr )
-	END
-	IF :0 pp
-		RULE r		$VP( s1 _ pp )
-		RULE r		$VP( s3 _ pp )
-		RULE r		$VP( s5 _ pp )
-	END
-END
-
-PART NP
-	# :0 | 1/m
-	# :1 | case
-
-	IF :0 1
-		# 수일치 / 출처: 수프림 수능 어법 실전 21p
-		RULE tno1		$Det number-noun $Prep( of ) *noun[:0=m]
-		RULE tno1		*een *noun[:0=1]
-		RULE tno1		every-every *noun[:0=1]
-		RULE tno1		*een ?$Prep( of ) *noun[:0=m]
-	END
-	IF :0 m
-		RULE ano		a-det number-noun $Prep( of ) *noun[:0=m]
-
-		RULE bothAB		both-both $NP( 1 :1 ) and-conj $NP( 1 :1 )
-		RULE bothAB		both-both $NP( m :1 ) and-conj $NP( m :1 )
-		RULE atonceAB	at-at once-once $NP( 1 :1 ) and-conj $NP( 1 :1 )
-		RULE atonceAB	at-at once-once $NP( m :1 ) and-conj $NP( m :1 )
-	END
-
-	RULE n1		*noun[:1=only&:0=_]
-	RULE n1		*noun[:1=only&:0=:0]
-	RULE n1		*noun[:1=abstract&:0=_]
-	RULE n1		*noun[:1=abstract&:0=:0]
-	
-	UNLESS :0 m
-		RULE n1		$Det( a ) *noun[:2=a&:0=1]
-		RULE n1		$Det( an ) *noun[:2=an&:0=1]
-	END
-
-	RULE n1		*noun[:0=_]
-	RULE n1		*noun[:0=:0]
-	RULE n1		$Det *noun[:0=_]
-	RULE n1		$Det *noun[:0=:0]
-
-	UNLESS :0 m
-		RULE n2		$Det( a ) $AP( 0 a ) *noun
-		RULE n2		$Det( an ) $AP( 0 an ) *noun
-	END
-	
-	# RULE n1	$Det $Adv %Aps *noun
-
-	RULE n3		*sath $AP $Det( a ) *noun[:2=a]
-	RULE n3		*sath $AP $Det( an ) *noun[:2=an]
-
-	RULE n4		*firsts $Det( a ) $AP( 0 a ) *noun
-	RULE n4		*firsts $Det( an ) $AP( 0 an ) *noun
-
-	RULE n5		*skof $Det *noun
-END
-
-PART Det
-	# :0 | a/an
-	RULE the	the-det
-
-	IF :0 a
-		RULE a	a-det
-	END
-	IF :0 an
-		RULE an	an-det
+	IF :0 O
+		RULE Si		$S( 1 ) $VP( s1 1 0 O )
+		RULE Si		$S( m ) $VP( s1 m 0 O )
+		RULE Siii	$S( 1 ) $VP( s3 1 0 O )
+		RULE Siii	$S( m ) $VP( s3 m 0 O )
+		RULE Sv		$S( 1 ) $VP( s5 1 0 O )
+		RULE Sv		$S( m ) $VP( s5 m 0 O )
 	END
 END
 

@@ -19,3 +19,7 @@ He allowed her to hold
 # 수일치 검사
 The number of participants has increased
 The number of participants have increased
+# it that 강조구문
+It is the woman that subscribed to me
+It is the boy that I subscribed to
+It is the boy that I subscribed

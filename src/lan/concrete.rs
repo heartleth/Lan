@@ -18,14 +18,14 @@ impl<'n> PhraseContext<'n> {
         let mut ret :Vec<TemplateNode<'n>> = Vec::new();
         for r in &rule.rules {
             let qualified = if let Some(cond) = r.condition {
-                if let Some((param, value)) = cond.split_once('=') {
-                    let idx :usize = param[1..].parse().unwrap();
-                    &args.get(idx).unwrap_or(&"0")[..] == value
-                }
-                else {
-                    let (param, value) = cond.split_once('~').unwrap();
+                if let Some((param, value)) = cond.split_once("!=") {
                     let idx :usize = param[1..].parse().unwrap();
                     &args.get(idx).unwrap_or(&"0")[..] != value
+                }
+                else {
+                    let (param, value) = cond.split_once('=').unwrap();
+                    let idx :usize = param[1..].parse().unwrap();
+                    &args.get(idx).unwrap_or(&"0")[..] == value
                 }
             }
             else { true };

@@ -1,7 +1,7 @@
 use crate::lan::lanparser::Templates::*;
+use crate::lan::lanparser::LanReference;
 use crate::lan::dictionary::Dictionary;
 use super::PhraseRulesCollection;
-use super::parse_notree;
 use std::collections::HashMap;
 use super::SyntaxTreeNode;
 use super::ParsingRule;
@@ -168,56 +168,22 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                             }
                         },
                         ShortPart(p) => {
-                            let x :Vec<_> =
-                            if let Some(conds) = p.condition {
-                                dict[p.part_name].iter().filter(|e| {
-                                    if s.len() - reading < e.text.len() {
-                                        return false;
-                                    }
-                                    let mut r = true;
-                                    for cond in conds.split('&') {
-                                        r &= if let Some((a, b)) = &cond[1..].split_once('=') {
-                                            let argn :usize = a.parse().unwrap();
-                                            let is_equal =
-                                            if b.starts_with(':') {
-                                                let argn2 :usize = b[1..].parse().unwrap();
-                                                e.argv.get(argn).unwrap_or(&"0") == cargs.get(argn2).unwrap_or(&"0")
-                                            }
-                                            else {
-                                                e.argv.get(argn).unwrap_or(&"0") == b
-                                            };
-                                            
-                                            &s[reading..reading+e.text.len()] == &e.text[..]
-                                            && is_equal
-                                        }
-                                        else {
-                                            let (a, b) = &cond[1..].split_once('~').unwrap();
-                                            let argn :usize = a.parse().unwrap();
-                                            let is_equal =
-                                            if b.starts_with(':') {
-                                                let argn2 :usize = b[1..].parse().unwrap();
-                                                e.argv.get(argn).unwrap_or(&"0") != cargs.get(argn2).unwrap_or(&"0")
-                                            }
-                                            else {
-                                                e.argv.get(argn).unwrap_or(&"0") != b
-                                            };                                            
-                                            &s[reading..reading+e.text.len()] == &e.text[..]
-                                            && is_equal
-                                        };
-                                    }
-                                    r
-                                }).filter(|e| &s[reading..reading+e.text.len()] == &e.text[..]).collect()
-                            }
-                            else {
-                                dict[p.part_name].iter().filter(|e| {
-                                    if s.len() - reading < e.text.len() {
-                                        return false;
-                                    }
-                                    else {
-                                        &s[reading..reading+e.text.len()] == &e.text[..]
-                                    }
-                                }).collect()
-                            };
+                            let x :Vec<_> = dict[p.part_name].iter().filter(|e| {
+                                if s.len() - reading < e.text.len() {
+                                    return false;
+                                }
+                                if p.condition.is_empty() {
+                                    return &s[reading..reading+e.text.len()] == &e.text[..];
+                                }
+                                else {
+                                    return &s[reading..reading+e.text.len()] == &e.text[..]
+                                    && p.condition.iter().map(|c| c.neq ^ (match c.target {
+                                        LanReference::PartAttr((a, b)) => e.argv.get(c.argn).unwrap_or(&"0") == expect.voca_attrs[a].get(b).unwrap_or(&"0"),
+                                        LanReference::PartParam(pi) => e.argv.get(c.argn).unwrap_or(&"0") == cargs.get(pi).unwrap_or(&"0"),
+                                        LanReference::Text(t) => e.argv.get(c.argn).unwrap_or(&"0") == &t
+                                    })).fold(true, |a, b| a && b);
+                                }
+                            }).collect();
 
                             if x.is_empty() {
                                 expect.kill();
@@ -298,186 +264,5 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
         }
         
         return Some(best_winner.unwrap().clone());
-    }
-}
-
-pub fn fit_rules_notree<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&'p Dictionary<'p>, cargs :&Vec<&'p str>) -> Option<usize> {
-    let rulehash = parsingrule_tostr(rule) + &cargs.join("")[..];
-    unsafe {
-        let key = (s.len(), rulehash.clone());
-        if let Some(k) = &PARSE_DP {
-            if let Some(x) = k.get(&key) {
-                return match x {
-                    Some(_) => Some(x.clone().unwrap().1),
-                    None => None
-                };
-            }
-        }
-
-        if let Some(k) = &mut PARSE_VISIT {
-            if let Some(x) = k.get(&key) {
-                if x < &STACK_LIMIT {
-                    k.insert(key, x + 1);
-                }
-                else {
-                    return None;
-                }
-            }
-            else {
-                k.insert(key, 0);
-            }
-        }
-    }
-
-    let mut expections = nexts(name, rule);
-    let mut winners = Vec::new();
-    while !expections.is_empty() {
-        for expect in &mut expections {
-            let reading = expect.reading;
-            let rule = expect.rule;
-            if let Some(prule) = &rule.first() {
-                if reading >= s.len() {
-                    expect.kill();
-                }
-                else {
-                    while s[expect.reading] == ' ' || s[expect.reading] == '\r' || s[expect.reading] == '\n' || s[expect.reading] == '\t' {
-                        expect.read(1);
-                    }
-                    let reading = expect.reading;
-                    match &prule.template {
-                        Text(t) => {
-                            if s[reading..].starts_with(&t.text) {
-                                expect.read(t.text.len());
-                                expect.next_rule();
-                            }
-                            else {
-                                expect.kill();
-                            }
-                        },
-                        ShortPart(p) => {
-                            let x :Vec<_> =
-                            if let Some(conds) = p.condition {
-                                dict[p.part_name].iter().filter(|e| {
-                                    if s.len() - reading < e.text.len() {
-                                        return false;
-                                    }
-                                    let mut r = true;
-                                    for cond in conds.split('&') {
-                                        r &= if let Some((a, b)) = &cond[1..].split_once('=') {
-                                            let argn :usize = a.parse().unwrap();
-                                            let is_equal =
-                                            if b.starts_with(':') {
-                                                let argn2 :usize = b[1..].parse().unwrap();
-                                                e.argv.get(argn).unwrap_or(&"0") == cargs.get(argn2).unwrap_or(&"0")
-                                            }
-                                            else {
-                                                e.argv.get(argn).unwrap_or(&"0") == b
-                                            };
-                                            
-                                            &s[reading..reading+e.text.len()] == &e.text[..]
-                                            && is_equal
-                                        }
-                                        else {
-                                            let (a, b) = &cond[1..].split_once('~').unwrap();
-                                            let argn :usize = a.parse().unwrap();
-                                            let is_equal =
-                                            if b.starts_with(':') {
-                                                let argn2 :usize = b[1..].parse().unwrap();
-                                                e.argv.get(argn).unwrap_or(&"0") != cargs.get(argn2).unwrap_or(&"0")
-                                            }
-                                            else {
-                                                e.argv.get(argn).unwrap_or(&"0") != b
-                                            };                                            
-                                            &s[reading..reading+e.text.len()] == &e.text[..]
-                                            && is_equal
-                                        };
-                                    }
-                                    r
-                                }).filter(|e| &s[reading..reading+e.text.len()] == &e.text[..]).collect()
-                            }
-                            else {
-                                dict[p.part_name].iter().filter(|e| {
-                                    if s.len() - reading < e.text.len() {
-                                        return false;
-                                    }
-                                    else {
-                                        &s[reading..reading+e.text.len()] == &e.text[..]
-                                    }
-                                }).collect()
-                            };
-
-                            if x.is_empty() {
-                                expect.kill();
-                            }
-                            else {
-                                let mx = *x.iter().max_by_key(|t| t.text.len()).unwrap();
-                                expect.register_attr(&mx.argv);
-                                expect.read(mx.text.len());
-                                expect.next_rule();
-                            }
-                        },
-                        Template(template) => {
-                            let mut t2 = template.args.clone();
-                            for e in t2.iter_mut() {
-                                if e.starts_with('@') {
-                                    let (a, b) = e[1..].split_once(':').unwrap();
-                                    let a :usize = a.parse().unwrap();
-                                    let b :usize = b.parse().unwrap();
-                                    if let Some(k) = expect.voca_attrs.get(a).unwrap().get(b) {
-                                        *e = k;
-                                    }
-                                    else {
-                                        *e = "0";
-                                    }
-                                }
-                            }
-                            let parsed = parse_notree(&s[reading..], template.build(rules, t2), rules, dict);
-                            if let Some(x) = parsed {
-                                expect.read(x);
-                                expect.next_rule();
-                            }
-                            else {
-                                expect.kill();
-                            }
-                        },
-                        _ => ()
-                    };
-                }
-            }
-            else {
-                winners.push((expect.take_tree(), reading));
-                expect.kill();
-            }
-        }
-        let mut new_expections = Vec::new();
-        for ex in &mut expections {
-            if ex.alive {
-                for k in ex.nexts() {
-                    new_expections.push(k);
-                }
-            }
-        }
-        expections = new_expections;
-    }
-    
-    if winners.is_empty() {
-        unsafe {
-            if let Some(k) = &mut PARSE_DP {
-                k.insert((s.len(), rulehash), None);
-            }
-        }
-        
-        return None;
-    }
-    else {
-        let best_winner = winners.iter().max_by_key(|x| x.1);
-        
-        unsafe {
-            if let Some(k) = &mut PARSE_DP {
-                k.insert((s.len(), rulehash), Some(best_winner.unwrap().clone()));
-            }
-        }
-        
-        return Some(best_winner.unwrap().1);
     }
 }

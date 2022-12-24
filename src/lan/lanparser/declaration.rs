@@ -50,28 +50,73 @@ pub struct TemplateNodeGen<'s, T> {
 
 #[derive(Clone)]
 pub struct ShortWordPart<'s> {
-    pub condition :Option<&'s str>,
+    pub condition :Vec<ShortWordPartCondition<'s>>,
     pub part_name :&'s str
+}
+
+#[derive(Clone, Debug)]
+pub enum LanReference<'s> {
+    PartAttr((usize, usize)),
+    PartParam(usize),
+    Text(&'s str)
+}
+
+#[derive(Clone, Debug)]
+pub struct ShortWordPartCondition<'s> {
+    pub target :LanReference<'s>,
+    pub argn :usize,
+    pub neq :bool
 }
 
 impl Debug for ShortWordPart<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if let Some(c) = self.condition {
-            write!(f, "{}[{}]", self.part_name, c)
-        }
-        else {
-            write!(f, "{}", self.part_name)
-        }
+        write!(f, "{}{:?}", self.part_name, self.condition)
     }
 }
 
 impl ShortWordPart<'_> {
     pub fn from_conditional<'s>(p :&'s str, c :&'s str) -> ShortWordPart<'s> {
-        ShortWordPart { condition: Some(c), part_name: p }
+        let mut condvec = Vec::new();
+        for cond in c.split('&') {
+            if let Some((a, b)) = &cond[1..].split_once('=') {
+                let neq = a.ends_with('!');
+                let argn :usize = 
+                if a.ends_with('!') {
+                    a[..a.len()-1].parse()
+                }
+                else {
+                    a.parse()
+                }.unwrap();
+                
+                if b.starts_with(':') {
+                    let argn2 :usize = b[1..].parse().unwrap();
+                    condvec.push(ShortWordPartCondition {
+                        target: LanReference::PartParam(argn2),
+                        argn, neq
+                    });
+                }
+                else if b.starts_with('@') {
+                    let (pa, pb) = b[1..].split_once(':').unwrap();
+                    let pa = pa.parse::<usize>().unwrap();
+                    let pb = pb.parse::<usize>().unwrap();
+                    condvec.push(ShortWordPartCondition {
+                        target: LanReference::PartAttr((pa, pb)),
+                        argn, neq
+                    });
+                }
+                else {
+                    condvec.push(ShortWordPartCondition {
+                        target: LanReference::Text(b),
+                        argn, neq
+                    });
+                }
+            }
+        }
+        ShortWordPart { condition: condvec, part_name: p }
     }
     
     pub fn from<'s>(p :&'s str) -> ShortWordPart<'s> {
-        ShortWordPart { condition: None, part_name: p }
+        ShortWordPart { condition: Vec::new(), part_name: p }
     }
 }
 
@@ -92,12 +137,7 @@ impl<'s> TemplateNode<'s> {
                 String::from(*e)
             },
             Templates::ShortPart(s) => {
-                if let Some(cond) = s.condition {
-                    format!("*{}[{}]", s.part_name, cond)
-                }
-                else {
-                    format!("*{}", s.part_name)
-                }
+                format!("*{}{:?}", s.part_name, s.condition)
             },
             Templates::Template(t) => {
                 if t.args.len() > 0 {
@@ -138,7 +178,7 @@ impl<'s> TemplateNode<'s> {
     }
 }  
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Rule<'s> {
     pub rules: Vec<TemplateNode<'s>>,
     pub name: &'s str

@@ -27,6 +27,7 @@ fn main() {
     parser_english.load_dict("dictionary/dicteng_noun.dic").unwrap();
     parser_english.load_dict("dictionary/dicteng_verb.dic").unwrap();
     parser_english.load_lan("lans_english/verb.lan");
+    parser_english.load_lan("lans_english/socnp.lan");
     
     parser_english.with_parser(|p| {
         let t = std::fs::read_to_string("sentences_english.txt").unwrap();
