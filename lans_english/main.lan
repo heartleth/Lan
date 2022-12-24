@@ -80,6 +80,23 @@ END
 
 PART NP
 	# :0 | 1/m
+	# :1 | case
+
+	IF :0 1
+		# 수일치 / 출처: 수프림 수능 어법 실전 21p
+		RULE tno1		$Det number-noun $Prep( of ) *noun[:0=m]
+		RULE tno1		*een *noun[:0=1]
+		RULE tno1		every-every *noun[:0=1]
+		RULE tno1		*een ?$Prep( of ) *noun[:0=m]
+	END
+	IF :0 m
+		RULE ano		a-det number-noun $Prep( of ) *noun[:0=m]
+
+		RULE bothAB		both-both $NP( 1 :1 ) and-conj $NP( 1 :1 )
+		RULE bothAB		both-both $NP( m :1 ) and-conj $NP( m :1 )
+		RULE atonceAB	at-at once-once $NP( 1 :1 ) and-conj $NP( 1 :1 )
+		RULE atonceAB	at-at once-once $NP( m :1 ) and-conj $NP( m :1 )
+	END
 
 	RULE n1		*noun[:1=only&:0=_]
 	RULE n1		*noun[:1=only&:0=:0]

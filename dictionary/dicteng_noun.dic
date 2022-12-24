@@ -1,5 +1,11 @@
 	# asdf
 	
+PART een
+
+each
+either
+neither
+
 PART noun
 # :0 | count
 # :1 | uctype
@@ -8,6 +14,9 @@ PART noun
 
 man			1 cnt a		man
 men			m cnt a		man
+
+woman		1 cnt a		man
+women		m cnt a		man
 
 boy			1 cnt a		man
 boys		m cnt a		man
@@ -18,8 +27,14 @@ sisters		m cnt a		man
 price		1 cnt a		stuff
 
 sight		1 cnt a		stuff
+sights		m cnt a		stuff
 chance		1 cnt a		stuff
+chances		m cnt a		stuff
 flower		1 cnt a		stuff
+flowers		m cnt a		stuff
+
+participant		1 cnt a	man
+participants	m cnt a	man
 
 # 출처: 명사, 관사, 대명사 프린트 p. 1
 audience	_ family an

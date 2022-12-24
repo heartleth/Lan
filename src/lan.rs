@@ -77,11 +77,15 @@ pub struct ParseResult {
 }
 
 impl<'p> RefParser<'p> {
-    pub fn reparse_raw(&self, v: &Vec<char>) -> Result<Option<(parse::syntree::SyntaxTreeNode, usize)>, LanError<()>> {
+    pub fn reparse_raw(&self, v :&Vec<char>) -> Result<Option<(parse::syntree::SyntaxTreeNode, usize)>, LanError<()>> {
         Ok(parse::parse(v, self.lan.get("main").ok_or(LanError::NoMainError)?.build(Vec::new()), self.lan, self.dict))
     }
+    
+    pub fn reparse_raw_notree(&self, v :&Vec<char>) -> Result<Option<usize>, LanError<()>> {
+        Ok(parse::parse_notree(v, self.lan.get("main").ok_or(LanError::NoMainError)?.build(Vec::new()), self.lan, self.dict))
+    }
 
-    pub fn parse_raw(&self, v: &Vec<char>) -> Result<Option<(parse::syntree::SyntaxTreeNode, usize)>, LanError<()>> {
+    pub fn parse_raw(&self, v :&Vec<char>) -> Result<Option<(parse::syntree::SyntaxTreeNode, usize)>, LanError<()>> {
         parse::init_parse();
         self.reparse_raw(v)
     }
@@ -97,6 +101,6 @@ impl<'p> RefParser<'p> {
     pub fn parse_check<T>(&self, text: T) -> Result<usize, LanError<()>> where String: From<T> {
         let v = assembling::disassemble(&String::from(text)[..]);
         parse::init_parse();
-        Ok(self.reparse_raw(&v)?.ok_or(LanError::ParsingError)?.1)
+        Ok(self.reparse_raw_notree(&v)?.ok_or(LanError::ParsingError)?)
     }
 }

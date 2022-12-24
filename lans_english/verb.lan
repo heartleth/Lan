@@ -3,6 +3,8 @@ PART VP
 	# :1 | 1/m
 	# :2 | time
 	
+	RULE hh		[:1=1]has-has [:1=m]have-have $VP( :0 m pp )
+
 	IF :0 s1
 		IF :2 0
 			RULE v		*verb[:1=_&:2~t]

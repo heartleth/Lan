@@ -138,10 +138,10 @@ sell		pr m
 sold		pa _
 sold		pp _
 
-tells		pr 1
-tell		pr m
-told		pa _
-told		pp _
+increases	pr 1 i
+increase	pr m i
+increased	pa _ i
+increased	pp _ i
 
 PART verb5
 # :0 | tense
