@@ -2,8 +2,31 @@ PART main
 	RULE sentence	$Sentence
 END
 
+PART Conj
+	RULE and	and-conj
+END
+
 PART Sentence
 	# :0 | missing
+	# :1 | conj fold
+	
+	# RULE 도치 $부정어 do/does/did S V
+	# RULE 도치 $부정어 $조동사 S V
+	# RULE 도치 $부정어 have/has/had S V( pp )
+	# RULE 도치 $부정어 $Be동사 S
+	
+	# RULE 보어도치 $AP/P $Be동사 $S
+	# RULE 보어도치 such $Be동사 $S $ThatConjP
+	# RULE 보어도치 so $AP/P $Be동사 $S $ThatConjP
+
+	# RULE 장소부사구도치 $장소부사구 $V( s1 ) $S(pronoun X)
+	# RULE 장소부사구도치 $장소부사구 $S(pronoun) $V( s1 )
+
+	# RULE 목적어도치 $O $S $V
+
+	IF :1 0
+		RULE conj	$Sentence( :0 x ) $Conj $Sentence( :0 )
+	END
 
 	IF :0 0
 		RULE Si		$S( 1 ) $VP( s1 1 )

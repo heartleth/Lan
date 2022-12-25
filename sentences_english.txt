@@ -3,6 +3,7 @@ A man apologizes
 A man apologize
 Men apologizes
 Men apologize
+The man apologizes and the women apologize
 # 자동사 검사
 A man apologizes to me
 A man apologizes me
@@ -22,4 +23,4 @@ The number of participants have increased
 # it that 강조구문
 It is the woman that subscribed to me
 It is the boy that I subscribed to
-It is the boy that I subscribed
+It is the man that I subscribed to him

@@ -6,6 +6,8 @@ PART VP
 	
 	RULE hh		[:1=1]has-has [:1=m]have-have $VP( :0 m pp :3 )
 	RULE hd		had-had $VP( :0 m pp :3 )
+	RULE hh		[:1=1]does-does [:1=m]do-do $VP( :0 m pr :3 )
+	RULE hd		did-did $VP( :0 m pr :3 )
 
 	IF :0 s1
 		IF :2 0
