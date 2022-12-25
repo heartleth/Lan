@@ -1,27 +1,31 @@
 # LAN 표기법
 
-    PART main
-        RULE FizzBuzz $FizzBuzz( Fizz Buzz )
-    END
-
-    Part FizzBuzz
-        # :0 | Fizz
-        # :1 | Buzz
-
-        IF 0 Fizz
-            RULE Fizz Fizz-Fizz
+    PART NaturalNumber
+        # :n | explaination of nth parameter (zero-based)
+        # comment
+        
+        # production rule
+        RULE number     *numeric ?$NaturalNumber
+        
+        # *category : category's vocabulary in dictionary file
+        # $NonTerminalSymbol
+        # ?*category, ?$Sym : can be omitted
+        # [:n=foo]*category, [:n=foo]$Sym : only activated when nth parameter is same with 'foo'. 
+        # $Symbol( param1 param2 ) : nonterminal symbol with parameters, whitespace separated, default "0"
+        
+        # if, unless statement
+        IF :parameter value
+            RULE ... ......
         END
-
-        IF 0 Buzz
-            RULE Buzz Buzz-Buzz
+        IF :parameter ~ match_value1 match_value2 match_value3
+            RULE ... ......
         END
-    END
-    
-## HQ9+
-
-    PART main
-        RULE H H-HelloWorld
-        RULE Q Q-Quine
-        RULE 9 9-Nine
-        RULE + +-Plus
+        UNLESS :parameter value
+            RULE ... ......
+        END
+        
+        # grammer alias
+        SET zerozero 0-terminal_symbol_zero 0-terminal_symbol_zero
+        
+        RULE hundred    1-one %zerozero
     END
