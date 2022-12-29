@@ -60,6 +60,9 @@ PART C
 		RULE r		$VP( s3 _ pp :1 )
 		RULE r		$VP( s5 _ pp :1 )
 	END
+	UNLESS :0 ~ g t r pp
+
+	END
 END
 
 PART NP
@@ -72,6 +75,8 @@ PART NP
 		RULE tno1		*een *noun[:0=1]
 		RULE tno1		every-every *noun[:0=1]
 		RULE tno1		*een ?$Prep( of ) *noun[:0=m]
+
+		RULE cthat		that-conj $Sentence
 	END
 	IF :0 m
 		RULE ano		a-det number-noun $Prep( of ) *noun[:0=m]
@@ -98,17 +103,17 @@ PART NP
 	RULE n1		$Det *noun[:0=:0]
 
 	UNLESS :0 m
-		RULE n2		$Det( a ) $AP( 0 a ) *noun
-		RULE n2		$Det( an ) $AP( 0 an ) *noun
+		RULE n2		$Det( a ) $AP( num a ) *noun
+		RULE n2		$Det( an ) $AP( num an ) *noun
 	END
 	
-	# RULE n1	$Det $Adv %Aps *noun
+	# RULE n1	$Det $Adv %AP *noun
 
 	RULE n3		*sath $AP $Det( a ) *noun[:2=a]
 	RULE n3		*sath $AP $Det( an ) *noun[:2=an]
 
-	RULE n4		*firsts $Det( a ) $AP( 0 a ) *noun
-	RULE n4		*firsts $Det( an ) $AP( 0 an ) *noun
+	RULE n4		*firsts $Det( a ) $AP( num a ) *noun
+	RULE n4		*firsts $Det( an ) $AP( num an ) *noun
 
 	RULE n5		*skof $Det *noun
 END
@@ -123,4 +128,9 @@ PART Det
 	IF :0 an
 		RULE an	an-det
 	END
+END
+
+PART RelPron
+	RULE olu	that-rel $Sentence( O )
+	RULE slu	that-rel $Sentence( S )
 END

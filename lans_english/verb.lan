@@ -99,3 +99,11 @@ PART BeV
 		END
 	END
 END
+
+PART Participial
+	# :0 | missing 
+	
+	RULE r		$VP( s1 _ pp :0 )
+	RULE r		$VP( s3 _ pp :0 )
+	RULE r		$VP( s5 _ pp :0 )
+END

@@ -4,6 +4,8 @@ END
 
 PART Conj
 	RULE and	and-conj
+	RULE but	but-conj
+	RULE sec	;-conj
 END
 
 PART Sentence
@@ -66,6 +68,8 @@ PART Sentence
 END
 
 PART AP
+	# :0 | type
+
 	IF :0 0
 		RULE adj	*adj
 	END
@@ -73,9 +77,14 @@ PART AP
 	IF :0 det
 		RULE adj	*adj[:0=det]
 		RULE nppos	$NP( POS )
+		RULE next	$AP( num )
 	END
 	IF :0 ~ num siz prp new col nat mat
 		RULE adj	*adj[:0=:0]
+		UNLESS :0 mat
+			RULE adj	*adj[:0=:0] [:0=num]$AP( siz ) [:0=siz]$AP( prp ) [:0=prp]$AP( new ) [:0=new]$AP( col ) [:0=col]$AP( nat ) [:0=nat]$AP( mat )
+			RULE next	[:0=num]$AP( siz ) [:0=siz]$AP( prp ) [:0=prp]$AP( new ) [:0=new]$AP( col ) [:0=col]$AP( nat ) [:0=nat]$AP( mat )
+		END
 	END
 END
 
@@ -86,12 +95,13 @@ PART AdvP
 	RULE pabs	$Prep( in ) *noun[:1=abstract]
 	RULE pabs	$Prep( on ) *noun[:1=abstract]
 	RULE pabs	$Prep( to ) *noun[:1=abstract]
+	# RULE adv	*adverb
 END
 
 PART Quantifier
 	# :0 | uctype
-	# :1 | count:1/m/-
-
+	# :1 | count:1/m/_
+	
 	IF :0 cnt
 		IF :1 1
 			RULE quant	*quantifier[:0=cnt&:1=1]
