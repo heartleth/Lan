@@ -1,0 +1,364 @@
+# The syntax of C in Backus-Naur Form
+PART TranslationUnit
+    RULE r  \$ExternalDeclaration
+END
+
+PART ExternalDeclaration
+    RULE r  $FunctionDefinition
+    RULE r  $Declaration
+END
+
+PART FunctionDefinition
+    RULE r  \$DeclarationSpecifier $Declarator \$Declaration $CompoundStatement
+END
+
+PART DeclarationSpecifier
+    RULE r  $StorageClassSpecifier
+    RULE r  $TypeSpecifier
+    RULE r  $TypeQualifier
+END
+
+PART StorageClassSpecifier
+    RULE r  auto-kw
+    RULE r  register-kw
+    RULE r  static-kw
+    RULE r  extern-kw
+    RULE r  typedef-kw
+END
+
+PART TypeSpecifier
+    RULE r  void-kw
+    RULE r  char-kw
+    RULE r  short-kw
+    RULE r  int-kw
+    RULE r  long-kw
+    RULE r  float-kw
+    RULE r  double-kw
+    RULE r  signed-kw
+    RULE r  unsigned-kw
+    RULE r  $StructOrUnionSpecifier
+    RULE r  $EnumSpecifier
+    RULE r  $TypedefName
+END
+
+PART StructOrUnionSpecifier
+    RULE r  $StructOrUnion $Identifier {-o $StructDeclaration \$StructDeclaration }-c
+    RULE r  $StructOrUnion {-o $StructDeclaration \$StructDeclaration }-c
+    RULE r  $StructOrUnion $Identifier
+END
+
+PART StructOrUnion
+    RULE r  struct-kw
+    RULE r  union-kw
+END
+
+PART StructDeclaration
+    RULE r  \$SpecifierQualifier $StructDeclaratorList
+END
+
+PART SpecifierQualifier
+    RULE r  $TypeSpecifier
+    RULE r  $TypeQualifier
+END
+
+PART StructDeclaratorList
+    RULE r  $StructDeclarator
+    RULE r  $StructDeclarator ,-c $StructDeclaratorList
+END
+
+PART StructDeclarator
+    RULE r  $Declarator
+    RULE r  $Declarator :-c $ConstantExpression
+    RULE r  :-c $ConstantExpression
+END
+
+PART Declarator
+    RULE r  ?$Pointer $DirectDeclarator
+END
+
+PART Pointer
+    RULE r  *asterisk \$TypeQualifier ?$Pointer
+END
+
+PART TypeQualifier
+    RULE r  const-kw
+    RULE r  volatile-kw
+END
+
+PART DirectDeclarator
+    RULE r  $Identifier
+    RULE r  (-o $Declarator )-c
+    RULE r  $DirectDeclarator [-o ?$ConstantExpression ]-c
+    RULE r  $DirectDeclarator (-o $ParameterTypeList )-c
+    RULE r  $DirectDeclarator (-o \$Identifier )-c
+END
+
+PART ConstantExpression
+    RULE r  $ConditionalExpression
+END
+
+PART ConditionalExpression
+    RULE r  $LogicalOrExpression
+    RULE r  $LogicalOrExpression *why $Expression :-op $ConditionalExpression
+END
+
+PART LogicalOrExpression
+    RULE r  $LogicalAndExpression
+    RULE r  $LogicalOrExpression ||-op $LogicalAndExpression
+END
+
+PART LogicalAndExpression
+    RULE r  $InclusiveOrExpression
+    RULE r  $LogicalAndExpression &&-op $InclusiveOrExpression
+END
+
+PART InclusiveOrExpression
+    RULE r  $ExclusiveOrExpression
+    RULE r  $InclusiveOrExpression |-op $ExclusiveOrExpression
+END
+
+PART ExclusiveOrExpression
+    RULE r $AndExpression
+    RULE r $ExclusiveOrExpression ^-op $AndExpression 
+END
+
+PART AndExpression
+    RULE r  $EqualityExpression
+    RULE r  $AndExpression &-op $EqualityExpression
+END
+
+PART EqualityExpression
+    RULE r  $RelationalExpression
+    RULE r  $EqualityExpression ==-op $RelationalExpression
+    RULE r  $EqualityExpression !=-op $RelationalExpression
+END
+
+PART RelationalExpression
+    RULE r  $ShiftExpression
+    RULE r  $RelationalExpression <-op $ShiftExpression
+    RULE r  $RelationalExpression >-op $ShiftExpression
+    RULE r  $RelationalExpression <=-op $ShiftExpression
+    RULE r  $RelationalExpression >=-op $ShiftExpression
+END
+
+PART ShiftExpression
+    RULE r  $AdditiveExpression
+    RULE r  $ShiftExpression <<-op $AdditiveExpression
+    RULE r  $ShiftExpression >>-op $AdditiveExpression
+END
+
+PART AdditiveExpression
+    RULE r  $MultiplicativeExpression
+    RULE r  $AdditiveExpression +-op $MultiplicativeExpression
+    RULE r  $AdditiveExpression *m $MultiplicativeExpression
+END
+
+PART MultiplicativeExpression
+    RULE r  $CastExpression
+    RULE r  $MultiplicativeExpression *asterisk $CastExpression
+    RULE r  $MultiplicativeExpression /-op $CastExpression
+    RULE r  $MultiplicativeExpression *mod $CastExpression
+END
+
+PART CastExpression
+    RULE r  $UnaryExpression
+    RULE r  (-o $TypeName )-p $CastExpression 
+END
+
+PART UnaryExpression
+    RULE r  $PostfixExpression
+    RULE r  ++-op $UnaryExpression
+    RULE r  *mm $UnaryExpression
+    RULE r  $UnaryOpetator $CastExpression
+    RULE r  sizeof-kw $UnaryExpression
+    RULE r  sizeof-kw $TypeName
+END
+
+PART PostfixExpression
+    RULE r  $PrimaryExpression
+    RULE r  $PostfixExpression [-o $Expression ]-c
+    RULE r  $PostfixExpression (-o \$AssignmentExpression )-c
+    RULE r  $PostfixExpression .-op $Identifier
+    RULE r  $PostfixExpression ->-op $Identifier
+    RULE r  $PostfixExpression ++-op
+    RULE r  $PostfixExpression *mm
+END
+
+PART PrimaryExpression
+    RULE r  $Identifier
+    RULE r  $Constant
+    RULE r  $String
+    RULE r  (-o $Expression )-c
+END
+
+PART Constant
+    RULE r  $IntegerConstant
+    RULE r  $CharacterConstant
+    RULE r  $FloatingConstant
+    RULE r  $EnumerationConstant
+END
+
+PART Expression
+    RULE r  $AssignmentExpression
+    RULE r  $Expression ,-op $AssignmentExpression
+END
+
+PART AssignmentExpression
+    RULE r  $ConditionalExpression
+    RULE r  $UnaryExpression $AssignmentOperator $AssignmentExpression
+END
+
+PART AssignmentOperator
+    RULE r  *assignmentOperator
+END
+
+PART UnaryOpetator
+    RULE r  *unaryOpetator
+END
+
+PART TypeName
+    RULE r  $SpecifierQualifier \$SpecifierQualifier ?$AbstractDeclarator
+END
+
+PART ParameterTypeList
+    RULE r  $ParameterList
+    RULE r  $ParameterList ,-op ...Epc
+END
+
+PART ParameterList
+    RULE r  $ParameterDeclaration
+    RULE r  $ParameterList ,-op $ParameterDeclaration
+END
+
+PART ParameterDeclaration
+    RULE r  $DeclarationSpecifier \$DeclarationSpecifier $Declarator
+    RULE r  $DeclarationSpecifier \$DeclarationSpecifier $AbstractDeclarator
+    RULE r  $DeclarationSpecifier \$DeclarationSpecifier
+END
+
+PART AbstractDeclarator
+    RULE r  $Pointer
+    RULE r  $Pointer $DirectAbstractDeclarator
+    RULE r  $DirectAbstractDeclarator
+END
+
+PART DirectAbstractDeclarator
+    RULE r  (-o $AbstractDeclarator )-c
+    RULE r  ?$DirectAbstractDeclarator [-o ?$ConstantExpression ]-c
+    RULE r  ?$DirectAbstractDeclarator (-o ?$ParameterTypeList )-c
+END
+
+PART EnumSpecifier
+    RULE r  enum-kw $Identifier {-o $EnumeratorList }-c
+    RULE r  enum-kw {-o $EnumeratorList }-c
+    RULE r  enum-kw $Identifier
+END
+
+PART EnumeratorList
+    RULE r  $Enumerator
+    RULE r  $EnumeratorList ,-op $Enumerator
+END
+
+PART Enumerator
+    RULE r  $Identifier
+    RULE r  $Identifier =-op $ConstantExpression
+END
+
+PART TypedefName
+    RULE r  $Identifier
+END
+
+PART Declaration
+    RULE r  $DeclarationSpecifier \$DeclarationSpecifier \$InitDeclarator ;-op
+END
+
+PART InitDeclarator
+    RULE r  $Declarator
+    RULE r  $Declarator =-op $Initializer
+END
+
+PART Initializer
+    RULE r  $AssignmentExpression
+    RULE r  {-o $InitializerList }-c
+    RULE r  {-o $InitializerList ,-op }-c
+END
+
+PART InitializerList
+    RULE r  $Initializer
+    RULE r  $InitializerList ,-op $Initializer
+END
+
+PART CompoundStatement
+    RULE r  {-o \$Declaration \$Statement }-c
+END
+
+PART Statement
+    RULE r  $LabeledStatement
+    RULE r  $ExpressionStatement
+    RULE r  $CompoundStatement
+    RULE r  $SelectionStatement
+    RULE r  $IterationStatement
+    RULE r  $JumpStatement
+END
+
+PART LabeledStatement
+    RULE r  $Identifier :-op $Statement
+    RULE r  case-kw $ConstantExpression :-op $Statement
+    RULE r  default-kw :-op $Statement
+END
+
+PART ExpressionStatement
+    RULE r  ?$Expression ;-op
+END
+
+PART SelectionStatement
+    RULE r  if-kw (-o $Expression )-c $Statement
+    RULE r  if-kw (-o $Expression )-c $Statement else-kw $Statement
+    RULE r  switch-kw (-o $Expression )-c $Statement
+END
+
+PART IterationStatement 
+    RULE r  while-kw (-o $Expression )-c $Statement
+    RULE r  do-kw $Statement while-kw (-o $Expression )-c ;-op
+    RULE r  for-kw (-o ?$Expression ;-op ?$Expression ;-op ?$Expression )-c $Statement
+END
+
+PART JumpStatement
+    RULE r  goto-kw $Identifier ;-op
+    RULE r  continue-kw ;-op
+    RULE r  break-kw ;-op
+    RULE r  return-kw ?$Expression ;-op
+END
+
+PART Nondigit
+    RULE r  *atoz
+    RULE r  *AtoZ
+    RULE r  _-c
+END
+
+PART Chars
+    RULE r  *Numbers
+    RULE r  *atoz
+    RULE r  *AtoZ
+    RULE r  _-c
+END
+
+PART EnumerationConstant
+    RULE r  $Nondigit \$Chars
+END
+
+PART Identifier
+    RULE r  $Nondigit \$Chars
+END
+
+PART IntegerConstant
+    RULE r  *Numbers \*Numbers
+END
+
+PART CharacterConstant
+    RULE r  *Numbers \*Numbers
+END
+
+PART Digit
+
+END

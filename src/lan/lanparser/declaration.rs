@@ -45,6 +45,7 @@ pub struct SignText<'s> {
 pub struct TemplateNodeGen<'s, T> {
     pub condition :Option<&'s str>,
     pub is_optional :bool,
+    pub is_free :bool,
     pub template :T
 }
 
@@ -157,22 +158,35 @@ impl<'s> TemplateNode<'s> {
         TemplateNode {
             is_optional: false,
             condition: None,
+            is_free: false,
             template: t
         }
     }
 
+    pub fn from_free<'p>(t :Templates<'p>) -> TemplateNode<'p> {
+        TemplateNode {
+            is_optional: false,
+            condition: None,
+            is_free: true,
+            template: t
+        }
+    }
+    
     pub fn from_opt<'p>(t :Templates<'p>) -> TemplateNode<'p> {
         TemplateNode {
             is_optional: true,
             condition: None,
+            is_free: false,
             template: t
         }
     }
+    
     
     pub fn from_conditional<'p>(t :Templates<'p>, c :&'p str) -> TemplateNode<'p> {
         TemplateNode {
             is_optional: false,
             condition: Some(c),
+            is_free: false,
             template: t
         }
     }

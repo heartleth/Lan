@@ -38,7 +38,7 @@ impl<'n> PhraseContext<'n> {
                 }
                 else if let Templates::Template(n) = &r.template {
                     let concreteargs :Vec<&'n str> = n.args.iter().map(
-                        |x| if x.starts_with(':') {
+                        |x| if &x[..1] == ":" {
                             let idx :usize = x[1..].parse().unwrap();
                             &args.get(idx).unwrap_or(&"0")[..]
                         }
@@ -51,6 +51,7 @@ impl<'n> PhraseContext<'n> {
                         }),
                         is_optional: r.is_optional,
                         condition: r.condition,
+                        is_free: r.is_free
                     });
                 }
                 else {
@@ -82,7 +83,7 @@ impl<'n> PhraseContext<'n> {
             }
             else if let PhraseRules::Ifs(cond) = pr {
                 let cp = &args.get(cond.parameter).unwrap_or(&"0")[..];
-                let is_equal = cond.value.split_whitespace().any(|x| x==cp);
+                let is_equal = cond.value.split_whitespace().any(|x| x == cp);
                 if is_equal ^ cond.unless {
                     res.append(&mut self.gain_rules(&cond.children, args, vals));
                 }
@@ -93,11 +94,12 @@ impl<'n> PhraseContext<'n> {
     
     pub fn build<'p>(&'p self, args :Vec<&'n str>) -> ConcretePart<'n, 'p> {
         let mut vals = HashMap::new();
+        let fm = format!("{}@{:?}", self.name, &args);
         ConcretePart {
             rules: self.gain_rules(&self.children, &args, &mut vals),
-            cargs: args.clone(),
+            cargs: args,
             part: &self,
-            id: format!("{}@{:?}", self.name, args)
+            id: fm
         }
     }
 }

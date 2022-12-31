@@ -108,6 +108,54 @@ pub fn parse_rules<'s>(words :&[&'s str]) -> Result<Vec<TemplateNode<'s>>, usize
                     })));
                 }
             }
+            else if word.get(1) == Some(&'>') {
+                if word.get(2) == Some(&'$') {
+                    if word.last() == Some(&'(') {
+                        inargs = true;
+                        aropt = true;
+                        name = Some(&sword[3..sword.len()-1]);
+                    }
+                    else {
+                        res.push(TN::from_free(Templates::Template(ParamedPart {
+                            args: Vec::new(),
+                            name: &sword[3..]
+                        })));
+                        if word.get(0).unwrap() == &'|' {
+                            res.push(TN::from(Templates::Template(ParamedPart {
+                                args: Vec::new(),
+                                name: &sword[3..]
+                            })));
+                        }
+                    }
+                }
+                else if word.get(2) == Some(&'*') {
+                    if let Some((a, b)) = &sword[2..].split_once('[') {
+                        res.push(TN::from_free(Templates::ShortPart(ShortWordPart::from_conditional(a, &b[..b.len()-1]))));
+                        if word.get(0).unwrap() == &'|' {
+                            res.push(TN::from(Templates::ShortPart(ShortWordPart::from_conditional(a, &b[..b.len()-1]))));
+                        }
+                    }
+                    else {
+                        res.push(TN::from_free(Templates::ShortPart(ShortWordPart::from(&sword[3..]))));
+                        if word.get(0).unwrap() == &'|' {
+                            res.push(TN::from(Templates::ShortPart(ShortWordPart::from(&sword[3..]))));
+                        }
+                    }
+                }
+                else {
+                    let t :Vec<&str> = sword[2..].split('-').collect();
+                    res.push(TN::from_free(Templates::Text(SignText {
+                        text: assembling::disassemble(t[0]),
+                        name: t[1]
+                    })));
+                    if word.get(0).unwrap() == &'|' {
+                        res.push(TN::from(Templates::Text(SignText {
+                            text: assembling::disassemble(t[0]),
+                            name: t[1]
+                        })));
+                    }
+                }
+            }
             else if word.get(0) == Some(&'[') {
                 let (condition, content) = &sword[1..].split_once(']').unwrap();
                 if content.starts_with("$") {

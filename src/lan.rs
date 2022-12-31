@@ -90,11 +90,11 @@ impl<'p> RefParser<'p> {
         self.reparse_raw(v)
     }
 
-    pub fn parse<T>(&self, text: T) -> Result<ParseResult, LanError<()>> where String: From<T> {
+    pub fn parse<T>(&self, text :T) -> Result<ParseResult, LanError<()>> where String: From<T> {
         let v = assembling::disassemble(&String::from(text)[..]);
         self.parse_raw(&v)?.ok_or(LanError::ParsingError).map(|e| ParseResult {
-            length :e.1,
-            tree :e.0
+            length: e.1,
+            tree: e.0
         })
     }
     

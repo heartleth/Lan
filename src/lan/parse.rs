@@ -40,15 +40,20 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
     }
 
     let (s2, trims) :(&[char], usize) = trim_front_iter(s);
+    let mut rns :&str = "";
     let mut m = trims;
     let mut mp = None;
+    
     // println!("{:20} : {}", part.id, String::from_iter(s));
     for r in part.rules {
         // println!("{:?}", r);
         if let Some((morphemes, x)) = fit_rules::fit_rules(&s2, &format!("{}@{}", part.part.name, r.name)[..], &r.rules, rules, dict, &part.cargs) {
-            if x + trims > m {
-                mp = Some(morphemes);
-                m = x + trims;
+            if x + trims >= m {
+                if x + trims > m || (r.name < &rns[..] || rns.is_empty()) {
+                    mp = Some(morphemes);
+                    m = x + trims;
+                    rns = r.name;
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use super::assembling;
 use std::rc::Rc;
 
+#[derive(Clone)]
 pub struct Voca<'s> {
     pub argv :Vec<&'s str>,
     pub text :Vec<char>

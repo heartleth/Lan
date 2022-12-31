@@ -1,0 +1,1129 @@
+PART abstract_declarator
+    RULE r $ptr_operator ?$abstract_declarator
+    RULE r $direct_abstract_declarator
+END
+
+PART access_specifier
+    RULE r private-kwop
+    RULE r protected-kwop
+    RULE r public-kwop
+END
+
+PART additive_expression
+    RULE r $multiplicative_expression
+    RULE r $additive_expression +-kwop $multiplicative_expression
+    RULE r $additive_expression --kwop $multiplicative_expression
+END
+
+PART and_expression
+    RULE r $equality_expression
+    RULE r $and_expression &-kwop $equality_expression
+END
+
+PART assignment_expression
+    RULE r $conditional_expression
+    RULE r $logical_or_expression $assignment_operator $assignment_expression
+    RULE r $throw_expression
+END
+
+PART assignment_operator
+    RULE r *assignment_operator_d
+END
+
+PART base_specifier
+    RULE r ?::-kwop ?$nested_name_specifier $class_name
+    RULE r virtual-kwop ?$access_specifier ?::-kwop ?$nested_name_specifier $class_name
+    RULE r $access_specifier ?virtual-kwop ?::-kwop ?$nested_name_specifier $class_name
+END
+
+PART base_specifier_list
+    RULE r $base_specifier
+    RULE r $base_specifier_list ,-kwop $base_specifier
+END
+
+PART block_declaration
+    RULE r $simple_declaration
+    RULE r $asm_definition
+    RULE r $namespace_alias_definition
+    RULE r $using_declaration
+    RULE r $using_directive
+END
+
+PART boolean_literal
+    RULE r false-kwop
+    RULE r true-kwop
+END
+
+PART c_char
+    RULE r *atoz
+    RULE r *AtoZ
+    # TODO
+    RULE r $escape_sequence
+    RULE r $universal_character_name
+END
+
+PART c_char_sequence
+    RULE r $c_char
+    RULE r $c_char_sequence $c_char
+END
+
+PART cast_expression
+    RULE r $unary_expression
+    RULE r (-kwop $type_id )-kwop $cast_expression
+END
+
+PART character_literal
+    RULE r '-kwop $c_char_sequence '-kwop
+    RULE r L'-kwop $c_char_sequence '-kwop
+END
+
+PART class_head
+    RULE r $class_key ?$identifier ?$base_clause
+    RULE r $class_key $nested_name_specifier $identifier ?$base_clause
+    RULE r $class_key ?$nested_name_specifier $template_id ?$base_clause
+END
+
+PART class_key
+    RULE r class-kwop
+    RULE r struct-kwop
+    RULE r union-kwop
+END
+
+PART class_name
+    RULE r $identifier
+    RULE r $template_id
+END
+
+PART class_or_namespace_name
+    RULE r $class_name
+    RULE r $namespace_name
+END
+
+PART condition
+    RULE r $expression
+    RULE r $type_specifier_seq $declarator =-kwop $assignment_expression
+END
+
+PART conditional_expression
+    RULE r $logical_or_expression
+    RULE r $logical_or_expression *why $expression :-kwop $assignment_expression
+END
+
+PART control_line
+    # RULE r #-kwop include-kwop $pp_tokens $new_line
+    # RULE r #-kwop define-kwop $identifier $replacement_list $new_line
+    # RULE r #-kwop define-kwop $identifier $lparen ?$identifier_list )-kwop $replacement_list $new_line
+    # RULE r #-kwop undef-kwop $identifier $new_line
+    # RULE r #-kwop line-kwop $pp_tokens $new_line
+    # RULE r #-kwop error-kwop ?$pp_tokens $new_line
+    # RULE r #-kwop pragma-kwop ?$pp_tokens $new_line
+    # RULE r #-kwop $new_line
+    RULE r #-kwop include-kwop $pp_tokens
+    RULE r #-kwop define-kwop $identifier $replacement_list
+    # RULE r #-kwop define-kwop $identifier $lparen ?$identifier_list )-kwop $replacement_list
+    RULE r #-kwop undef-kwop $identifier
+    RULE r #-kwop line-kwop $pp_tokens
+    RULE r #-kwop error-kwop ?$pp_tokens
+    RULE r #-kwop pragma-kwop ?$pp_tokens
+    RULE r #-kwop
+END
+
+PART cv_qualifier
+    RULE r const-kwop
+    RULE r volatile-kwop
+END
+
+PART decimal_literal
+    RULE r $nonzero_digit
+    RULE r $decimal_literal $digit
+END
+
+PART decl_specifier
+    RULE r $storage_class_specifier
+    RULE r $type_specifier
+    RULE r $function_specifier
+    RULE r friend-kwop
+    RULE r typedef-kwop
+END
+
+PART declaration
+    RULE r $block_declaration
+    RULE r $function_definition
+    RULE r $template_declaration
+    RULE r $explicit_instantiation
+    RULE r $explicit_specialization
+    RULE r $linkage_specification
+    RULE r $namespace_definition
+END
+
+PART declaration_seq
+    RULE r $declaration
+    RULE r $declaration_seq $declaration
+END
+
+PART declarator
+    RULE r $direct_declarator
+    RULE r $ptr_operator $declarator
+END
+
+PART declarator_id
+    RULE r $id_expression
+    RULE r ?::-kwop ?$nested_name_specifier $type_name
+END
+
+PART delete_expression
+    RULE r ?::-kwop delete-kwop $cast_expression
+    RULE r ?::-kwop delete-kwop *bpo *bpc $cast_expression
+END
+
+PART digit_sequence
+    RULE r $digit
+    RULE r $digit_sequence $digit
+END
+
+PART direct_abstract_declarator
+    RULE r ?$direct_abstract_declarator (-kwop $paramerter_declaration_clause )-kwop ?$cv_qualifier_seq ?$exception_specification
+    RULE r ?$direct_abstract_declarator *bpo ?$constant_expression *bpc
+    RULE r (-kwop $abstract_declarator )-kwop
+END
+
+PART direct_declarator
+    RULE r $declarator_id
+    RULE r $direct_declarator (-kwop $paramerter_declaration_clause )-kwop ?$cv_qualifier_seq ?$exception_specification
+    RULE r $direct_declarator *bpo ?$constant_expression *bpc
+    RULE r (-kwop $declarator )-kwop
+END
+
+PART direct_new_declarator
+    RULE r *bpo $expression *bpc
+    RULE r $direct_new_declarator *bpo $constant_expression *bpc
+END
+
+PART elaborated_type_specifier
+    RULE r $class_key ?::-kwop ?$nested_name_specifier $identifier
+    RULE r enum-kwop ?::-kwop ?$nested_name_specifier $identifier
+    RULE r typename-kwop ?::-kwop $nested_name_specifier $identifier
+    RULE r typename-kwop ?::-kwop $nested_name_specifier ?template-kwop $template_id
+END
+
+PART elif_groups
+    RULE r $elif_group
+    RULE r $elif_groups $elif_group
+END
+
+PART enumerator_definition
+    RULE r $enumerator
+    RULE r $enumerator =-kwop $constant_expression
+END
+
+PART enumerator_list
+    RULE r $enumerator_definition
+    RULE r $enumerator_list ,-kwop $enumerator_definition
+END
+
+PART equality_expression
+    RULE r $relational_expression
+    RULE r $equality_expression ==-kwop $relational_expression
+    RULE r $equality_expression !=-kwop $relational_expression
+END
+
+PART escape_sequence
+    RULE r $simple_escape_sequence
+    RULE r $octal_escape_sequence
+    RULE r $hexadecimal_escape_sequence
+END
+
+PART exception_declatation
+    RULE r $type_specifier_seq $declarator
+    RULE r $type_specifier_seq $abstract_declarator
+    RULE r $type_specifier_seq
+    RULE r ...-kwop
+END
+
+PART exclusive_or_expression
+    RULE r $and_expression
+    RULE r $exclusive_or_expression ^-kwop $and_expression
+END
+
+PART exponent_part
+    RULE r e-kwop ?$sign $digit_sequence
+    RULE r E-kwop ?$sign $digit_sequence
+END
+
+PART expression
+    RULE r $assignment_expression
+    RULE r $expression ,-kwop $assignment_expression
+END
+
+PART expression_list
+    RULE r $assignment_expression
+    RULE r $expression_list ,-kwop $assignment_expression
+END
+
+PART floating_literal
+    RULE r $fractional_constant ?$exponent_part ?$floating_suffix
+    RULE r $digit_sequence $exponent_part ?$floating_suffix
+END
+
+PART floating_suffix
+    RULE r f-kwop
+    RULE r l-kwop
+    RULE r F-kwop
+    RULE r L-kwop
+END
+
+PART for_init_statement
+    RULE r $expression_statement
+    RULE r $simple_declaration
+END
+
+PART fractional_constant
+    RULE r ?$digit_sequence .-kwop $digit_sequence
+    RULE r $digit_sequence .-kwop
+END
+
+PART function_definition
+    RULE r ?$decl_specifier_seq $declarator ?$ctor_initializer $function_body
+    RULE r ?$decl_specifier_seq $declarator $function_try_block
+END
+
+PART function_specifier
+    RULE r inline-kwop
+    RULE r virtual-kwop
+    RULE r explicit-kwop
+END
+
+PART group
+    RULE r $group_part
+    RULE r $group $group_part
+END
+
+PART group_part
+    # RULE r ?$pp_tokens $new_line
+    RULE r ?$pp_tokens
+    RULE r $if_section
+    RULE r $control_line
+END
+
+PART h_char_sequence
+    RULE r $h_char
+    RULE r $h_char_sequence $h_char
+END
+
+PART header_name
+    RULE r <-kwop $h_char_sequence >-kwop
+    RULE r "-kwop $q_char_sequence "-kwop
+END
+
+PART hexadecimal_digit
+    RULE r 0-kwop
+    RULE r 1-kwop
+    RULE r 2-kwop
+    RULE r 3-kwop
+    RULE r 4-kwop
+    RULE r 5-kwop
+    RULE r 6-kwop
+    RULE r 7-kwop
+    RULE r 8-kwop
+    RULE r 9-kwop
+    RULE r a-kwop
+    RULE r b-kwop
+    RULE r c-kwop
+    RULE r d-kwop
+    RULE r e-kwop
+    RULE r f-kwop
+    RULE r A-kwop
+    RULE r B-kwop
+    RULE r C-kwop
+    RULE r D-kwop
+    RULE r E-kwop
+    RULE r F-kwop
+END
+
+PART hexadecimal_escape_sequence
+    RULE r \x-kwop $hexadecimal_digit
+    RULE r $hexadecimal_escape_sequence $hexadecimal_digit
+END
+
+PART hexadecimal_literal
+    RULE r 0x-kwop $hexadecimal_digit
+    RULE r 0X-kwop $hexadecimal_digit
+    RULE r $hexadecimal_literal $hexadecimal_digit
+END
+
+PART id_expression
+    RULE r $unqualified_id
+    RULE r $qualified_id
+END
+
+PART identifier
+    RULE r $nondigit
+    RULE r $identifier $nondigit
+    RULE r $identifier $digit
+END
+
+PART identifier_list
+    RULE r $identifier
+    RULE r $identifier_list ,-kwop $identifier
+END
+
+PART if_group
+    # RULE r #-kwop if-kwop $constant_expression $new_line ?$group
+    # RULE r #-kwop ifdef-kwop $identifier $new_line ?$group
+    # RULE r #-kwop ifndef-kwop $identifier $new_line ?$group
+    RULE r #-kwop if-kwop $constant_expression ?$group
+    RULE r #-kwop ifdef-kwop $identifier ?$group
+    RULE r #-kwop ifndef-kwop $identifier ?$group
+END
+
+PART inclusive_or_expression
+    RULE r $exclusive_or_expression
+    RULE r $inclusive_or_expression |-kwop $exclusive_or_expression
+END
+
+PART init_declarator_list
+    RULE r $init_declarator
+    RULE r $init_declarator_list ,-kwop $init_declarator
+END
+
+PART initializer
+    RULE r =-kwop $initializer_clause
+    RULE r (-kwop $expression_list )-kwop
+END
+
+PART initializer_clause
+    RULE r $assignment_expression
+    RULE r {-kwop $initializer_list ?,-kwop }-kwop
+    RULE r {-kwop }-kwop
+END
+
+PART initializer_list
+    RULE r $initializer_clause
+    RULE r $initializer_list ,-kwop $initializer_clause
+END
+
+PART integer_literal
+    RULE r $decimal_literal ?$integer_suffix
+    RULE r $octal_literal ?$integer_suffix
+    RULE r $hexadecimal_literal ?$integer_suffix
+END
+
+PART integer_suffix
+    RULE r $unsigned_suffix ?$long_suffix
+    RULE r $long_suffix ?$unsigned_suffix
+END
+
+PART iteration_statement
+    RULE r while-kwop (-kwop $condition )-kwop $statement
+    RULE r do-kwop $statement $while-kwop (-kwop $expression )-kwop ;-kwop
+    RULE r for-kwop (-kwop $for_init_statement ?$condition ;-kwop ?$expression )-kwop $statement
+END
+
+PART jump_statement
+    RULE r break-kwop ;-kwop
+    RULE r continue-kwop ;-kwop
+    RULE r return-kwop ?$expression ;-kwop
+    RULE r goto-kwop $identifier ;-kwop
+END
+
+PART labeled_statement
+    RULE r $identifier :-kwop $statement
+    RULE r case-kwop $constant_expression :-kwop $statement
+    RULE r default-kwop :-kwop $statement
+END
+
+PART linkage_specification
+    RULE r extern-kwop $string_literal {-kwop ?$declaration_seq }-kwop
+    RULE r extern-kwop $string_literal $declaration
+END
+
+PART literal
+    RULE r $integer_literal
+    RULE r $character_literal
+    RULE r $floating_literal
+    RULE r $string_literal
+    RULE r $boolean_literal
+END
+
+PART logical_and_expression
+    RULE r $inclusive_or_expression
+    RULE r $logical_and_expression &&-kwop $inclusive_or_expression
+END
+
+PART logical_or_expression
+    RULE r $logical_and_expression
+    RULE r $logical_or_expression ||-kwop $logical_and_expression
+END
+
+PART long_suffix
+    RULE r l-kwop
+    RULE r L-kwop
+END
+
+PART mem_initializer_id
+    RULE r ?::-kwop ?$nested_name_specifier $class_name
+    RULE r $identifier
+END
+
+PART mem_initializer_list
+    RULE r $mem_initializer
+    RULE r $mem_initializer ,-kwop $mem_initializer_list
+END
+
+PART member_declaration
+    RULE r ?$decl_specifier_seq ?$member_declarator_list ;-kwop
+    RULE r $function_definition ?;-kwop
+    RULE r ?::-kwop $nested_name_specifier ?template-kwop $unqualified_id ;-kwop
+    RULE r $using_declaration
+    RULE r $template_declaration
+END
+
+PART member_declarator
+    RULE r $declarator ?$pure_specifier
+    RULE r $declarator ?$constant_initializer
+    RULE r ?$identifier :-kwop $constant_expression
+END
+
+PART member_declarator_list
+    RULE r $member_declarator
+    RULE r $member_declarator_list ,-kwop $member_declarator
+END
+
+PART member_specification
+    RULE r $member_declaration ?$member_specification
+    RULE r $access_specifier :-kwop ?$member_specification
+END
+
+PART multiplicative_expression
+    RULE r $pm_expression
+    RULE r $multiplicative_expression *asterisk $pm_expression
+    RULE r $multiplicative_expression /-kwop $pm_expression
+    RULE r $multiplicative_expression %-kwop $pm_expression
+END
+
+PART named_namespace_definition
+    RULE r $original_namespace_definition
+    RULE r $extension_namespace_definition
+END
+
+PART namespace_definition
+    RULE r $named_namespace_definition
+    RULE r $unnamed_namespace_definition
+END
+
+PART namespace_name
+    RULE r $original_namespace_name
+    RULE r $namespace_alias
+END
+
+PART nested_name_specifier
+    RULE r $class_or_namespace_name ::-kwop ?$nested_name_specifier
+    RULE r $class_or_namespace_name ::-kwop template-kwop $nested_name_specifier
+END
+
+PART new_declarator
+    RULE r $ptr_operator ?$new_declarator
+    RULE r $direct_new_declarator
+END
+
+PART new_expression
+    RULE r ?::-kwop new-kwop ?$new_placement $new_type_id ?$new_initializer
+    RULE r ?::-kwop new-kwop ?$new_placement (-kwop $type_id )-kwop ?$new_initializer
+END
+
+PART nondigit
+    RULE r $universal_character_name
+    # RULE r ALPHA$_CHARACTER
+    RULE r *atoz
+    RULE r *AtoZ
+    RULE r _-kwop
+END
+
+PART nonzero_digit
+    RULE r 1-kwop
+    RULE r 2-kwop
+    RULE r 3-kwop
+    RULE r 4-kwop
+    RULE r 5-kwop
+    RULE r 6-kwop
+    RULE r 7-kwop
+    RULE r 8-kwop
+    RULE r 9-kwop
+END
+
+PART octal_digit
+    RULE r 0-kwop
+    RULE r 1-kwop
+    RULE r 2-kwop
+    RULE r 3-kwop
+    RULE r 4-kwop
+    RULE r 5-kwop
+    RULE r 6-kwop
+    RULE r 7-kwop
+END
+
+PART octal_escape_sequence
+    RULE r \-kwop $octal_digit
+    RULE r \-kwop $octal_digit $octal_digit
+    RULE r \-kwop $octal_digit $octal_digit $octal_digit
+END
+
+PART octal_literal
+    RULE r 0-kwop
+    RULE r $octal_literal $octal_digit
+END
+
+PART operator
+    RULE r *operator_d
+END
+
+PART paramerter_declaration_clause
+    RULE r ?$parameter_declaration_list ?...-kwop
+    RULE r $parameter_declaration_list ,-kwop ...-kwop
+END
+
+PART parameter_declaration
+    RULE r $decl_specifier_seq $declarator
+    RULE r $decl_specifier_seq $declarator =-kwop $assignment_expression
+    RULE r $decl_specifier_seq ?$abstract_declarator
+    RULE r $decl_specifier_seq ?$abstract_declarator =-kwop $assignment_expression
+END
+
+PART parameter_declaration_list
+    RULE r $parameter_declaration
+    RULE r $parameter_declaration_list ,-kwop $parameter_declaration
+END
+
+PART pm_expression
+    RULE r $cast_expression
+    RULE r $pm_expression .*-kwop $cast_expression
+    RULE r $pm_expression ->*-kwop $cast_expression
+END
+
+PART postfix_expression
+    RULE r $primary_expression
+    RULE r $postfix_expression *bpo $expression *bpc
+    RULE r $postfix_expression (-kwop ?$expression_list )-kwop
+    RULE r $simple_type_specifier (-kwop ?$expression_list )-kwop
+    RULE r typename-kwop ?::-kwop $nested_name_specifier $identifier (-kwop ?$expression_list )-kwop
+    RULE r typename-kwop ?::-kwop $nested_name_specifier ?template-kwop $template_id (-kwop ?$expression_list )-kwop
+    RULE r $postfix_expression .-kwop ?template-kwop $id_expression
+    RULE r $postfix_expression ->-kwop ?template-kwop $id_expression
+    RULE r $postfix_expression .-kwop $pseudo_destructor_name
+    RULE r $postfix_expression ->-kwop $pseudo_destructor_name
+    RULE r $postfix_expression ++-kwop
+    RULE r $postfix_expression ---kwop
+    RULE r dynamic_cast-kwop <-kwop $type_id >-kwop (-kwop $expression )-kwop
+    RULE r static_cast-kwop <-kwop $type_id >-kwop (-kwop $expression )-kwop
+    RULE r reinterpret_cast-kwop <-kwop $type_id >-kwop (-kwop $expression )-kwop
+    RULE r const_cast-kwop <-kwop $type_id >-kwop (-kwop $expression )-kwop
+    RULE r typeid-kwop (-kwop $expression )-kwop
+    RULE r typeid-kwop (-kwop $type_id )-kwop
+END
+
+PART pp_number
+    RULE r $digit
+    RULE r .-kwop $digit
+    RULE r $pp_number $digit
+    RULE r $pp_number $nondigit
+    RULE r $pp_number $e-kwop $sign
+    RULE r $pp_number E-kwop $sign
+    RULE r $pp_number .-kwop
+END
+
+PART pp_tokens
+    RULE r $preprocessing_token
+    RULE r $pp_tokens $preprocessing_token
+END
+
+# PART preprocessing_file
+
+# END
+
+PART preprocessing_op_or_punc
+    RULE r *preprocessing_op_or_punc_d
+END
+
+PART preprocessing_token
+    RULE r $header_name
+    RULE r $identifier
+    RULE r $pp_number
+    RULE r $character_literal
+    RULE r $string_literal
+    RULE r $preprocessing_op_or_punc
+    # RULE r ANY$_NOT$_YET$_COVERED$_NON$_WS$_CHARACTER
+END
+
+PART primary_expression
+    RULE r $literal
+    RULE r $this-kwop
+    RULE r (-kwop $expression )-kwop
+    RULE r $id_expression
+END
+
+PART pseudo_destructor_name
+    RULE r ?::-kwop ?$nested_name_specifier $type_name ::-kwop ~-kwop $type_name
+    RULE r ?::-kwop $nested_name_specifier $template-kwop $template_id ::-kwop ~-kwop $type_name
+    RULE r ?::-kwop ?$nested_name_specifier ~-kwop $type_name
+END
+
+PART ptr_operator
+    RULE r *asterisk ?$cv_qualifier_seq
+    RULE r &-kwop
+    RULE r ?::-kwop $nested_name_specifier *asterisk ?$cv_qualifier_seq
+END
+
+PART q_char_sequence
+    RULE r $q_char
+    RULE r $q_char_sequence $q_char
+END
+
+PART qualified_id
+    RULE r ?::-kwop $nested_name_specifier ?$template-kwop $unqualified_id
+    RULE r ::-kwop $identifier
+    RULE r ::-kwop $operator_function_id
+    RULE r ::-kwop $template_id
+END
+
+PART relational_expression
+    RULE r $shift_expression
+    RULE r $relational_expression <-kwop $shift_expression
+    RULE r $relational_expression >-kwop $shift_expression
+    RULE r $relational_expression <=-kwop $shift_expression
+    RULE r $relational_expression >=-kwop $shift_expression
+END
+
+PART s_char
+    # RULE r ANY$_CHARACTER$_EXCEPT$_NEWLINE$_DQUOTE$_BACKSLASH
+    # RULE r $escape_sequence
+    # RULE r $universal_character_name
+    RULE r $c_char
+END
+
+PART s_char_sequence
+    RULE r $s_char
+    RULE r $s_char_sequence $s_char
+END
+
+PART selection_statement
+    RULE r $if-kwop (-kwop $condition )-kwop $statement
+    RULE r $if-kwop (-kwop $condition )-kwop $statement $else-kwop $statement
+    RULE r $switch-kwop (-kwop $condition )-kwop $statement
+END
+
+PART shift_expression
+    RULE r $additive_expression
+    RULE r $shift_expression <<-kwop $additive_expression
+    RULE r $shift_expression >>-kwop $additive_expression
+END
+
+PART sign
+    RULE r +-kwop
+    RULE r *m
+END
+
+PART simple_escape_sequence
+    RULE r *sescseq
+END
+
+PART simple_type_specifier
+    RULE r ?::-kwop ?$nested_name_specifier $type_name
+    RULE r ?::-kwop $nested_name_specifier template-kwop $template_id
+    RULE r char-kwop
+    RULE r wchar_t-kwop
+    RULE r bool-kwop
+    RULE r short-kwop
+    RULE r int-kwop
+    RULE r long-kwop
+    RULE r signed-kwop
+    RULE r unsigned-kwop
+    RULE r float-kwop
+    RULE r ouble-kwop
+    RULE r void-kwop
+END
+
+PART statement
+    RULE r $labeled_statement
+    RULE r $expression_statement
+    RULE r $compound_statement
+    RULE r $selection_statement
+    RULE r $iteration_statement
+    RULE r $jump_statement
+    RULE r $declaration_statement
+    RULE r $try_block
+END
+
+PART statement_seq
+    RULE r $statement
+    RULE r $statement_seq $statement
+END
+
+PART storage_class_specifier
+    RULE r auto-kwop
+    RULE r register-kwop
+    RULE r static-kwop
+    RULE r extern-kwop
+    RULE r mutable-kwop
+END
+
+PART string_literal
+    RULE r "-kwop ?$s_char_sequence "-kwop
+    RULE r L"-kwop ?$s_char_sequence "-kwop
+END
+
+# PART syntax
+PART main
+    # RULE r $cpp_syntax_translation_unit
+    # RULE r $preprocessor_syntax_preprocessing_file
+    RULE r $translation_unit
+    RULE r $preprocessing_file
+END
+
+PART template_argument
+    RULE r $assignment_expression
+    RULE r $type_id
+    RULE r $id_expression
+END
+
+PART template_argument_list
+    RULE r $template_argument
+    RULE r $template_argument_list ,-kwop $template_argument
+END
+
+PART template_parameter
+    RULE r $type_parameter
+    RULE r $parameter_declaration
+END
+
+PART template_parameter_list
+    RULE r $template_parameter
+    RULE r $template_parameter_list ,-kwop $template_parameter
+END
+
+# PART token (not used)
+#     RULE r $identifier
+#     RULE r KEYWORD
+#     RULE r $literal
+#     RULE r $operator
+#     RULE r PUNCTUATOR
+# END
+
+PART type_id_list
+    RULE r $type_id
+    RULE r $type_id_list ,-kwop $type_id
+END
+
+PART type_name
+    RULE r $class_name
+    RULE r $enum_name
+    RULE r $typedef_name
+END
+
+PART type_parameter
+    RULE r class-kwop ?$identifier
+    RULE r class-kwop ?$identifier =-kwop $type_id
+    RULE r typename-kwop ?$identifier
+    RULE r typename-kwop ?$identifier =-kwop $type_id
+    RULE r template-kwop <-kwop $template_parameter_list >-kwop $class-kwop ?$identifier
+    RULE r template-kwop <-kwop $template_parameter_list >-kwop $class-kwop ?$identifier =-kwop $id_expression
+END
+
+PART type_specifier
+    RULE r $simple_type_specifier
+    RULE r $class_specifier
+    RULE r $enum_specifier
+    RULE r $elaborated_type_specifier
+    RULE r $cv_qualifier
+END
+
+PART unary_expression
+    RULE r $postfix_expression
+    RULE r ++-kwop $cast_expression
+    RULE r *mm $cast_expression
+    RULE r $unary_operator $cast_expression
+    RULE r sizeof-kwop $unary_expression
+    RULE r sizeof-kwop (-kwop $type_id )-kwop
+    RULE r $new_expression
+    RULE r $delete_expression
+END
+
+PART unary_operator
+    RULE r *unary_operator_d
+END
+
+PART universal_character_name
+    RULE r \u-kwop $hex_quad
+    RULE r \U-kwop $hex_quad $hex_quad
+END
+
+PART unqualified_id
+    RULE r $identifier
+    RULE r $operator_function_id
+    RULE r $conversion_function_id
+    RULE r ~-kwop $class_name
+    RULE r $template_id
+END
+
+PART unsigned_suffix
+    RULE r u-kwop
+    RULE r U-kwop
+END
+
+PART using_declaration
+    RULE r using-kwop ?typename-kwop ?::-kwop $nested_name_specifier $unqualified_id ;-kwop
+    RULE r using-kwop ::-kwop $unqualified_id ;-kwop
+END
+
+PART asm_definition
+    RULE r asm-kwop (-kwop $string_literal )-kwop ;-kwop
+END
+
+PART base_clause
+    RULE r :-kwop $base_specifier_list
+END
+
+PART class_specifier
+    RULE r $class_head {-kwop ?$member_specification }-kwop
+END
+
+PART compound_statement
+    RULE r {-kwop ?$statement_seq }-kwop
+END
+
+PART constant_expression
+    RULE r $conditional_expression
+END
+
+PART constant_initializer
+    RULE r =-kwop $constant_expression
+END
+
+PART conversion_declarator
+    RULE r $ptr_operator ?$conversion_declarator
+END
+
+PART conversion_function_id
+    RULE r operator-kwop $conversion_type_id
+END
+
+PART conversion_type_id
+    RULE r $type_specifier_seq ?$conversion_declarator
+END
+
+PART ctor_initializer
+    RULE r :-kwop $mem_initializer_list
+END
+
+PART cv_qualifier_seq
+    RULE r $cv_qualifier ?$cv_qualifier_seq
+END
+
+PART decl_specifier_seq
+    RULE r ?$decl_specifier_seq $decl_specifier
+END
+
+PART declaration_statement
+    RULE r $block_declaration
+END
+
+PART digit
+    RULE r *Numbers
+END
+
+PART elif_group
+    # RULE r #-kwop elif-kwop $constant_expression $new_line ?$group
+    RULE r #-kwop elif-kwop $constant_expression ?$group
+END
+
+PART else_group
+    # RULE r #-kwop else-kwop $new_line ?$group
+    RULE r #-kwop else-kwop ?$group
+END
+
+PART endif_line
+    # RULE r #-kwop endif-kwop $new_line
+    RULE r #-kwop endif-kwop
+END
+
+PART enum_name
+    RULE r $identifier
+END
+
+PART enum_specifier
+    RULE r enum-kwop ?$identifier {-kwop ?$enumerator_list }-kwop
+END
+
+PART enumerator
+    RULE r $identifier
+END
+
+PART exception_specification
+    RULE r throw-kwop (-kwop ?$type_id_list )-kwop
+END
+
+PART explicit_instantiation
+    RULE r template-kwop $declaration
+END
+
+PART explicit_specialization
+    RULE r template-kwop <-kwop >-kwop $declaration
+END
+
+PART expression_statement
+    RULE r ?$expression ;-kwop
+END
+
+PART extension_namespace_definition
+    RULE r namespace-kwop $original_namespace_name {-kwop $namespace_body }-kwop
+END
+
+PART function_body
+    RULE r $compound_statement
+END
+
+PART function_try_block
+    RULE r try-kwop ?$ctor_initializer $function_body $handler_seq
+END
+
+PART h_char
+    # RULE r ANY$_CHARACTER$_EXCEPT$_NEWLINE$_GT
+    RULE r $c_char
+END
+
+PART handler
+    RULE r catch-kwop (-kwop $exception_declatation )-kwop $compound_statement
+END
+
+PART handler_seq
+    RULE r $handler ?$handler_seq
+END
+
+PART hex_quad
+    RULE r $hexadecimal_digit $hexadecimal_digit $hexadecimal_digit $hexadecimal_digit
+END
+
+PART if_section
+    RULE r $if_group ?$elif_groups ?$else_group $endif_line
+END
+
+PART init_declarator
+    RULE r $declarator ?$initializer
+END
+
+PART lparen
+    # RULE r LEFT$_PARENTHESIS$_WITHOUT$_LEADING$_WS
+END
+
+PART mem_initializer
+    RULE r $mem_initializer_id (-kwop ?$expression_list )-kwop
+END
+
+PART namespace_alias
+    RULE r $identifier
+END
+
+PART namespace_alias_definition
+    RULE r namespace-kwop $identifier =-kwop $qualified_namespace_specifier ;-kwop
+END
+
+PART namespace_body
+    RULE r ?$declaration_seq
+END
+
+PART new_initializer
+    RULE r (-kwop ?$expression_list )-kwop
+END
+
+# PART new_line
+#     RULE r NEWLINE
+# END
+
+PART new_placement
+    RULE r (-kwop $expression_list )-kwop
+END
+
+PART new_type_id
+    RULE r $type_specifier_seq ?$new_declarator
+END
+
+PART operator_function_id
+    RULE r operator-kwop $operator
+END
+
+PART original_namespace_definition
+    RULE r namespace-kwop $identifier {-kwop $namespace_body }-kwop
+END
+
+PART original_namespace_name
+    RULE r $identifier
+END
+
+PART preprocessing_file
+    RULE r ?$group
+END
+
+PART pure_specifier
+    RULE r =-kwop 0-kwop
+END
+
+PART q_char
+    # RULE r ANY$_CHARACTER$_EXCEPT$_NEWLINE$_DQUOTE
+    RULE r *AtoZ
+    RULE r *atoz
+END
+
+PART qualified_namespace_specifier
+    RULE r ?::-kwop ?$nested_name_specifier $namespace_name
+END
+
+PART replacement_list
+    RULE r ?$pp_tokens
+END
+
+PART simple_declaration
+    RULE r ?$decl_specifier_seq ?$init_declarator_list ;-kwop
+END
+
+PART template_declaration
+    RULE r ?export-kwop template-kwop <-kwop $template_parameter_list >-kwop $declaration
+END
+
+PART template_id
+    RULE r $template_name <-kwop ?$template_argument_list >-kwop
+END
+
+PART template_name
+    RULE r $identifier
+END
+
+PART throw_expression
+    RULE r throw-kwop ?$assignment_expression
+END
+
+PART translation_unit
+    RULE r ?$declaration_seq
+END
+
+PART try_block
+    RULE r try-kwop $compound_statement $handler_seq
+END
+
+PART type_id
+    RULE r $type_specifier_seq ?$abstract_declarator
+END
+
+PART type_specifier_seq
+    RULE r $type_specifier ?$type_specifier_seq
+END
+
+PART typedef_name
+    RULE r $identifier
+END
+
+PART unnamed_namespace_definition
+    RULE r namespace-kwop {-kwop $namespace_body }-kwop
+END
+
+PART using_directive
+    RULE r using-kwop namespace-kwop ?::-kwop ?$nested_name_specifier $namespace_name ;-kwop
+END
