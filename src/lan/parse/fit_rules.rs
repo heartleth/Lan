@@ -1,119 +1,18 @@
+mod expect;
 use crate::lan::lanparser::Templates::*;
-use crate::lan::lanparser::LanReference;
+use crate::lan::dictionary::search_dict;
 use crate::lan::dictionary::Dictionary;
 use super::PhraseRulesCollection;
 use std::collections::HashMap;
+pub use expect::Expectation;
 use super::SyntaxTreeNode;
 use super::ParsingRule;
+use expect::nexts;
 use super::parse;
 
 static mut PARSE_DP :Option<HashMap<(usize, String), Option<(SyntaxTreeNode, usize)>>> = None;
 static mut PARSE_VISIT :Option<HashMap<(usize, String), u8>> = None;
 static STACK_LIMIT :u8 = 2;
-
-#[derive(Clone)]
-pub struct Expectation<'p> {
-    pub voca_attrs :Vec<&'p Vec<&'p str>>,
-    pub rule :ParsingRule<'p>,
-    pub tree :Option<SyntaxTreeNode>,
-    pub reading :usize,
-    pub name :&'p str,
-    pub alive :bool,
-}
-
-impl<'p> Expectation<'p> {
-    pub fn from<'n>(name :&'n str, rule :ParsingRule<'n>, tree :SyntaxTreeNode, reading :usize)->Expectation<'n> {
-        Expectation {
-            voca_attrs: Vec::new(),
-            tree: Some(tree),
-            alive: true,
-            reading,
-            rule,
-            name
-        }
-    }
-    
-    pub fn kill(&mut self) {
-        self.alive = false;
-    }
-    
-    pub fn next_rule(&mut self) {
-        if let Some(r) = self.rule.first() {
-            if !r.is_free {
-                self.rule = &self.rule[1..];
-            }
-        }
-        else {
-            self.rule = &self.rule[1..];
-        }
-    }
-
-    pub fn take_tree(&mut self) -> SyntaxTreeNode {
-        self.tree.take().unwrap()
-    }
-    
-    pub fn read(&mut self, amount :usize) {
-        self.reading += amount;
-    }
-    
-    pub fn register_attr(&mut self, attr :&'p Vec<&'p str>) {
-        self.voca_attrs.push(attr);
-    }
-
-    pub fn push_category(&mut self, stn :SyntaxTreeNode) {
-        self.tree.as_mut().unwrap().push_category(stn);
-    }
-
-    pub fn nexts(&mut self)->Vec<Expectation<'p>> {
-        if self.rule.is_empty() {
-            return vec![ self.clone() ];
-        }
-        let mut ret :Vec<Expectation<'p>> = Vec::new();
-        let mut i = 0;
-        for r in self.rule {
-            if r.is_optional {
-                let mut p = Expectation::from(self.name, &self.rule[i..], self.tree.clone().unwrap(), self.reading);
-                p.voca_attrs = self.voca_attrs.clone();
-                ret.push(p);
-            }
-            else if r.is_free {
-                let mut p = Expectation::from(self.name, &self.rule[i..], self.tree.clone().unwrap(), self.reading);
-                p.voca_attrs = self.voca_attrs.clone();
-                ret.push(p);
-            }
-            else {
-                let mut p = Expectation::from(self.name, &self.rule[i..], self.tree.take().unwrap(), self.reading);
-                p.voca_attrs = self.voca_attrs.clone();
-                ret.push(p);
-                return ret;
-            }
-            i = i + 1;
-        }
-        if self.rule.last().unwrap().is_optional {
-            ret.push(Expectation::from(self.name, &self.rule[0..0], self.tree.take().unwrap(), self.reading));
-        }
-        if self.rule.last().unwrap().is_free {
-            ret.push(Expectation::from(self.name, &self.rule[0..0], self.tree.take().unwrap(), self.reading));
-        }
-        return ret;
-    }
-}
-
-pub fn nexts<'p>(name: &'p str, rule :ParsingRule<'p>) -> Vec<Expectation<'p>> {
-    let mut ret :Vec<Expectation<'p>> = Vec::new();
-    let mut i = 0;
-    for r in rule {
-        if r.is_optional || r.is_free {
-            ret.push(Expectation::from(name, &rule[i..], SyntaxTreeNode::new_category(name), 0));
-        }
-        else {
-            ret.push(Expectation::from(name, &rule[i..], SyntaxTreeNode::new_category(name), 0));
-            return ret;
-        }
-        i = i + 1;
-    }
-    return ret;
-}
 
 pub fn init_parse() {
     unsafe {
@@ -127,13 +26,12 @@ fn parsingrule_tostr<'p, 't>(p :ParsingRule<'p>) -> String {
     return v.join("");
 }
 
-pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&'p Dictionary<'p>, cargs :&Vec<&'p str>) -> Option<(SyntaxTreeNode, usize)> {
-    let rulehash = parsingrule_tostr(rule) + &cargs.join("")[..];
+fn cache_view(l :usize, rulehash :&String) -> Result<(SyntaxTreeNode, usize), bool> {
     unsafe {
-        let key = (s.len(), rulehash.clone());
+        let key = (l, rulehash.clone());
         if let Some(k) = &PARSE_DP {
             if let Some(x) = k.get(&key) {
-                return x.clone();
+                return x.clone().ok_or(true);
             }
         }
 
@@ -143,13 +41,33 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                     k.insert(key, x + 1);
                 }
                 else {
-                    return None;
+                    return Err(true);
                 }
             }
             else {
                 k.insert(key, 0);
             }
         }
+    }
+    return Err(false);
+}
+
+fn cache_register(l :usize, rulehash :String, tree :Option<(SyntaxTreeNode, usize)>) {
+    unsafe {
+        if let Some(k) = &mut PARSE_DP {
+            k.insert((l, rulehash), tree);
+        }
+    }
+}
+
+pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&'p Dictionary<'p>, cargs :&Vec<&'p str>) -> Option<(SyntaxTreeNode, usize)> {
+    let rulehash = parsingrule_tostr(rule) + &cargs.join("")[..];
+    let cachev = cache_view(s.len(), &rulehash);
+    if let Err(true) = cachev {
+        return None;
+    }
+    else if let Ok(x) = cachev {
+        return Some(x);
     }
 
     let mut expections = nexts(name, rule);
@@ -179,25 +97,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                             }
                         },
                         ShortPart(p) => {
-                            let x :Vec<_> = dict[p.part_name].iter().filter(|e| {
-                                if s.len() - reading < e.text.len() {
-                                    return false;
-                                }
-                                if p.condition.is_empty() {
-                                    return &s[reading..reading+e.text.len()] == &e.text[..];
-                                }
-                                if &s[reading..reading+e.text.len()] == &e.text[..] {
-                                    return p.condition.iter().all(|c| c.neq ^ (match c.target {
-                                        LanReference::PartAttr((a, b)) => e.argv.get(c.argn).unwrap_or(&"0") == expect.voca_attrs[a].get(b).unwrap_or(&"0"),
-                                        LanReference::PartParam(pi) => e.argv.get(c.argn).unwrap_or(&"0") == cargs.get(pi).unwrap_or(&"0"),
-                                        LanReference::Text(t) => e.argv.get(c.argn).unwrap_or(&"0") == &t
-                                    }));
-                                }
-                                else {
-                                    return false;
-                                }
-                            }).collect();
-
+                            let x = search_dict(dict, p, s, reading, expect, cargs);
                             if x.is_empty() {
                                 expect.kill();
                             }
@@ -258,23 +158,12 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
     }
     
     if winners.is_empty() {
-        unsafe {
-            if let Some(k) = &mut PARSE_DP {
-                k.insert((s.len(), rulehash), None);
-            }
-        }
-        
+        cache_register(s.len(), rulehash, None);
         return None;
     }
     else {
         let best_winner = winners.iter().max_by_key(|x| x.1);
-        
-        unsafe {
-            if let Some(k) = &mut PARSE_DP {
-                k.insert((s.len(), rulehash), Some(best_winner.unwrap().clone()));
-            }
-        }
-        
+        cache_register(s.len(), rulehash, Some(best_winner.unwrap().clone()));
         return Some(best_winner.unwrap().clone());
     }
 }

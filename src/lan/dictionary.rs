@@ -96,3 +96,28 @@ pub fn dictrc_to_dict<'d>(dicrc :&'d DictionaryRc) -> Dictionary<'d> {
     }
     dictionary
 }
+
+use super::parse::fit_rules::Expectation;
+use super::lanparser::ShortWordPart;
+use super::lanparser::LanReference;
+
+pub fn search_dict<'p>(dict :&'p Dictionary<'p>, p :&'p ShortWordPart, s :&[char], reading :usize, expect :&Expectation, cargs :&Vec<&'p str>) -> Vec<&'p Voca<'p>> {
+    dict[p.part_name].iter().filter(|e| {
+        if s.len() - reading < e.text.len() {
+            return false;
+        }
+        if p.condition.is_empty() {
+            return &s[reading..reading+e.text.len()] == &e.text[..];
+        }
+        if &s[reading..reading+e.text.len()] == &e.text[..] {
+            return p.condition.iter().all(|c| c.neq ^ (match c.target {
+                LanReference::PartAttr((a, b)) => e.argv.get(c.argn).unwrap_or(&"0") == expect.voca_attrs[a].get(b).unwrap_or(&"0"),
+                LanReference::PartParam(pi) => e.argv.get(c.argn).unwrap_or(&"0") == cargs.get(pi).unwrap_or(&"0"),
+                LanReference::Text(t) => e.argv.get(c.argn).unwrap_or(&"0") == &t
+            }));
+        }
+        else {
+            return false;
+        }
+    }).collect::<Vec<&Voca>>()
+}
