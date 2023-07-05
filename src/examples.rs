@@ -1,5 +1,5 @@
 use super::lan::Parser;
-use std::time::Instant;
+// use std::time::Instant;
 
 pub fn korean() {
     let mut parser_korean = Parser::open("examples/lans_korean/main.lan", "examples/dictionary/dictionary.dic").unwrap();
@@ -11,11 +11,11 @@ pub fn korean() {
         let t = std::fs::read_to_string("examples/sentences_korean.txt").unwrap();
         for text in t.split("\n") {
             println!("{}", text);
-            let start = Instant::now();
+            // let start = Instant::now();
             let result = p.parse(text).unwrap();
-            let dur = start.elapsed();
+            // let dur = start.elapsed();
             println!("{}", result.tree.collect_verbose(" "));
-            println!("==> {:?}\n", dur);
+            // println!("==> {:?}\n", dur);
         }
         Some(())
     }).unwrap();
@@ -37,21 +37,22 @@ pub fn english() {
             }
             let text = text.trim();
             println!("{}", text);
-            let start = Instant::now();
+            // let start = Instant::now();
             let result = p.parse(text);
-            let dur = start.elapsed();
+            // let dur = start.elapsed();
             if let Ok(res) = result {
                 if res.length == text.len() {
-                    println!("VALID");
+                    println!("문법 오류 없음");
+                    println!("{}\n", res.tree.collect_verbose(" "));
                 }
                 else {
-                    println!("INVALID");
+                    println!("문법 오류 있음\n");
                 }
             }
             else {
                 println!("INVALID");
             }
-            println!("==> {:?}\n", dur);
+            // println!("==> {:?}\n", dur);
         }
         Some(())
     }).unwrap();

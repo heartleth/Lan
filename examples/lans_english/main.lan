@@ -1,14 +1,14 @@
 PART main
-	RULE sentence	$Sentence
+	RULE 문장	$문장
 END
 
-PART Conj
+PART 접속사
 	RULE and	and-conj
 	RULE but	but-conj
 	RULE sec	;-conj
 END
 
-PART Sentence
+PART 문장
 	# :0 | missing
 	# :1 | conj fold
 	
@@ -17,9 +17,9 @@ PART Sentence
 	# RULE 도치 $부정어 have/has/had S V( pp )
 	# RULE 도치 $부정어 $Be동사 S
 	
-	# RULE 보어도치 $AP/P $Be동사 $S
+	# RULE 보어도치 $형용사구/P $Be동사 $S
 	# RULE 보어도치 such $Be동사 $S $ThatConjP
-	# RULE 보어도치 so $AP/P $Be동사 $S $ThatConjP
+	# RULE 보어도치 so $형용사구/P $Be동사 $S $ThatConjP
 
 	# RULE 장소부사구도치 $장소부사구 $V( s1 ) $S(pronoun X)
 	# RULE 장소부사구도치 $장소부사구 $S(pronoun) $V( s1 )
@@ -27,47 +27,47 @@ PART Sentence
 	# RULE 목적어도치 $O $S $V
 
 	IF :1 0
-		RULE conj	$Sentence( :0 x ) $Conj $Sentence( :0 )
+		RULE conj	$문장( :0 x ) $접속사 $문장( :0 )
 	END
 
 	IF :0 0
-		RULE Si		$S( 1 ) $VP( s1 1 )
-		RULE Si		$S( m ) $VP( s1 m )
+		RULE Si		$S( 1 ) $동사구( s1 1 )
+		RULE Si		$S( m ) $동사구( s1 m )
 
 		# RULE Sii	$S( 1 ) $V( s2 1 ) $Comp
 		# RULE Sii	$S( m ) $V( s2 m ) $Comp
 
-		RULE Siii	$S( 1 ) $VP( s3 1 )
-		RULE Siii	$S( m ) $VP( s3 m )
+		RULE Siii	$S( 1 ) $동사구( s3 1 )
+		RULE Siii	$S( m ) $동사구( s3 m )
 
-		# RULE Siv	$S( 1 ) $V( s4 1 ) $NP( IO ) $NP( DO )
-		# RULE Siv	$S( m ) $V( s4 m ) $NP( IO ) $NP( DO )
+		# RULE Siv	$S( 1 ) $V( s4 1 ) $명사구( IO ) $명사구( DO )
+		# RULE Siv	$S( m ) $V( s4 m ) $명사구( IO ) $명사구( DO )
 
-		RULE Sv		$S( 1 ) $VP( s5 1 )
-		RULE Sv		$S( m ) $VP( s5 m )
+		RULE Sv		$S( 1 ) $동사구( s5 1 )
+		RULE Sv		$S( m ) $동사구( s5 m )
 
-		RULE ithl	it-it $BeV( 3 1 ) $S that-rel $Sentence( S )
-		RULE ithl	it-it $BeV( 3 1 ) $O that-rel $Sentence( O )
+		RULE ithl	it-it $Be동사( 3 1 ) $S that-rel $문장( S )
+		RULE ithl	it-it $Be동사( 3 1 ) $O that-rel $문장( O )
 	END
 	IF :0 S
-		RULE Si		$VP( s1 1 )
-		RULE Si		$VP( s1 m )
-		RULE Siii	$VP( s3 1 )
-		RULE Siii	$VP( s3 m )
-		RULE Sv		$VP( s5 1 )
-		RULE Sv		$VP( s5 m )
+		RULE Si		$동사구( s1 1 )
+		RULE Si		$동사구( s1 m )
+		RULE Siii	$동사구( s3 1 )
+		RULE Siii	$동사구( s3 m )
+		RULE Sv		$동사구( s5 1 )
+		RULE Sv		$동사구( s5 m )
 	END
 	IF :0 O
-		RULE Si		$S( 1 ) $VP( s1 1 0 O )
-		RULE Si		$S( m ) $VP( s1 m 0 O )
-		RULE Siii	$S( 1 ) $VP( s3 1 0 O )
-		RULE Siii	$S( m ) $VP( s3 m 0 O )
-		RULE Sv		$S( 1 ) $VP( s5 1 0 O )
-		RULE Sv		$S( m ) $VP( s5 m 0 O )
+		RULE Si		$S( 1 ) $동사구( s1 1 0 O )
+		RULE Si		$S( m ) $동사구( s1 m 0 O )
+		RULE Siii	$S( 1 ) $동사구( s3 1 0 O )
+		RULE Siii	$S( m ) $동사구( s3 m 0 O )
+		RULE Sv		$S( 1 ) $동사구( s5 1 0 O )
+		RULE Sv		$S( m ) $동사구( s5 m 0 O )
 	END
 END
 
-PART AP
+PART 형용사구
 	# :0 | type
 
 	IF :0 0
@@ -76,29 +76,28 @@ PART AP
 
 	IF :0 det
 		RULE adj	*adj[:0=det]
-		RULE nppos	$NP( POS )
-		RULE next	$AP( num )
+		RULE nppos	$명사구( POS )
+		RULE next	$형용사구( num )
 	END
 	IF :0 ~ num siz prp new col nat mat
 		RULE adj	*adj[:0=:0]
 		UNLESS :0 mat
-			RULE adj	*adj[:0=:0] [:0=num]$AP( siz ) [:0=siz]$AP( prp ) [:0=prp]$AP( new ) [:0=new]$AP( col ) [:0=col]$AP( nat ) [:0=nat]$AP( mat )
-			RULE next	[:0=num]$AP( siz ) [:0=siz]$AP( prp ) [:0=prp]$AP( new ) [:0=new]$AP( col ) [:0=col]$AP( nat ) [:0=nat]$AP( mat )
+			RULE adj	*adj[:0=:0] [:0=num]$형용사구( siz ) [:0=siz]$형용사구( prp ) [:0=prp]$형용사구( new ) [:0=new]$형용사구( col ) [:0=col]$형용사구( nat ) [:0=nat]$형용사구( mat )
+			RULE next	[:0=num]$형용사구( siz ) [:0=siz]$형용사구( prp ) [:0=prp]$형용사구( new ) [:0=new]$형용사구( col ) [:0=col]$형용사구( nat ) [:0=nat]$형용사구( mat )
 		END
 	END
 END
 
-PART AdvP
-	# 출처: 명사, 관사, 대명사 프린트 p. 2
-	RULE pabs	$Prep( with ) *noun[:1=abstract]
-	RULE pabs	$Prep( by ) *noun[:1=abstract]
-	RULE pabs	$Prep( in ) *noun[:1=abstract]
-	RULE pabs	$Prep( on ) *noun[:1=abstract]
-	RULE pabs	$Prep( to ) *noun[:1=abstract]
+PART 부사구
+	RULE pabs	$전치사( with ) *noun[:1=abstract]
+	RULE pabs	$전치사( by ) *noun[:1=abstract]
+	RULE pabs	$전치사( in ) *noun[:1=abstract]
+	RULE pabs	$전치사( on ) *noun[:1=abstract]
+	RULE pabs	$전치사( to ) *noun[:1=abstract]
 	# RULE adv	*adverb
 END
 
-PART Quantifier
+PART 한정사
 	# :0 | uctype
 	# :1 | count:1/m/_
 	
@@ -108,8 +107,8 @@ PART Quantifier
 		END
 		IF :1 m
 			RULE quant	*quantifier[:0=cnt&:1=m]
-			RULE quant	*quantmeasure[:0=0] *prep[:0=of]
-			RULE quant	a-det *quantmeasure[:0=a] *prep[:0=of]
+			RULE quant	*quantmeasure[:0=0] *전치사[:0=of]
+			RULE quant	a-det *quantmeasure[:0=a] *전치사[:0=of]
 
 			RULE quant	*quantifier[:0=both]
 		END
