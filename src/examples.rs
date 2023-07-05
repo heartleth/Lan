@@ -1,5 +1,5 @@
 use super::lan::Parser;
-// use std::time::Instant;
+use std::time::Instant;
 
 pub fn korean() {
     let mut parser_korean = Parser::open("examples/lans_korean/main.lan", "examples/dictionary/dictionary.dic").unwrap();
@@ -32,27 +32,27 @@ pub fn english() {
         let t = std::fs::read_to_string("examples/sentences_english.txt").unwrap();
         for text in t.split("\n") {
             if text.starts_with('#') {
-                println!("{}", &text[2..]);
+                // println!("{}", &text[2..]);
                 continue;
             }
             let text = text.trim();
             println!("{}", text);
-            // let start = Instant::now();
+            let start = Instant::now();
             let result = p.parse(text);
-            // let dur = start.elapsed();
+            let dur = start.elapsed();
             if let Ok(res) = result {
                 if res.length == text.len() {
                     println!("문법 오류 없음");
-                    println!("{}\n", res.tree.collect_verbose(" "));
+                    println!("문장분석: {}", res.tree.collect_verbose(" "));
                 }
                 else {
-                    println!("문법 오류 있음\n");
+                    println!("문법 오류 있음");
                 }
             }
             else {
-                println!("INVALID");
+                println!("문법 오류 있음");
             }
-            // println!("==> {:?}\n", dur);
+            println!("==> {:?}\n", dur);
         }
         Some(())
     }).unwrap();
