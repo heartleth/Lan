@@ -1,0 +1,67 @@
+PART main
+	RULE sentence	$Sentence
+END
+
+PART Sentence
+	RULE wordseq 	|>$Word
+END
+
+PART Word
+	RULE np			$NP ?$Particle
+	RULE vp			$VP ?$Particle
+END
+
+PART NP
+	RULE n			*jn
+	RULE adj		$AP *jn
+END
+
+PART Adv
+	RULE adv		*jadv
+	RULE kn			*ja[:0=i] kute-con
+	RULE kn			*ja[:0=na] de-con
+END
+
+PART VP
+	RULE desu		doko-where ?$desu
+	RULE desu		*ja[:0=i] i-i ?$desu
+	RULE desu		*ja[:0=na] da-da
+	RULE desu		*ja[:0=na] $desu
+	RULE kn			*ja[:0=i] ku-ku nai-nai
+	RULE kn			*ja[:0=na] jya-ku nai-nai
+	RULE be			a-vr $pol( a )
+	RULE be			i-vr $pol( i )
+	RULE sr			simasu-simasu
+	RULE sr			suru-suru
+	RULE be			$NP $desu
+END
+
+PART AP
+	# :0 | i, na
+
+	RULE a			*jn no-no
+	RULE a			*ja[:0=i] i-i
+	RULE a			*ja[:0=na] na-na
+END
+
+PART pol
+	RULE pl			[:0=a]ri-ri masu-masu ?ka-ka
+	RULE non		ru-ru ?yo-yo
+END
+
+PART desu
+	RULE desu		desu-desu
+	RULE dska		desu-desu ka-ka
+	RULE dsyo		desu-desu yo-yo
+END
+
+PART Particle
+	RULE k	nadoga-pa
+	RULE k	kara-pa
+	RULE k	nado-pa
+	RULE k	ga-pa
+	RULE k	ni-pa
+	RULE k	mo-pa
+	RULE k	ha-pa
+	RULE k	ya-pa
+END

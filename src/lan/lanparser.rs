@@ -215,6 +215,17 @@ pub fn parse<'s>(lines :&Vec<&'s str>) -> Result<HashMap<&'s str, PhraseContext<
             let p = PhraseContext {
                 name: words[1],
                 children: Vec::new(),
+                is_trap: false,
+                argc: argc
+            };
+            st.push(Context::Phrase(p));
+        }
+        else if words[0] == "TRAP" {
+            let argc :usize = words.get(2).unwrap_or(&"0").parse().unwrap();
+            let p = PhraseContext {
+                name: words[1],
+                children: Vec::new(),
+                is_trap: true,
                 argc: argc
             };
             st.push(Context::Phrase(p));

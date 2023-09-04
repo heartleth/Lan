@@ -1,0 +1,15 @@
+PART main
+    RULE m  $Exp
+END
+
+TRAP Exp
+    RULE a  $Num ^-e $Exp
+    RULE b  $Num
+END
+
+PART Num
+    RULE a  1-1
+    RULE b  2-1
+    RULE c  3-1
+    RULE d  4-1
+END

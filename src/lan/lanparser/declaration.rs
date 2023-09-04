@@ -4,6 +4,7 @@ use std::fmt::Debug;
 pub struct PhraseContext<'n> {
     pub name :&'n str,
     pub children :Vec<PhraseRules<'n>>,
+    pub is_trap: bool,
     pub argc :usize
 }
 

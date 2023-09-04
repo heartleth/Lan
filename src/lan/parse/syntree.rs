@@ -44,7 +44,7 @@ impl SyntaxTreeNode {
             return None;
         }
     }
-
+    
     pub fn collect(&self, delim :&str)->String {
         match self {
             Self::Category(c) => {
@@ -96,6 +96,20 @@ impl SyntaxTreeNode {
     pub fn get_category(&self) -> Option<&SyntaxTree> {
         match self {
             Self::Category(v) => Some(v),
+            _ => None
+        }
+    }
+
+    pub fn get_category_mut(&mut self) -> Option<&mut SyntaxTree> {
+        match self {
+            Self::Category(v) => Some(v),
+            _ => None
+        }
+    }
+
+    pub fn children_len(&self) -> Option<usize> {
+        match self {
+            Self::Category(v) => Some(v.children.len()),
             _ => None
         }
     }

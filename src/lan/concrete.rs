@@ -95,6 +95,7 @@ impl<'n> PhraseContext<'n> {
     pub fn build<'p>(&'p self, args :Vec<&'n str>) -> ConcretePart<'n, 'p> {
         let mut vals = HashMap::new();
         let fm = format!("{}@{:?}", self.name, &args);
+        
         ConcretePart {
             rules: self.gain_rules(&self.children, &args, &mut vals),
             cargs: args,

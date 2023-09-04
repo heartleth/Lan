@@ -47,7 +47,7 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
     // println!("{:20} : {}", part.id, String::from_iter(s));
     for r in part.rules {
         // println!("{:?}", r);
-        if let Some((morphemes, x)) = fit_rules::fit_rules(&s2, &format!("{}@{}", part.part.name, r.name)[..], &r.rules, rules, dict, &part.cargs) {
+        if let Some((morphemes, x)) = fit_rules::fit_rules(&s2, &format!("{}@{}", part.part.name, r.name)[..], &r.rules, rules, dict, &part.cargs, part.part.is_trap) {
             if x + trims >= m {
                 if x + trims > m || (r.name < &rns[..] || rns.is_empty()) {
                     mp = Some(morphemes);

@@ -7,6 +7,7 @@ use std::collections::HashMap;
 pub use expect::Expectation;
 use super::SyntaxTreeNode;
 use super::ParsingRule;
+use super::SyntaxTree;
 use expect::nexts;
 use super::parse;
 
@@ -60,7 +61,7 @@ fn cache_register(l :usize, rulehash :String, tree :Option<(SyntaxTreeNode, usiz
     }
 }
 
-pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&'p Dictionary<'p>, cargs :&Vec<&'p str>) -> Option<(SyntaxTreeNode, usize)> {
+pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, rules :PhraseRulesCollection<'p>, dict :&'p Dictionary<'p>, cargs :&Vec<&'p str>, is_trap :bool) -> Option<(SyntaxTreeNode, usize)> {
     let rulehash = parsingrule_tostr(rule) + &cargs.join("")[..];
     let cachev = cache_view(s.len(), &rulehash);
     if let Err(true) = cachev {
@@ -126,7 +127,8 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                     }
                                 }
                             }
-                            let parsed = parse(&s[reading..], template.build(rules, t2), rules, dict);
+                            let template_built = template.build(rules, t2);
+                            let parsed = parse(&s[reading..], template_built, rules, dict);
                             if let Some((stn, x)) = parsed {
                                 expect.read(x);
                                 expect.next_rule();
@@ -156,7 +158,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
         }
         expections = new_expections;
     }
-    
+
     if winners.is_empty() {
         cache_register(s.len(), rulehash, None);
         return None;
@@ -164,6 +166,33 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
     else {
         let best_winner = winners.iter().max_by_key(|x| x.1);
         cache_register(s.len(), rulehash, Some(best_winner.unwrap().clone()));
-        return Some(best_winner.unwrap().clone());
+        let mut bw = best_winner.unwrap().clone();
+        if is_trap {
+            trap_reconstruct(&mut bw);
+        }
+        return Some(bw);
     }
+}
+
+fn trap_reconstruct(tr: &mut (SyntaxTreeNode, usize)) {
+    if let SyntaxTreeNode::Category(c) = &mut tr.0 {
+        if c.children.len() > 1 {
+            let size = c.children.len();
+            c.children.swap(0, size - 1);
+            tr2(c);
+        }
+    }
+}
+
+fn tr2(c: &mut SyntaxTree) {
+    let mut l2 = c.children.first().unwrap().clone();
+    if match l2.get_category() { None => true, Some(cc) => c.name != cc.name } {
+        let size = c.children.len();
+        c.children.swap(0, size - 1);
+        return;
+    }
+    let x = l2.get_category_mut().unwrap().children.last_mut().unwrap();
+    std::mem::swap(x, c.children.last_mut().unwrap());
+    tr2(l2.get_category_mut().unwrap());
+    std::mem::swap(c.children.first_mut().unwrap(), &mut l2);
 }
