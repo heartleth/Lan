@@ -73,6 +73,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
 
     let mut expections = nexts(name, rule);
     let mut winners = Vec::new();
+    let mut i = 0;
     while !expections.is_empty() {
         for expect in &mut expections {
             let reading = expect.reading;
@@ -155,6 +156,10 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                     new_expections.push(k);
                 }
             }
+        }
+        i += 1;
+        if i > 200 {
+            return None;
         }
         expections = new_expections;
     }

@@ -6,10 +6,10 @@ use lan::Parser;
 
 fn main() {
     // examples::english();
-    let parser_english = Parser::open("examples/lans_japanese/main.lan", "examples/dictionary/dictionary.dic").unwrap();
+    let parser_english = Parser::open("examples/lans_c/main.lan", "examples/dictionary/dictionary.dic").unwrap();
 
     parser_english.with_parser(|p| {
-        let t = std::fs::read_to_string("examples/sentences_japanese.txt").unwrap();
+        let t = std::fs::read_to_string("examples/sentences_c.txt").unwrap();
         for text in t.split("\n") {
             if text.starts_with('#') {
                 println!("{}", &text[2..]);
@@ -21,7 +21,7 @@ fn main() {
             if let Ok(res) = result {
                 if res.length == text.len() {
                     println!("VALID");
-                    println!("{:?}\n", res.tree);
+                    println!("{:#?}\n", res.tree);
                 }
                 else {
                     println!("INVALID\n");

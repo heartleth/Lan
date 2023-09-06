@@ -1,6 +1,10 @@
+PART main
+    RULE a  $AdditiveExpression
+END
+
 # The syntax of C in Backus-Naur Form
 PART TranslationUnit
-    RULE r  \$ExternalDeclaration
+    RULE r  |>$ExternalDeclaration
 END
 
 PART ExternalDeclaration
@@ -9,7 +13,7 @@ PART ExternalDeclaration
 END
 
 PART FunctionDefinition
-    RULE r  \$DeclarationSpecifier $Declarator \$Declaration $CompoundStatement
+    RULE r  |>$DeclarationSpecifier $Declarator |>$Declaration $CompoundStatement
 END
 
 PART DeclarationSpecifier
@@ -36,14 +40,14 @@ PART TypeSpecifier
     RULE r  double-kw
     RULE r  signed-kw
     RULE r  unsigned-kw
-    RULE r  $StructOrUnionSpecifier
-    RULE r  $EnumSpecifier
-    RULE r  $TypedefName
+    # RULE r  $StructOrUnionSpecifier
+    # RULE r  $EnumSpecifier
+    # RULE r  $TypedefName
 END
 
 PART StructOrUnionSpecifier
-    RULE r  $StructOrUnion $Identifier {-o $StructDeclaration \$StructDeclaration }-c
-    RULE r  $StructOrUnion {-o $StructDeclaration \$StructDeclaration }-c
+    RULE r  $StructOrUnion $Identifier {-o $StructDeclaration |>$StructDeclaration }-c
+    RULE r  $StructOrUnion {-o $StructDeclaration |>$StructDeclaration }-c
     RULE r  $StructOrUnion $Identifier
 END
 
@@ -53,7 +57,7 @@ PART StructOrUnion
 END
 
 PART StructDeclaration
-    RULE r  \$SpecifierQualifier $StructDeclaratorList
+    RULE r  |>$SpecifierQualifier $StructDeclaratorList
 END
 
 PART SpecifierQualifier
@@ -77,7 +81,7 @@ PART Declarator
 END
 
 PART Pointer
-    RULE r  *asterisk \$TypeQualifier ?$Pointer
+    RULE r  *asterisk ->$TypeQualifier ?$Pointer
 END
 
 PART TypeQualifier
@@ -88,9 +92,9 @@ END
 PART DirectDeclarator
     RULE r  $Identifier
     RULE r  (-o $Declarator )-c
-    RULE r  $DirectDeclarator [-o ?$ConstantExpression ]-c
+    # RULE r  $DirectDeclarator [-o ?$ConstantExpression ]-c
     RULE r  $DirectDeclarator (-o $ParameterTypeList )-c
-    RULE r  $DirectDeclarator (-o \$Identifier )-c
+    RULE r  $DirectDeclarator (-o |>$Identifier )-c
 END
 
 PART ConstantExpression
@@ -102,62 +106,66 @@ PART ConditionalExpression
     RULE r  $LogicalOrExpression *why $Expression :-op $ConditionalExpression
 END
 
-PART LogicalOrExpression
+TRAP LogicalOrExpression
     RULE r  $LogicalAndExpression
-    RULE r  $LogicalOrExpression ||-op $LogicalAndExpression
+    RULE r  $LogicalAndExpression ||-op $LogicalOrExpression
+    # RULE r  $LogicalOrExpression ||-op $LogicalAndExpression
 END
 
-PART LogicalAndExpression
+TRAP LogicalAndExpression
     RULE r  $InclusiveOrExpression
-    RULE r  $LogicalAndExpression &&-op $InclusiveOrExpression
+    RULE r  $InclusiveOrExpression &&-op $LogicalAndExpression
 END
 
-PART InclusiveOrExpression
+TRAP InclusiveOrExpression
     RULE r  $ExclusiveOrExpression
-    RULE r  $InclusiveOrExpression |-op $ExclusiveOrExpression
+    RULE r  $ExclusiveOrExpression |-op $InclusiveOrExpression
 END
 
-PART ExclusiveOrExpression
+TRAP ExclusiveOrExpression
     RULE r $AndExpression
-    RULE r $ExclusiveOrExpression ^-op $AndExpression 
+    RULE r $AndExpression ^-op $ExclusiveOrExpression
 END
 
-PART AndExpression
+TRAP AndExpression
     RULE r  $EqualityExpression
-    RULE r  $AndExpression &-op $EqualityExpression
+    RULE r  $EqualityExpression &-op $AndExpression
 END
 
-PART EqualityExpression
+TRAP EqualityExpression
     RULE r  $RelationalExpression
-    RULE r  $EqualityExpression ==-op $RelationalExpression
-    RULE r  $EqualityExpression !=-op $RelationalExpression
+    RULE r  $RelationalExpression ==-op $EqualityExpression
+    RULE r  $RelationalExpression !=-op $EqualityExpression
 END
 
 PART RelationalExpression
     RULE r  $ShiftExpression
-    RULE r  $RelationalExpression <-op $ShiftExpression
-    RULE r  $RelationalExpression >-op $ShiftExpression
-    RULE r  $RelationalExpression <=-op $ShiftExpression
-    RULE r  $RelationalExpression >=-op $ShiftExpression
+    # RULE r  $ShiftExpression <-op  $RelationalExpression
+    # RULE r  $ShiftExpression >-op  $RelationalExpression
+    # RULE r  $ShiftExpression <=-op $RelationalExpression
+    # RULE r  $ShiftExpression >=-op $RelationalExpression
 END
 
-PART ShiftExpression
+
+TRAP ShiftExpression
     RULE r  $AdditiveExpression
-    RULE r  $ShiftExpression <<-op $AdditiveExpression
-    RULE r  $ShiftExpression >>-op $AdditiveExpression
+    RULE r  $AdditiveExpression <<-op $ShiftExpression
+    RULE r  $AdditiveExpression >>-op $ShiftExpression
 END
 
-PART AdditiveExpression
+TRAP AdditiveExpression
     RULE r  $MultiplicativeExpression
-    RULE r  $AdditiveExpression +-op $MultiplicativeExpression
-    RULE r  $AdditiveExpression *m $MultiplicativeExpression
+    RULE r  $MultiplicativeExpression +-op $AdditiveExpression
+    RULE r  $MultiplicativeExpression m-op $AdditiveExpression
+    # RULE r  $MultiplicativeExpression --op $AdditiveExpression
+    RULE r  $MultiplicativeExpression *m $AdditiveExpression
 END
 
-PART MultiplicativeExpression
+TRAP MultiplicativeExpression
     RULE r  $CastExpression
-    RULE r  $MultiplicativeExpression *asterisk $CastExpression
-    RULE r  $MultiplicativeExpression /-op $CastExpression
-    RULE r  $MultiplicativeExpression *mod $CastExpression
+    RULE r  $CastExpression *asterisk $MultiplicativeExpression
+    RULE r  $CastExpression /-op $MultiplicativeExpression
+    RULE r  $CastExpression *mod $MultiplicativeExpression
 END
 
 PART CastExpression
@@ -169,71 +177,71 @@ PART UnaryExpression
     RULE r  $PostfixExpression
     RULE r  ++-op $UnaryExpression
     RULE r  *mm $UnaryExpression
-    RULE r  $UnaryOpetator $CastExpression
+    # RULE r  $UnaryOpetator $CastExpression
     RULE r  sizeof-kw $UnaryExpression
     RULE r  sizeof-kw $TypeName
 END
 
 PART PostfixExpression
     RULE r  $PrimaryExpression
-    RULE r  $PostfixExpression [-o $Expression ]-c
-    RULE r  $PostfixExpression (-o \$AssignmentExpression )-c
-    RULE r  $PostfixExpression .-op $Identifier
-    RULE r  $PostfixExpression ->-op $Identifier
-    RULE r  $PostfixExpression ++-op
-    RULE r  $PostfixExpression *mm
+    # RULE r  $PostfixExpression [-o $Expression ]-c
+    # RULE r  $PostfixExpression (-o |>$AssignmentExpression )-c
+    # RULE r  $PostfixExpression .-op $Identifier
+    # RULE r  $PostfixExpression ->-op $Identifier
+    # RULE r  $PostfixExpression ++-op
+    # RULE r  $PostfixExpression *mm
 END
 
 PART PrimaryExpression
     RULE r  $Identifier
     RULE r  $Constant
-    RULE r  $String
+    # RULE r  $String
     RULE r  (-o $Expression )-c
 END
 
 PART Constant
     RULE r  $IntegerConstant
     RULE r  $CharacterConstant
-    RULE r  $FloatingConstant
+    # RULE r  $FloatingConstant
     RULE r  $EnumerationConstant
 END
 
-PART Expression
+TRAP Expression
     RULE r  $AssignmentExpression
-    RULE r  $Expression ,-op $AssignmentExpression
+    RULE r  $AssignmentExpression ,-op $Expression
 END
 
 PART AssignmentExpression
     RULE r  $ConditionalExpression
-    RULE r  $UnaryExpression $AssignmentOperator $AssignmentExpression
+    # RULE r  $UnaryExpression $AssignmentOperator $AssignmentExpression
 END
 
-PART AssignmentOperator
-    RULE r  *assignmentOperator
-END
+# PART AssignmentOperator
+#     RULE r  *assignmentOperator
+# END
 
-PART UnaryOpetator
-    RULE r  *unaryOpetator
-END
+# PART UnaryOpetator
+#     RULE r  *unaryOpetator
+# END
 
 PART TypeName
-    RULE r  $SpecifierQualifier \$SpecifierQualifier ?$AbstractDeclarator
+    RULE r  $SpecifierQualifier ->$SpecifierQualifier ?$AbstractDeclarator
 END
 
-PART ParameterTypeList
-    RULE r  $ParameterList
-    RULE r  $ParameterList ,-op ...Epc
-END
+# PART ParameterTypeList
+#     RULE r  $ParameterList
+#     RULE r  $ParameterList ,-op ...Epc
+# END
 
-PART ParameterList
+TRAP ParameterList
     RULE r  $ParameterDeclaration
-    RULE r  $ParameterList ,-op $ParameterDeclaration
+    RULE r  $ParameterDeclaration ,-op $ParameterList
 END
 
 PART ParameterDeclaration
-    RULE r  $DeclarationSpecifier \$DeclarationSpecifier $Declarator
-    RULE r  $DeclarationSpecifier \$DeclarationSpecifier $AbstractDeclarator
-    RULE r  $DeclarationSpecifier \$DeclarationSpecifier
+    RULE r  $DeclarationSpecifier |>$DeclarationSpecifier $Declarator
+    RULE r  $DeclarationSpecifier |>$DeclarationSpecifier $AbstractDeclarator
+    RULE r  $DeclarationSpecifier |>$DeclarationSpecifier
 END
 
 PART AbstractDeclarator
@@ -244,7 +252,7 @@ END
 
 PART DirectAbstractDeclarator
     RULE r  (-o $AbstractDeclarator )-c
-    RULE r  ?$DirectAbstractDeclarator [-o ?$ConstantExpression ]-c
+    # RULE r  ?$DirectAbstractDeclarator [-o ?$ConstantExpression ]-c
     RULE r  ?$DirectAbstractDeclarator (-o ?$ParameterTypeList )-c
 END
 
@@ -254,7 +262,7 @@ PART EnumSpecifier
     RULE r  enum-kw $Identifier
 END
 
-PART EnumeratorList
+PART TRAP
     RULE r  $Enumerator
     RULE r  $EnumeratorList ,-op $Enumerator
 END
@@ -269,7 +277,7 @@ PART TypedefName
 END
 
 PART Declaration
-    RULE r  $DeclarationSpecifier \$DeclarationSpecifier \$InitDeclarator ;-op
+    RULE r  $DeclarationSpecifier |>$DeclarationSpecifier |>$InitDeclarator ;-op
 END
 
 PART InitDeclarator
@@ -289,7 +297,7 @@ PART InitializerList
 END
 
 PART CompoundStatement
-    RULE r  {-o \$Declaration \$Statement }-c
+    RULE r  {-o |>$Declaration |>$Statement }-c
 END
 
 PART Statement
@@ -344,21 +352,22 @@ PART Chars
 END
 
 PART EnumerationConstant
-    RULE r  $Nondigit \$Chars
+    RULE r  $Nondigit ->$Chars
 END
 
 PART Identifier
-    RULE r  $Nondigit \$Chars
+    RULE r  $Nondigit ->$Chars
 END
 
 PART IntegerConstant
-    RULE r  *Numbers \*Numbers
+    RULE r  *Numbers ->*Numbers
+    RULE r  *Numbers
 END
 
 PART CharacterConstant
-    RULE r  *Numbers \*Numbers
+    RULE r  *Numbers ->*Numbers
 END
 
 PART Digit
-
+    RULE n  *Numbers
 END

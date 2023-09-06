@@ -44,7 +44,7 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
     let mut m = trims;
     let mut mp = None;
     
-    // println!("{:20} : {}", part.id, String::from_iter(s));
+    // println!("{:20} : {}", &part.id[..], String::from_iter(s));
     for r in part.rules {
         // println!("{:?}", r);
         if let Some((morphemes, x)) = fit_rules::fit_rules(&s2, &format!("{}@{}", part.part.name, r.name)[..], &r.rules, rules, dict, &part.cargs, part.part.is_trap) {
@@ -59,6 +59,7 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
     }
 
     if m == trims {
+        // println!("toobad: {:20} : {}", &part.id[..], String::from_iter(s));
         unsafe {
             if let Some(k) = &mut PARSE_DP {
                 k.insert((s.len(), part.id), None);
@@ -78,6 +79,7 @@ pub fn parse<'p, 't>(s :&'t [char], part :ConcretePart<'t, 'p>, rules :PhraseRul
                 }
             }
         }
+        // println!("nice: {:20} : {}", &part.id[..], String::from_iter(&s[..m]));
         return Some((mp.unwrap(), m));
     }
 }
