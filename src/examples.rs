@@ -11,11 +11,11 @@ pub fn korean() {
         let t = std::fs::read_to_string("examples/sentences_korean.txt").unwrap();
         for text in t.split("\n") {
             println!("{}", text);
-            let start = Instant::now();
+            // let start = Instant::now();
             let result = p.parse(text).unwrap();
-            let dur = start.elapsed();
+            // let dur = start.elapsed();
             println!("{}", result.tree.collect_verbose(" "));
-            println!("==> {:?}\n", dur);
+            // println!("==> {:?}\n", dur);
         }
         Some(())
     }).unwrap();
@@ -32,7 +32,7 @@ pub fn english() {
         let t = std::fs::read_to_string("examples/sentences_english.txt").unwrap();
         for text in t.split("\n") {
             if text.starts_with('#') {
-                println!("{}", &text[2..]);
+                // println!("{}", &text[2..]);
                 continue;
             }
             let text = text.trim();
@@ -42,14 +42,15 @@ pub fn english() {
             let dur = start.elapsed();
             if let Ok(res) = result {
                 if res.length == text.len() {
-                    println!("VALID");
+                    println!("문법 오류 없음");
+                    println!("문장분석: {}", res.tree.collect_verbose(" "));
                 }
                 else {
-                    println!("INVALID");
+                    println!("문법 오류 있음");
                 }
             }
             else {
-                println!("INVALID");
+                println!("문법 오류 있음");
             }
             println!("==> {:?}\n", dur);
         }

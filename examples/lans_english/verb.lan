@@ -1,13 +1,13 @@
-PART VP
+PART 동사구
 	# :0 | form
 	# :1 | 1/m
 	# :2 | time
 	# :3 | missing
 	
-	RULE hh		[:1=1]has-has [:1=m]have-have $VP( :0 m pp :3 )
-	RULE hd		had-had $VP( :0 m pp :3 )
-	RULE hh		[:1=1]does-does [:1=m]do-do $VP( :0 m pr :3 )
-	RULE hd		did-did $VP( :0 m pr :3 )
+	RULE hh		[:1=1]has-has [:1=m]have-have $동사구( :0 m pp :3 )
+	RULE hd		had-had $동사구( :0 m pp :3 )
+	RULE hh		[:1=1]does-does [:1=m]do-do $동사구( :0 m pr :3 )
+	RULE hd		did-did $동사구( :0 m pr :3 )
 
 	IF :0 s1
 		IF :2 0
@@ -15,16 +15,16 @@ PART VP
 				RULE v	*verb[:1=_&:2!=t]
 				RULE v	*verb[:1=:1&:2!=t]
 			END
-			RULE vp1	*verb[:1=_&:2!=t&:3!=0] $PrepP( @0:3 :3 )
-			RULE vp1	*verb[:1=:1&:2!=t&:3!=0] $PrepP( @0:3 :3 )
+			RULE vp1	*verb[:1=_&:2!=t&:3!=0] $전치사구( @0:3 :3 )
+			RULE vp1	*verb[:1=:1&:2!=t&:3!=0] $전치사구( @0:3 :3 )
 		END
 		UNLESS :2 0
 			IF :3 0
 				RULE v	*verb[:0=:2&:1=_&:2!=t]
 				RULE v	*verb[:0=:2&:1=:1&:2!=t]
 			END
-			RULE vp1	*verb[:0=:2&:1=_&:2!=t&:3!=0] $PrepP( @0:3 :3 )
-			RULE vp1	*verb[:0=:2&:1=:1&:2!=t&:3!=0] $PrepP( @0:3 :3 )
+			RULE vp1	*verb[:0=:2&:1=_&:2!=t&:3!=0] $전치사구( @0:3 :3 )
+			RULE vp1	*verb[:0=:2&:1=:1&:2!=t&:3!=0] $전치사구( @0:3 :3 )
 		END
 	END
 	
@@ -59,29 +59,29 @@ PART VP
 	END
 END
 
-PART PrepP
+PART 전치사구
 	# :0 | type
 	# :1 | missing
-	RULE pp		$Prep( :0 ) [:1!=O]$Oprep
+	RULE pp		$전치사( :0 ) [:1!=O]$O전치사
 END
 
-PART Prep
-	RULE prep	[:0=about]about-prep [:0=with]with-prep [:0=for]for-prep [:0=by]by-prep [:0=in]in-prep [:0=on]on-prep [:0=to]to-prep [:0=of]of-prep [:0=at]at-prep
+PART 전치사
+	RULE 전치사	[:0=about]about-전치사 [:0=with]with-전치사 [:0=for]for-전치사 [:0=by]by-전치사 [:0=in]in-전치사 [:0=on]on-전치사 [:0=to]to-전치사 [:0=of]of-전치사 [:0=at]at-전치사
 END
 
-PART Gerund
+PART 동명사
 	RULE todo	being-gerund
 END
 
-PART ToV
+PART To부정사
 	# :0 | missing
 	
-	RULE tov	to-inf $VP( s1 m pr :0 )
-	RULE tov	to-inf $VP( s3 m pr :0 )
-	RULE tov	to-inf $VP( s5 m pr :0 )
+	RULE tov	to-inf $동사구( s1 m pr :0 )
+	RULE tov	to-inf $동사구( s3 m pr :0 )
+	RULE tov	to-inf $동사구( s5 m pr :0 )
 END
 
-PART BeV
+PART Be동사
 	# :0 | person
 	# :1 | 1/m
 	
@@ -100,10 +100,10 @@ PART BeV
 	END
 END
 
-PART Participial
+PART 분사
 	# :0 | missing 
 	
-	RULE r		$VP( s1 _ pp :0 )
-	RULE r		$VP( s3 _ pp :0 )
-	RULE r		$VP( s5 _ pp :0 )
+	RULE r		$동사구( s1 _ pp :0 )
+	RULE r		$동사구( s3 _ pp :0 )
+	RULE r		$동사구( s5 _ pp :0 )
 END

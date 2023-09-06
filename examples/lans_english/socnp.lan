@@ -2,20 +2,20 @@
 PART S
 	# :0 | 1/m
 	RULE pron	*pronoun[:0=NOM&:1=:0]
-	RULE np		$NP( :0 NOM )
+	RULE 명사구		$명사구( :0 NOM )
 END
 
 PART O
 	RULE pron	*pronoun[:0=OBJ]
 	RULE recr	*pronoun[:0=REC]
-	RULE np		$NP( _ OBJ )
-	RULE gd		$Gerund( _ OBJ )
+	RULE 명사구		$명사구( _ OBJ )
+	RULE gd		$동명사( _ OBJ )
 END
 
-PART Oprep
+PART O전치사
 	RULE pron	*pronoun[:0=OBJ]
 	RULE recr	*pronoun[:0=REC]
-	RULE np		$NP( _ OBJprep )
+	RULE 명사구		$명사구( _ OBJ전치사 )
 END
 
 PART C5
@@ -45,46 +45,46 @@ PART C
 	# :1 | missing
 
 	IF :0 g
-		RULE g		$Gerund( :1 )
+		RULE g		$동명사( :1 )
 	END
 	IF :0 t
-		RULE tov	$ToV( :1 )
+		RULE tov	$To부정사( :1 )
 	END
 	IF :0 r
-		RULE r		$VP( s1 m pr :1 )
-		RULE r		$VP( s3 m pr :1 )
-		RULE r		$VP( s5 m pr :1 )
+		RULE r		$동사구( s1 m pr :1 )
+		RULE r		$동사구( s3 m pr :1 )
+		RULE r		$동사구( s5 m pr :1 )
 	END
 	IF :0 pp
-		RULE r		$VP( s1 _ pp :1 )
-		RULE r		$VP( s3 _ pp :1 )
-		RULE r		$VP( s5 _ pp :1 )
+		RULE r		$동사구( s1 _ pp :1 )
+		RULE r		$동사구( s3 _ pp :1 )
+		RULE r		$동사구( s5 _ pp :1 )
 	END
 	UNLESS :0 ~ g t r pp
 
 	END
 END
 
-PART NP
+PART 명사구
 	# :0 | 1/m
 	# :1 | case
 
 	IF :0 1
 		# 수일치 / 출처: 수프림 수능 어법 실전 21p
-		RULE tno1		$Det number-noun $Prep( of ) *noun[:0=m]
+		RULE tno1		$관사 number-noun $전치사( of ) *noun[:0=m]
 		RULE tno1		*een *noun[:0=1]
 		RULE tno1		every-every *noun[:0=1]
-		RULE tno1		*een ?$Prep( of ) *noun[:0=m]
+		RULE tno1		*een ?$전치사( of ) *noun[:0=m]
 
-		RULE cthat		that-conj $Sentence
+		RULE cthat		that-conj $문장
 	END
 	IF :0 m
-		RULE ano		a-det number-noun $Prep( of ) *noun[:0=m]
+		RULE ano		a-관사 number-noun $전치사( of ) *noun[:0=m]
 
-		RULE bothAB		both-both $NP( 1 :1 ) and-conj $NP( 1 :1 )
-		RULE bothAB		both-both $NP( m :1 ) and-conj $NP( m :1 )
-		RULE atonceAB	at-at once-once $NP( 1 :1 ) and-conj $NP( 1 :1 )
-		RULE atonceAB	at-at once-once $NP( m :1 ) and-conj $NP( m :1 )
+		RULE bothAB		both-both $명사구( 1 :1 ) and-conj $명사구( 1 :1 )
+		RULE bothAB		both-both $명사구( m :1 ) and-conj $명사구( m :1 )
+		RULE atonceAB	at-at once-once $명사구( 1 :1 ) and-conj $명사구( 1 :1 )
+		RULE atonceAB	at-at once-once $명사구( m :1 ) and-conj $명사구( m :1 )
 	END
 
 	RULE n1		*noun[:1=only&:0=_]
@@ -93,44 +93,44 @@ PART NP
 	RULE n1		*noun[:1=abstract&:0=:0]
 	
 	UNLESS :0 m
-		RULE n1		$Det( a ) *noun[:2=a&:0=1]
-		RULE n1		$Det( an ) *noun[:2=an&:0=1]
+		RULE n1		$관사( a ) *noun[:2=a&:0=1]
+		RULE n1		$관사( an ) *noun[:2=an&:0=1]
 	END
 
 	RULE n1		*noun[:0=_]
 	RULE n1		*noun[:0=:0]
-	RULE n1		$Det *noun[:0=_]
-	RULE n1		$Det *noun[:0=:0]
+	RULE n1		$관사 *noun[:0=_]
+	RULE n1		$관사 *noun[:0=:0]
 
 	UNLESS :0 m
-		RULE n2		$Det( a ) $AP( num a ) *noun
-		RULE n2		$Det( an ) $AP( num an ) *noun
+		RULE n2		$관사( a ) $형용사구( num a ) *noun
+		RULE n2		$관사( an ) $형용사구( num an ) *noun
 	END
 	
-	# RULE n1	$Det $Adv %AP *noun
+	# RULE n1	$관사 $Adv %형용사구 *noun
 
-	RULE n3		*sath $AP $Det( a ) *noun[:2=a]
-	RULE n3		*sath $AP $Det( an ) *noun[:2=an]
+	RULE n3		*sath $형용사구 $관사( a ) *noun[:2=a]
+	RULE n3		*sath $형용사구 $관사( an ) *noun[:2=an]
 
-	RULE n4		*firsts $Det( a ) $AP( num a ) *noun
-	RULE n4		*firsts $Det( an ) $AP( num an ) *noun
+	RULE n4		*firsts $관사( a ) $형용사구( num a ) *noun
+	RULE n4		*firsts $관사( an ) $형용사구( num an ) *noun
 
-	RULE n5		*skof $Det *noun
+	RULE n5		*skof $관사 *noun
 END
 
-PART Det
+PART 관사
 	# :0 | a/an
-	RULE the	the-det
+	RULE the	the-관사
 
 	IF :0 a
-		RULE a	a-det
+		RULE a	a-관사
 	END
 	IF :0 an
-		RULE an	an-det
+		RULE an	an-관사
 	END
 END
 
 PART RelPron
-	RULE olu	that-rel $Sentence( O )
-	RULE slu	that-rel $Sentence( S )
+	RULE olu	that-rel $문장( O )
+	RULE slu	that-rel $문장( S )
 END
