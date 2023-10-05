@@ -1,15 +1,33 @@
 PART main
-    RULE m  $Exp
+    RULE m  $V
 END
 
-TRAP Exp
-    RULE a  $Num ^-e $Exp
-    RULE b  $Num
+PART V
+    RULE v  *Jverb *Jverb_tail[:0=@0:0&:1=u]
+    RULE v  *Jverb[:1=2col] $Masu
+    RULE v  *Jverb[:1=5col] *Jverb_tail[:0=@0:0&:1=i] $Masu
+
+    RULE v  *Jverb[:0=nu] *Jverb_tail[:0=@0:0&:1=i] nde-verb_tail
+    RULE v  *Jverb[:0=bu] *Jverb_tail[:0=@0:0&:1=i] nde-verb_tail
+    RULE v  *Jverb[:0=mu] *Jverb_tail[:0=@0:0&:1=i] nde-verb_tail
+
+    RULE v  *Jverb[:0=ru&:1=5col] tte-verb_tail
+    RULE v  *Jverb[:0=tu] tte-verb_tail
+    RULE v  *Jverb[:0=u] tte-verb_tail
+
+    RULE v  *Jverb[:0=ku] ite-verb_tail
+    RULE v  *Jverb[:0=gu] ide-verb_tail
+
+    RULE v  *Jverb[:1=2col] te-verb_tail
 END
 
-PART Num
-    RULE a  1-1
-    RULE b  2-1
-    RULE c  3-1
-    RULE d  4-1
+PART Masu
+    RULE masenka    masenka-verb_tail
+    RULE mashou     mashou-verb_tail
+    RULE masita     masita-verb_tail
+    RULE masen      masen-verb_tail
+    RULE masu       masu-verb_tail
+    
+    RULE nagara     nagara-verb_tail
+    RULE tai        tai-verb_tail
 END

@@ -620,3 +620,38 @@ takusan
 amari
 itiban
 totemo
+
+PART Jverb
+
+aso bu 5col
+ku ru 5col
+a ru 5col
+yasu mu 5col
+a u 5col
+no mu 5col
+
+tabe ru 2col
+mi ru 2col
+mise ru 2col
+
+
+PART Jverb_tail
+ru ru u
+tu tu u
+ku ku u
+gu gu u
+bu bu u
+u  u  u
+mu mu u
+su su u
+nu nu u
+
+ri ru i
+ti tu i
+ki ku i
+gi gu i
+bi bu i
+i  u  i
+mi mu i
+si su i
+ni nu i
