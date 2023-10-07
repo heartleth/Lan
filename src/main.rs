@@ -18,14 +18,22 @@ struct Args {
     #[arg(short, long)]
     dict: String,
 
+    /// Parse doc line by line.
     #[arg(short, long)]
     multiline: bool,
+    
+    /// Do not ignore whitespaces. 
+    #[arg(short = 'w', long)]
+    strictws: bool,
 }
+
+static mut SKIP_WS :bool = true;
 
 fn main() {
     let args = Args::parse();
     let specs :Vec<&str> = args.spec.split(',').collect();
     let dicts :Vec<&str> = args.dict.split(',').collect();
+    unsafe { SKIP_WS = args.strictws; } 
     
     println!("{:?}", specs);
     println!("{:?}", dicts);

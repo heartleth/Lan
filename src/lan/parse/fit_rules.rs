@@ -8,6 +8,7 @@ pub use expect::Expectation;
 use super::SyntaxTreeNode;
 use super::ParsingRule;
 use super::SyntaxTree;
+use crate::SKIP_WS;
 use expect::nexts;
 use super::parse;
 
@@ -77,19 +78,38 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
     while !expections.is_empty() {
         for expect in &mut expections {
             let reading = expect.reading;
+            let oread = reading;
             let rule = expect.rule;
             if let Some(prule) = &rule.first() {
                 if reading >= s.len() {
                     expect.kill();
                 }
                 else {
-                    while s[expect.reading] == ' ' || s[expect.reading] == '\r' || s[expect.reading] == '\n' || s[expect.reading] == '\t' {
-                        expect.read(1);
+                    unsafe {
+                        if !SKIP_WS {
+                            while s[expect.reading] == ' ' || s[expect.reading] == '\r' || s[expect.reading] == '\n' || s[expect.reading] == '\t' {
+                                expect.read(1);
+                            }
+                        }
                     }
                     let reading = expect.reading;
                     match &prule.template {
                         Text(t) => {
-                            if s[reading..].starts_with(&t.text) {
+                            if t.text == vec!['w', 's'] {
+                                let mut j = 0;
+                                while s[expect.reading+j] == ' ' || s[expect.reading+j] == '\r' || s[expect.reading+j] == '\n' || s[expect.reading+j] == '\t' {
+                                    j += 1;
+                                }
+                                if expect.reading + j > oread {
+                                    expect.read(j);
+                                    expect.next_rule();
+                                    expect.push_category(SyntaxTreeNode::new_morpheme(String::from(t.name), s[oread..reading+j].iter().collect::<String>()));
+                                }
+                                else {
+                                    expect.kill();
+                                }
+                            }
+                            else if s[reading..].starts_with(&t.text) {
                                 expect.read(t.text.len());
                                 expect.next_rule();
                                 expect.push_category(SyntaxTreeNode::new_morpheme(String::from(t.name), s[reading..reading+t.text.len()].iter().collect::<String>()));

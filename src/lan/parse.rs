@@ -9,6 +9,8 @@ use super::lanparser::*;
 use super::dictionary::Dictionary;
 use std::collections::HashMap;
 
+use crate::SKIP_WS;
+
 pub type PhraseRulesCollection<'p> = &'p HashMap<&'p str, PhraseContext<'p>>;
 pub type ParsingRule<'p> = &'p [TemplateNode<'p>];
 
@@ -22,6 +24,11 @@ pub fn init_parse() {
 }
 
 pub fn trim_front_iter<'t>(s :&'t [char])->(&'t [char], usize) {
+    unsafe {
+        if SKIP_WS {
+            return (s, 0);
+        }
+    }
     let mut i = 0;
     while !s.is_empty() && (s[i] == ' ' || s[i] == '\t' || s[i] == '\n' || s[i] == '\r') {
         i += 1;
