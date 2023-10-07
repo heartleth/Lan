@@ -90,7 +90,7 @@ pub fn nexts<'p>(name: &'p str, rule :ParsingRule<'p>) -> Vec<Expectation<'p>> {
     let mut ret :Vec<Expectation<'p>> = Vec::new();
     let mut i = 0;
     for r in rule {
-        if r.is_optional {
+        if r.is_optional || r.is_free {
             ret.push(Expectation::from(name, &rule[i..], SyntaxTreeNode::new_category(name), 0));
         }
         else {

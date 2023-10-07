@@ -17,57 +17,25 @@ PART Combine 2
     # :0 | Ion
     # :1 | Is Starting
 
-    IF 1 0
-        RULE fold   ?$Number $Substance $Combine( :0 false )
-        RULE sub    ?$Number $Substance ?*Ion
+    IF :1 0
+        RULE fold   ?$Number $SubstanceN $Combine( :0 false )
+        RULE sub    ?$Number $SubstanceN ?*Ion
     END
-    IF 1 false
-        RULE fold   $Substance $Combine( :0 false )
-        RULE sub    $Substance ?*Ion
+    IF :1 false
+        RULE fold   $SubstanceN $Combine( :0 false )
+        RULE sub    $SubstanceN ?*Ion
     END
+END
+
+PART SubstanceN
+    RULE substance  $Substance ?$Number
 END
 
 PART Substance
-    RULE substance  *Elements ?$Number
+    RULE elem       *Elements
+    RULE embed      (-left $Combine )-right
 END
 
 PART Number
-    RULE n  *Numbers ?$Number
+    RULE n          |>*Numbers
 END
-
-# # TODO
-# 
-# PART main
-#     RULE molecule $Molecule
-# END
-# 
-# PART Conj
-#     RULE c ws-ws *conj ws-ws
-# END
-# 
-# PART Molecule 1
-#     # :0 | p
-#     RULE s      [:0=p]$Conj $Combine ?$Molecule( p )
-# END
-# 
-# PART Combine 2
-#     # :0 | Ion
-#     # :1 | Is Starting
-# 
-#     IF 1 0
-#         RULE fold   ?$Number $Substance $Combine( :0 false )
-#         RULE sub    ?$Number $Substance ?*Ion
-#     END
-#     IF 1 false
-#         RULE fold   $Substance $Combine( :0 false )
-#         RULE sub    $Substance ?*Ion
-#     END
-# END
-# 
-# PART Substance
-#     RULE substance  *Elements ?$Number
-# END
-# 
-# PART Number
-#     RULE n  *Numbers ?$Number
-# END
