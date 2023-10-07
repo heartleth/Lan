@@ -8,7 +8,6 @@ use clap::Parser;
 #[command(author, version, about, long_about = None)]
 struct Args {
     /// path of file to parse.
-    #[arg(short = 't', long)]
     doc: String,
     
     /// Lan grammer paths, separated by ",".
@@ -17,7 +16,10 @@ struct Args {
     
     /// Lan dictionary paths, separated by ",".
     #[arg(short, long)]
-    dict: String
+    dict: String,
+
+    #[arg(short, long)]
+    multiline: bool,
 }
 
 fn main() {
@@ -46,12 +48,31 @@ fn main() {
 
     lanparser.with_parser(|p| {
         let t = std::fs::read_to_string(&args.doc).unwrap();
-        for text in t.split("\n") {
-            if text.starts_with('#') {
-                println!("{}", &text[2..]);
-                continue;
+        if !args.multiline {
+            for text in t.split("\n") {
+                if text.starts_with('#') {
+                    println!("{}", &text[2..]);
+                    continue;
+                }
+                let text = text.trim();
+                println!("{}", text);
+                let result = p.parse(text);
+                if let Ok(res) = result {
+                    if res.length == text.len() {
+                        println!("VALID");
+                        println!("{}\n", res.tree.collect_verbose(" "));
+                    }
+                    else {
+                        println!("INVALID\n");
+                    }
+                }
+                else {
+                    println!("INVALID\n");
+                }
             }
-            let text = text.trim();
+        }
+        else {
+            let text = t.trim();
             println!("{}", text);
             let result = p.parse(text);
             if let Ok(res) = result {
