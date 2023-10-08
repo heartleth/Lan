@@ -58,8 +58,11 @@ fn main() {
         let t = std::fs::read_to_string(&args.doc).unwrap();
         if !args.multiline {
             for text in t.split("\n") {
-                if text.starts_with('#') {
-                    println!("{}", &text[2..]);
+                if text.starts_with("///") {
+                    println!("{}", &text[3..]);
+                    continue;
+                }
+                if text.trim().len() == 0 {
                     continue;
                 }
                 let text = text.trim();

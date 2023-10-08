@@ -96,7 +96,36 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                     let reading = expect.reading;
                     match &prule.template {
                         Text(t) => {
-                            if t.text == vec!['w', 's'] {
+                            if t.text == vec!['<'] {
+                                if reading == 0 {
+                                    expect.next_rule();
+                                }
+                                else if s[reading - 1] == '\n' {
+                                    expect.next_rule();
+                                }
+                                else {
+                                    expect.kill();
+                                }
+                            }
+                            else if t.text == vec!['>'] {
+                                if reading == s.len() {
+                                    expect.next_rule();
+                                }
+                                else if s[reading + 1] == '\n' {
+                                    expect.read(1);
+                                    expect.next_rule();
+                                    expect.push_category(SyntaxTreeNode::new_morpheme(String::from(t.name), s[reading..reading+1].iter().collect::<String>()));
+                                }
+                                else if s[reading + 1] == '\r' {
+                                    expect.read(2);
+                                    expect.next_rule();
+                                    expect.push_category(SyntaxTreeNode::new_morpheme(String::from(t.name), s[reading..reading+2].iter().collect::<String>()));
+                                }
+                                else {
+                                    expect.kill();
+                                }
+                            }
+                            else if t.text.len() == 0 {
                                 let mut j = 0;
                                 while s[expect.reading+j] == ' ' || s[expect.reading+j] == '\r' || s[expect.reading+j] == '\n' || s[expect.reading+j] == '\t' {
                                     j += 1;
