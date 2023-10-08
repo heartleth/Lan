@@ -211,22 +211,20 @@ pub fn parse<'s>(lines :&Vec<&'s str>) -> Result<HashMap<&'s str, PhraseContext<
     for line in lines {
         let words :Vec<&str> = line.split_whitespace().collect();
         if words[0] == "PART" {
-            let argc :usize = words.get(2).unwrap_or(&"0").parse().unwrap();
             let p = PhraseContext {
                 name: words[1],
                 children: Vec::new(),
                 is_trap: false,
-                argc: argc
+                props: words.get(2).map(|e| &e[..])
             };
             st.push(Context::Phrase(p));
         }
         else if words[0] == "TRAP" {
-            let argc :usize = words.get(2).unwrap_or(&"0").parse().unwrap();
             let p = PhraseContext {
                 name: words[1],
                 children: Vec::new(),
                 is_trap: true,
-                argc: argc
+                props: words.get(2).map(|e| &e[..])
             };
             st.push(Context::Phrase(p));
         }

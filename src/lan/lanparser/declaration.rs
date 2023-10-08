@@ -2,10 +2,10 @@ use std::fmt::Debug;
 
 #[derive(Clone)]
 pub struct PhraseContext<'n> {
-    pub name :&'n str,
     pub children :Vec<PhraseRules<'n>>,
+    pub props :Option<&'n str>,
     pub is_trap: bool,
-    pub argc :usize
+    pub name :&'n str
 }
 
 #[derive(Clone)]

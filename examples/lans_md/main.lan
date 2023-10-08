@@ -3,13 +3,14 @@ PART main
 END
 
 PART Block
+    RULE qoute      <-< *mdquote >->
     IF :0 0
-        RULE x      *Effect $Blocks( @0:0 ) *Effect[:0=@0:0]
-        RULE noeff  *TREffect
+        RULE style  *Effect $Blocks( @0:0 ) *Effect[:0=@0:0]
+        RULE text   *TREffect
     END
     UNLESS :0 0
-        RULE x      *Effect[:0!=:0] *TREffect[:0=@0:0] *Effect[:0=@0:0]
-        RULE noeff  *TREffect
+        RULE style  *Effect[:0!=:0] *TREffect[:0=@0:0] *Effect[:0=@0:0]
+        RULE text   *TREffect
     END
 END
 

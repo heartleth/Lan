@@ -35,8 +35,6 @@ fn main() {
     let dicts :Vec<&str> = args.dict.split(',').collect();
     unsafe { SKIP_WS = args.strictws; } 
     
-    println!("{:?}", specs);
-    println!("{:?}", dicts);
     let mut lanparser = lan::Parser::open(specs[0], dicts[0]).unwrap();
     let mut i = 0;
     for dictf in dicts {

@@ -96,7 +96,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                     let reading = expect.reading;
                     match &prule.template {
                         Text(t) => {
-                            if t.text == vec!['<'] {
+                            if t.text == vec!['<'] && t.name == "<" {
                                 if reading == 0 {
                                     expect.next_rule();
                                 }
@@ -107,7 +107,7 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                                     expect.kill();
                                 }
                             }
-                            else if t.text == vec!['>'] {
+                            else if t.text == vec!['>'] && t.name == ">" {
                                 if reading == s.len() {
                                     expect.next_rule();
                                 }
