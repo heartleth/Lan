@@ -655,3 +655,19 @@ i  u  i
 mi mu i
 si su i
 ni nu i
+
+# For md
+
+TRAP TREffect
+*  sast
+_  sund
+** dast
+__ dund
+~~ canc
+
+PART Effect
+*  sast
+_  sund
+** dast
+__ dund
+~~ canc

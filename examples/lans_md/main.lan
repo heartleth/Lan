@@ -1,0 +1,18 @@
+PART main
+    RULE md         $Blocks
+END
+
+PART Block
+    IF :0 0
+        RULE x      *Effect $Blocks( @0:0 ) *Effect[:0=@0:0]
+        RULE noeff  *TREffect
+    END
+    UNLESS :0 0
+        RULE x      *Effect[:0!=:0] *TREffect[:0=@0:0] *Effect[:0=@0:0]
+        RULE noeff  *TREffect
+    END
+END
+
+PART Blocks
+    RULE r          $Block( :0 ) ?$Blocks
+END

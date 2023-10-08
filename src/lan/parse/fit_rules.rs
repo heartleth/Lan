@@ -1,4 +1,5 @@
 mod expect;
+use crate::lan::dictionary::SearchDictResult;
 use crate::lan::lanparser::Templates::*;
 use crate::lan::dictionary::search_dict;
 use crate::lan::dictionary::Dictionary;
@@ -119,18 +120,25 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
                             }
                         },
                         ShortPart(p) => {
-                            let x = search_dict(dict, p, s, reading, expect, cargs);
-                            if x.is_empty() {
-                                expect.kill();
+                            let res = search_dict(dict, p, s, reading, expect, cargs);
+                            if let SearchDictResult::Part(x) = res {
+                                if x.is_empty() {
+                                    expect.kill();
+                                }
+                                else {
+                                    let mx = *x.iter().max_by_key(|t| t.text.len()).unwrap();
+                                    expect.push_category(SyntaxTreeNode::new_morpheme(
+                                        String::from(p.part_name),
+                                        String::from_iter(&s[reading..reading+mx.text.len()])));
+                                    expect.register_attr(&mx.argv);
+                                    expect.read(mx.text.len());
+                                    expect.next_rule();
+                                }
                             }
-                            else {
-                                let mx = *x.iter().max_by_key(|t| t.text.len()).unwrap();
-                                expect.push_category(SyntaxTreeNode::new_morpheme(
-                                    String::from(p.part_name),
-                                    String::from_iter(&s[reading..reading+mx.text.len()])));
-                                expect.register_attr(&mx.argv);
-                                expect.read(mx.text.len());
+                            else if let SearchDictResult::Trap(l) = res {
+                                expect.read(l);
                                 expect.next_rule();
+                                expect.push_category(SyntaxTreeNode::new_morpheme(format!("until[{}]", p.part_name), s[reading..reading+l].iter().collect::<String>()));
                             }
                         },
                         Template(template) => {
