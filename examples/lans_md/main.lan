@@ -3,7 +3,10 @@ PART main
 END
 
 PART Block
-    RULE qoute      <-< *mdquote >->
+    RULE qoute      <-< *mdquote - *TREffect >->
+    UNLESS :1 nonl
+        RULE nl     *Effect[:0=nl]
+    END
     IF :0 0
         RULE style  *Effect $Blocks( @0:0 ) *Effect[:0=@0:0]
         RULE text   *TREffect
@@ -15,5 +18,5 @@ PART Block
 END
 
 PART Blocks
-    RULE r          $Block( :0 ) ?$Blocks
+    RULE r          $Block( :0 :1 ) ?$Blocks( :0 :1 )
 END

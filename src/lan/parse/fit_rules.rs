@@ -83,7 +83,17 @@ pub fn fit_rules<'p, 't>(s :&'t [char], name :&'p str, rule :ParsingRule<'p>, ru
             let rule = expect.rule;
             if let Some(prule) = &rule.first() {
                 if reading >= s.len() {
-                    expect.kill();
+                    if let Text(t) = &prule.template {
+                        if t.text == vec!['>'] && t.name == ">" {
+                            expect.next_rule();
+                        }
+                        else {
+                            expect.kill();
+                        }
+                    }
+                    else {
+                        expect.kill();
+                    }
                 }
                 else {
                     unsafe {

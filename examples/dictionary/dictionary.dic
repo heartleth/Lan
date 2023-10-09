@@ -666,6 +666,7 @@ __ dund
 ~~ canc
 || splr
 >  qt
+\n nl
 
 PART Effect
 *  sast
@@ -674,6 +675,7 @@ _  sund
 __ dund
 ~~ canc
 || splr
+\n nl
 
 PART mdquote
 >

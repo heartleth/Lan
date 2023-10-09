@@ -35,7 +35,21 @@ pub fn load_dictionary<'s>(dict :&'s str) -> Dictionary<'s> {
             dictionary.insert(&t.clone()[5..], (true, Vec::new()));
         }
         else {
-            dictionary.get_mut(mode).unwrap().1.push(Voca::from(t.clone()));
+            if t == "\\n" {
+                dictionary.get_mut(mode).unwrap().1.push(Voca::from("\n"));
+            }
+            else if t == "\\r" {
+                dictionary.get_mut(mode).unwrap().1.push(Voca::from("\r"));
+            }
+            else if t == "\\t" {
+                dictionary.get_mut(mode).unwrap().1.push(Voca::from("\t"));
+            }
+            else if t == "\\s" {
+                dictionary.get_mut(mode).unwrap().1.push(Voca::from(" "));
+            }
+            else {
+                dictionary.get_mut(mode).unwrap().1.push(Voca::from(t.clone()));
+            }
         }
     }
     return dictionary;
