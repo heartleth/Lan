@@ -29,3 +29,5 @@
         
         RULE hundred    1-one %zerozero
     END
+
+[GNE](https://github.com/heartleth/GNE)에 따로 구현되어 있는 코드가 더 잘 작동합니다.
